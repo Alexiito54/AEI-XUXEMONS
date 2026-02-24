@@ -1,12 +1,21 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.scss'
+  standalone: true,
+  imports: [CommonModule, RouterOutlet],
+  template: `
+    <div class="app">
+      <h1> XUXEMONS DAW</h1>
+      <router-outlet />
+    </div>
+  `,
+  styles: [`
+    .app { padding: 20px; text-align: center; }
+    h1 { color: #ff6b35; }
+  `]
 })
-export class App {
-  protected readonly title = signal('xuxemons');
+export class AppComponent {
+  title = 'xuxemons-frontend';
 }
