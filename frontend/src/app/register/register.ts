@@ -54,6 +54,7 @@ export class RegisterComponent {
           this.registerForm.reset();
         },
         error: (err) => {
+          console.error(err);
           alert('Error: ' + (err.error?.error || 'Registro falló'));
           this.loading = false;
         }
