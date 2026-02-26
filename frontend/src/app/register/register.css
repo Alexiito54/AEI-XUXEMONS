@@ -1,0 +1,101 @@
+.register-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f0f23 0%, #2a1b3d 50%, #1a0f2e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.register-content {
+  display: flex;
+  gap: 4rem;
+  max-width: 1000px;
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(20px);
+  border-radius: 30px;
+  padding: 3rem;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+  border: 1px solid rgba(138, 43, 226, 0.3);
+}
+
+.logo-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.logo-img {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  filter: drop-shadow(0 0 30px rgba(138, 43, 226, 0.8));
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+.logo-title {
+  font-size: 3rem;
+  background: linear-gradient(45deg, #8a2be2, #00d4ff, #ff6b9d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-top: 1rem;
+  text-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+  animation: pulse 2s infinite;
+}
+
+.form-section {
+  flex: 1;
+  max-width: 400px;
+}
+
+.form-section h2 {
+  color: white;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+/* Resto estilos formulario igual que antes */
+.form-group { margin-bottom: 1.5rem; }
+label { display: block; margin-bottom: 0.5rem; font-weight: bold; color: #e0e0e0; }
+input { 
+  width: 100%; padding: 0.75rem; border: 2px solid rgba(255,255,255,0.2); 
+  border-radius: 12px; background: rgba(255,255,255,0.1); 
+  color: white; font-size: 1rem; transition: all 0.3s; 
+  backdrop-filter: blur(10px);
+}
+input::placeholder { color: rgba(255,255,255,0.6); }
+input:focus { border-color: #8a2be2; box-shadow: 0 0 20px rgba(138,43,226,0.4); }
+.input-error { border-color: #ff4757; box-shadow: 0 0 15px rgba(255,71,87,0.4); }
+.error-message small { color: #ff4757; font-size: 0.875rem; }
+.btn-register { 
+  width: 100%; padding: 1.2rem; background: linear-gradient(45deg, #8a2be2, #00d4ff); 
+  color: white; border: none; border-radius: 12px; font-size: 1.1rem; 
+  font-weight: bold; cursor: pointer; transition: all 0.3s; margin-top: 1rem;
+}
+.btn-register:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(138,43,226,0.4); }
+.btn-register:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Animaciones XUXUEMONS */
+@keyframes glow {
+  from { filter: drop-shadow(0 0 20px rgba(138,43,226,0.6)); }
+  to { filter: drop-shadow(0 0 40px rgba(138,43,226,1)); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Responsive móvil */
+@media (max-width: 768px) {
+  .register-content { flex-direction: column; gap: 2rem; padding: 2rem 1rem; }
+  .logo-img { max-width: 250px; }
+  .logo-title { font-size: 2rem; }
+}
