@@ -1,0 +1,77 @@
+<section class="register-page">
+  <div class="register-content">
+    <div class="logo-section">
+      <img src="assets/images/Img_Registro.PNG" alt="XUXUEMONS Dragón Gaming" class="logo-img"
+           loading="lazy" width="300" height="200">
+      <h1 class="logo-title">XUXUEMONS</h1>
+    </div>
+
+    <!-- Formulario derecha -->
+    <div class="form-section">
+      <h2>REGISTRO XUXEMONS</h2>
+      
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="name">Nombre</label>
+          <input id="name" formControlName="name" placeholder="Introduce tu nombre" 
+                 [class.input-error]="nameControl.invalid && nameControl.touched"
+                 (blur)="nameControl.markAsTouched()" />
+          <div class="error-message" *ngIf="nameControl.invalid && nameControl.touched">
+            <small *ngIf="nameControl.errors?.['required']">Nombre requerido</small>
+            <small *ngIf="nameControl.errors?.['maxlength']">Máx. 50 caracteres</small>
+          </div>
+        </div>
+
+        <!-- Resto campos igual... -->
+        <div class="form-group">
+          <label for="surname">Cognoms</label>
+          <input id="surname" formControlName="surname" placeholder="Introduce tus cognoms" 
+                 [class.input-error]="surnameControl.invalid && surnameControl.touched"
+                 (blur)="surnameControl.markAsTouched()" />
+          <div class="error-message" *ngIf="surnameControl.invalid && surnameControl.touched">
+            <small *ngIf="surnameControl.errors?.['required']">Cognoms requeridos</small>
+            <small *ngIf="surnameControl.errors?.['maxlength']">Máx. 100 caracteres</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" formControlName="email" type="email" placeholder="email@ejemplo.com" 
+                 [class.input-error]="emailControl.invalid && emailControl.touched"
+                 (blur)="emailControl.markAsTouched()" />
+          <div class="error-message" *ngIf="emailControl.invalid && emailControl.touched">
+            <small *ngIf="emailControl.errors?.['required']">Email requerido</small>
+            <small *ngIf="emailControl.errors?.['email']">Formato email inválido</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Contrasenya</label>
+          <input id="password" formControlName="password" type="password" placeholder="Mín. 6 caracteres" 
+                 [class.input-error]="passwordControl.invalid && passwordControl.touched"
+                 (blur)="passwordControl.markAsTouched()" />
+          <div class="error-message" *ngIf="passwordControl.invalid && passwordControl.touched">
+            <small *ngIf="passwordControl.errors?.['required']">Contrasenya requerida</small>
+            <small *ngIf="passwordControl.errors?.['minlength']">Mínimo 6 caracteres</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password_confirmation">Repetir contrasenya</label>
+          <input id="password_confirmation" formControlName="password_confirmation" type="password" 
+                 placeholder="Repite la contrasenya" 
+                 [class.input-error]="passwordMismatch"
+                 (blur)="onPasswordConfirmTouched()" />
+          <div class="error-message" *ngIf="passwordMismatch">
+            <small>Les contrasenyes no coincideixen</small>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-register" [disabled]="loading || registerForm.invalid">
+          <span *ngIf="loading; else registerText">Registrant...</span>
+          <ng-template #registerText>REGISTRAR</ng-template>
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
