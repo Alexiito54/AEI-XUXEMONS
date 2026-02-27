@@ -1,0 +1,74 @@
+:root{
+  --bg:#f6f6f6;
+  --panel:#ffffff;
+  --accent:#8a49f0;
+  --muted:#6d6d6d;
+  --text:#111;
+}
+
+*{box-sizing:border-box}
+body{font-family:Roboto, system-ui, 'Segoe UI', Arial; margin:0; background:var(--bg); color:var(--text)}
+
+/* Menu lateral fijo (se adapta a la estructura existente en index.html) */
+.menu-section{
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+  width:220px;
+  background:var(--accent);
+  padding:28px 18px;
+  color:#000;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+.menu-section .logo-section .logo-title{
+  font-family: 'Fredoka One', sans-serif;
+  font-size:32px;
+  margin:0;
+}
+.menu-section .menu-title{display:flex; flex-direction:column; gap:8px}
+.menu-section .menu-title h3{margin:0; font-weight:500; color:#0b0b0b}
+
+/* Contenido principal desplazado a la derecha para dejar espacio al menú */
+.main-content{
+  margin-left:260px;
+  padding:36px;
+  max-width:1200px;
+}
+
+/* Bienvenida */
+.welcome-section .welcome-title{font-family:'Fredoka One', sans-serif; font-size:36px; margin:0}
+.welcome-section .welcome-description{color:var(--muted); margin-top:6px}
+
+/* Estadísticas estilo tarjetas */
+.xuxemons-section, .fights-section, .friends-section, .level-section{
+  display:inline-block;
+  width:220px;
+  background:var(--panel);
+  padding:16px;
+  margin:18px 12px 0 0;
+  border-radius:12px;
+  box-shadow:0 6px 0 rgba(0,0,0,0.06);
+  border:1px solid rgba(0,0,0,0.08);
+  vertical-align:top;
+}
+.xuxemons-section h2, .fights-section h2, .friends-section h2, .level-section h2{margin:0 0 8px 0; font-size:14px; color:#333}
+.xuxemons-total, .fights-total, .friends-total, .level-total{font-size:22px; color:var(--text); margin:0}
+
+/* Responsive: apilar en pantallas pequeñas */
+@media (max-width:900px){
+  .menu-section{position:static;width:100%;height:auto;padding:14px}
+  .main-content{margin-left:0;padding:18px}
+  .xuxemons-section, .fights-section, .friends-section, .level-section{width:100%; margin-right:0}
+}
+
+/* Tu equipo */
+.team-section .team-title{font-family:'Fredoka One', sans-serif; font-size:36px; margin:0}
+
+/* Estilos para resumen por Xuxemon */
+.xuxemons-summary{margin-top:24px}
+.xuxemons-section{display:inline-block; width:220px; background:var(--panel); padding:16px; margin:8px 12px 0 0; border-radius:12px; box-shadow:0 4px 0 rgba(0,0,0,0.05); border:1px solid rgba(0,0,0,0.08); vertical-align:top}
+.xuxemons-section h2{margin:0 0 8px 0; font-size:14px; color:#333}
+.xuxemons-total{font-size:20px; color:var(--text); margin:0}
