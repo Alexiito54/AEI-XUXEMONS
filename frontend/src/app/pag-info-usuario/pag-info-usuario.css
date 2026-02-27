@@ -1,0 +1,459 @@
+.profile-section {
+    display: flex;
+    height: 100vh;
+    background-color: #f5f5f5;
+}
+
+.sidebar {
+    width: 200px;
+    background: linear-gradient(135deg, #7e3fdb 0%, #6a2db8 100%);
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-logo {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 30px;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar-nav a {
+    color: white;
+    text-decoration: none;
+    padding: 12px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.sidebar-nav a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.sidebar-nav a.active {
+    background-color: rgba(255, 255, 255, 0.3);
+    font-weight: 600;
+}
+
+.main-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 40px;
+}
+
+.page-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.page-subtitle {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 30px;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 370px 1fr;
+    gap: 30px;
+    max-width: 1400px;
+}
+
+.profile-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.profile-avatar-wrapper {
+    position: relative;
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.star-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.avatar-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ddd 0%, #e8e8e8 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    border: 3px solid #f0f0f0;
+    overflow: hidden;
+}
+
+.avatar-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.trainer-rank {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+}
+
+.trainer-email {
+    font-size: 13px;
+    color: #888;
+    margin: 5px 0 0 0;
+}
+
+.profile-card .profile-section {
+    width: 100%;
+    margin-top: 0;
+    text-align: left;
+    padding-top: 0;
+    border-top: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.profile-section {
+    width: 100%;
+    margin-top: 8px;
+    text-align: left;
+    padding-top: 8px;
+    border-top: none;
+}
+
+.profile-section:first-of-type {
+    border-top: none;
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.profile-section h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 8px 0;
+    text-transform: uppercase;
+}
+
+.profile-section p {
+    font-size: 13px;
+    color: #666;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.btn-edit-profile {
+    width: 100%;
+    margin-top: 25px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #7e3fdb 0%, #6a2db8 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-edit-profile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(126, 63, 219, 0.3);
+}
+
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 15px 0;
+}
+
+.stats-section {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 10px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+}
+
+.stat-item.xuxemons {
+    background: linear-gradient(135deg, #a78bfa 0%, #9370db 100%);
+}
+
+.stat-item.victorias {
+    background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+}
+
+.stat-item.derrotas {
+    background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+}
+
+.stat-item.porcentaje {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+}
+
+.stat-label {
+    font-size: 11px;
+    opacity: 0.9;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.stat-value {
+    font-size: 22px;
+}
+
+.xp-bar-wrapper {
+    margin-top: 15px;
+}
+
+.xp-bar {
+    height: 10px;
+    background: #e5e5e5;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.xp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #7e3fdb 0%, #6a2db8 100%);
+    border-radius: 5px;
+}
+
+.xp-label {
+    font-size: 12px;
+    color: #666;
+    display: block;
+    text-align: center;
+}
+
+.badges-section {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+}
+
+.badges-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.badge-card {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    border-left: 4px solid #ddd;
+    transition: all 0.3s ease;
+}
+
+.badge-card.obtained {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    border-left-color: #7e3fdb;
+}
+
+.badge-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.badge-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.badge-header .star-icon {
+    font-size: 18px;
+}
+
+.badge-header strong {
+    font-size: 13px;
+    color: #333;
+}
+
+.badge-card p {
+    font-size: 12px;
+    color: #666;
+    margin: 6px 0;
+    line-height: 1.4;
+}
+
+.badge-status {
+    font-size: 11px;
+    font-weight: 600;
+    display: block;
+    margin-top: 8px;
+}
+
+.obtained-text {
+    color: #22c55e;
+}
+
+.preferences-section {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+}
+
+.preference-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.preference-item:last-child {
+    margin-bottom: 0;
+}
+
+.preference-label {
+    font-size: 13px;
+    color: #333;
+    font-weight: 500;
+}
+
+.preference-description {
+    font-size: 11px;
+    color: #999;
+    margin-top: 2px;
+}
+
+.toggle-switch {
+    width: 45px;
+    height: 24px;
+    background: #ccc;
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.toggle-switch.active {
+    background: #22c55e;
+}
+
+.toggle-switch::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: left 0.3s;
+}
+
+.toggle-switch.active::after {
+    left: 23px;
+}
+
+@media (max-width: 1024px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .badges-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-section {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        padding: 15px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .sidebar-nav {
+        flex-direction: row;
+        gap: 5px;
+    }
+
+    .sidebar-nav a {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+
+    .main-content {
+        padding: 20px;
+    }
+
+    .page-title {
+        font-size: 24px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .badges-grid {
+        grid-template-columns: 1fr;
+    }
+}
