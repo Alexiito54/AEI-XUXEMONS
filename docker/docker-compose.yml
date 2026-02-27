@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+
+  # Base de dades MySQL
+  db:
+    image: mysql:8.0
+    container_name: xuxemons-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bd-xuxemons
+      MYSQL_USER: xuxemons
+      MYSQL_PASSWORD: xuxemons
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  # phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: xuxemons-phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+
+  # Backend Laravel
+  laravel:
+    image: php:8.2-apache
+    container_name: xuxemons-laravel
+    restart: always
+    working_dir: /var/www/html
+    volumes:
+      - ./backend/laravel:/var/www/html
+    ports:
+      - "8000:80"
+    depends_on:
+      - db
+
+  # Frontend Angular
+  angular:
+    image: node:20
+    container_name: xuxemons-angular
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "4200:4200"
+    command: sh -c "npm install && npx ng serve --host 0.0.0.0 --poll 2000"
+    depends_on:
+      - laravel
+
+volumes:
+  db_data:
