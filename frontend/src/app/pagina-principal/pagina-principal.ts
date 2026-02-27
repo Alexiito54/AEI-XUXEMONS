@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'app-pagina-principal',
@@ -6,6 +6,7 @@ import { Component } from '@angular/core';
   imports: [],
   templateUrl: './pagina-principal.html',
   styleUrls: ['./pagina-principal.css'],
+   encapsulation: ViewEncapsulation.None  // <–– deja que :root afecte
 })
 export class PaginaPrincipal {
 
