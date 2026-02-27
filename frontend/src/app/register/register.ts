@@ -48,10 +48,10 @@ export class RegisterComponent {
     if (this.registerForm.valid) {
       this.loading = true;
       this.authService.register(this.registerForm.value).subscribe({
-        next: (response) => {
-          alert('Registrado! ID: ' + response.user.user_id);
-          this.loading = false;
-          this.registerForm.reset();
+        next: (response: any) => {
+      alert('Registrado! ID: ' + response.user_id);
+      this.loading = false;
+      this.registerForm.reset();
         },
         error: (err) => {
           console.error(err);

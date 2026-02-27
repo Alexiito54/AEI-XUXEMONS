@@ -1,28 +1,31 @@
 <section class="register-page">
   <div class="register-content">
+
+    <!-- Imagen izquierda -->
     <div class="logo-section">
-      <img src="../../assets/images/Img_Registro.PNG" alt="XUXEMONS Dragón Gaming" class="logo-img"
-           loading="lazy" width="300" height="200">
-      <h1 class="logo-title">XUXEMONS</h1>
+      <img src="images/img_registro.png" alt="XUXEMONS" class="logo-img" loading="eager">
     </div>
 
-    <!-- Formulario derecha -->
+    <!-- Formulario de registro -->
     <div class="form-section">
-      <h2>REGISTRO XUXEMONS</h2>
+      <h2>REGISTRO</h2>
       
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+        <!-- Campo nombre -->
         <div class="form-group">
           <label for="name">Nombre</label>
           <input id="name" formControlName="name" placeholder="Introduce tu nombre" 
                  [class.input-error]="nameControl.invalid && nameControl.touched"
                  (blur)="nameControl.markAsTouched()" />
+          <!-- Mensajes de error del nombre -->
           <div class="error-message" *ngIf="nameControl.invalid && nameControl.touched">
             <small *ngIf="nameControl.errors?.['required']">Nombre requerido</small>
             <small *ngIf="nameControl.errors?.['maxlength']">Máx. 50 caracteres</small>
           </div>
         </div>
 
-        <!-- Resto campos igual... -->
+        <!-- Campo apellidos -->
         <div class="form-group">
           <label for="surname">Cognoms</label>
           <input id="surname" formControlName="surname" placeholder="Introduce tus cognoms" 
@@ -34,6 +37,7 @@
           </div>
         </div>
 
+        <!-- Campo email -->
         <div class="form-group">
           <label for="email">Email</label>
           <input id="email" formControlName="email" type="email" placeholder="email@ejemplo.com" 
@@ -45,6 +49,7 @@
           </div>
         </div>
 
+        <!-- Campo contraseña -->
         <div class="form-group">
           <label for="password">Contrasenya</label>
           <input id="password" formControlName="password" type="password" placeholder="Mín. 6 caracteres" 
@@ -56,6 +61,7 @@
           </div>
         </div>
 
+        <!-- Repetir contraseña, uso un validator personalizado en el .ts para comprobar que coinciden -->
         <div class="form-group">
           <label for="password_confirmation">Repetir contrasenya</label>
           <input id="password_confirmation" formControlName="password_confirmation" type="password" 
@@ -67,10 +73,12 @@
           </div>
         </div>
 
+        <!-- Botón enviar, deshabilitado si el form no es válido o está cargando -->
         <button type="submit" class="btn-register" [disabled]="loading || registerForm.invalid">
           <span *ngIf="loading; else registerText">Registrant...</span>
           <ng-template #registerText>REGISTRAR</ng-template>
         </button>
+
       </form>
     </div>
   </div>
