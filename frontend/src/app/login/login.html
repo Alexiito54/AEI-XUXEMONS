@@ -1,0 +1,63 @@
+<section class="login-page">
+  <div class="login-content">
+
+    <!-- Imagen izquierda -->
+    <div class="logo-section">
+      <img src="images/img_registro.png" alt="XUXEMONS" class="logo-img" loading="eager">
+    </div>
+
+    <!-- Formulario de login -->
+    <div class="form-section">
+      <h2>LOGIN</h2>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+        <!-- Campo ID -->
+        <div class="form-group">
+          <label for="user_id">ID</label>
+          <input id="user_id" formControlName="user_id" placeholder="Introduce tu ID"
+                 [class.input-error]="userIdControl.invalid && userIdControl.touched"
+                 (blur)="userIdControl.markAsTouched()" />
+          @if (userIdControl.invalid && userIdControl.touched) {
+            <div class="error-message">
+              @if (userIdControl.errors?.['required']) {
+                <small>ID requerit</small>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Campo contraseña -->
+        <div class="form-group">
+          <label for="password">Contrasenya</label>
+          <input id="password" formControlName="password" type="password" placeholder="Mín. 6 caracteres"
+                 [class.input-error]="passwordControl.invalid && passwordControl.touched"
+                 (blur)="passwordControl.markAsTouched()" />
+          @if (passwordControl.invalid && passwordControl.touched) {
+            <div class="error-message">
+              @if (passwordControl.errors?.['required']) {
+                <small>Contrasenya requerida</small>
+              }
+              @if (passwordControl.errors?.['minlength']) {
+                <small>Mínim 6 caràcters</small>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Error general -->
+        @if (errorMsg) {
+          <div class="error-message">
+            <small>{{ errorMsg }}</small>
+          </div>
+        }
+
+        <!-- Botón enviar -->
+        <button type="submit" class="btn-login" [disabled]="loading || loginForm.invalid">
+          {{ loading ? 'Entrant...' : 'ENTRAR' }}
+        </button>
+
+      </form>
+    </div>
+  </div>
+</section>
