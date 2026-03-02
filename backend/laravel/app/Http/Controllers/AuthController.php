@@ -38,4 +38,36 @@ class AuthController extends Controller
             'message' => 'Usuario registrado'
         ], 201);
     }
+  public function login(Request $request)
+    {
+        $request->validate([
+            'user_id'  => 'required|string',
+            'password' => 'required|string|min:6',
+        ]);
+
+        $user = User::where('user_id', $request->user_id)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'message' => 'Credencials incorrectes'
+            ], 401);
+        }
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'token' => $token,
+            'user'  => [
+                'user_id' => $user->user_id,
+                'name'    => $user->name,
+                'role'    => $user->role
+            ]
+        ]);
+
+    Route::post('/logout', function (Request $request) {
+    $request->user()->currentAccessToken()->delete();
+    return response()->json(['message' => 'Logout exitós']);
+});
+
+}
 }
