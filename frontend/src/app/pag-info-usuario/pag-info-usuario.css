@@ -6,7 +6,7 @@
 
 .sidebar {
     width: 200px;
-    background: linear-gradient(135deg, #7e3fdb 0%, #6a2db8 100%);
+    background: linear-gradient(90deg, #a855f7, #3b82f6);
     color: white;
     padding: 20px;
     display: flex;
@@ -172,7 +172,7 @@
     width: 100%;
     margin-top: 25px;
     padding: 12px 20px;
-    background: linear-gradient(135deg, #7e3fdb 0%, #6a2db8 100%);
+    background: linear-gradient(90deg, #a855f7, #3b82f6);;
     color: white;
     border: none;
     border-radius: 8px;
@@ -225,19 +225,19 @@
 }
 
 .stat-item.xuxemons {
-    background: linear-gradient(135deg, #a78bfa 0%, #9370db 100%);
+    background: linear-gradient(90deg, #a855f7, #3b82f6);
 }
 
 .stat-item.victorias {
-    background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+    background: linear-gradient(90deg, #4ade80, #22c55e);
 }
 
 .stat-item.derrotas {
-    background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+    background: linear-gradient(90deg, #f87171, #ef4444);
 }
 
 .stat-item.porcentaje {
-    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
 }
 
 .stat-label {

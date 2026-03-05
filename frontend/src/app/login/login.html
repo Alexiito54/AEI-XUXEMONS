@@ -1,63 +1,81 @@
-<section class="login-page">
-  <div class="login-content">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PokeRogue - Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="login.css">
+</head>
+<body>
+<div class="gif-bg"></div>
+<div class="stars" id="stars"></div>
+<div class="pokemon-bg" id="pokebg"></div>
 
-    <!-- Imagen izquierda -->
-    <div class="logo-section">
-      <img src="images/img_registro.png" alt="XUXEMONS" class="logo-img" loading="eager">
-    </div>
-
-    <!-- Formulario de login -->
-    <div class="form-section">
-      <h2>LOGIN</h2>
-
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-
-        <!-- Campo ID -->
-        <div class="form-group">
-          <label for="user_id">ID</label>
-          <input id="user_id" formControlName="user_id" placeholder="Introduce tu ID"
-                 [class.input-error]="userIdControl.invalid && userIdControl.touched"
-                 (blur)="userIdControl.markAsTouched()" />
-          @if (userIdControl.invalid && userIdControl.touched) {
-            <div class="error-message">
-              @if (userIdControl.errors?.['required']) {
-                <small>ID requerit</small>
-              }
-            </div>
-          }
-        </div>
-
-        <!-- Campo contraseña -->
-        <div class="form-group">
-          <label for="password">Contrasenya</label>
-          <input id="password" formControlName="password" type="password" placeholder="Mín. 6 caracteres"
-                 [class.input-error]="passwordControl.invalid && passwordControl.touched"
-                 (blur)="passwordControl.markAsTouched()" />
-          @if (passwordControl.invalid && passwordControl.touched) {
-            <div class="error-message">
-              @if (passwordControl.errors?.['required']) {
-                <small>Contrasenya requerida</small>
-              }
-              @if (passwordControl.errors?.['minlength']) {
-                <small>Mínim 6 caràcters</small>
-              }
-            </div>
-          }
-        </div>
-
-        <!-- Error general -->
-        @if (errorMsg) {
-          <div class="error-message">
-            <small>{{ errorMsg }}</small>
-          </div>
-        }
-
-        <!-- Botón enviar -->
-        <button type="submit" class="btn-login" [disabled]="loading || loginForm.invalid">
-          {{ loading ? 'Entrant...' : 'ENTRAR' }}
-        </button>
-
-      </form>
-    </div>
+<div class="container">
+  <div class="game-title">
+    <div class="title-main">XUXEMONS</div>
   </div>
-</section>
+
+  <div class="login-panel">
+    <div class="panel-corner tl"></div>
+    <div class="panel-corner tr"></div>
+    <div class="panel-corner bl"></div>
+    <div class="panel-corner br"></div>
+
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">LOGIN ENTRENADOR</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>▸ ENTRENADOR</label>
+      <div class="input-wrap">
+        <input type="text" placeholder="NOMBRE DE USUARIO" autocomplete="off" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>▸ CONTRASEÑA</label>
+      <div class="input-wrap">
+        <input type="password" placeholder="MIN. 6 CARACTERES" />
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="handleLogin(this)">
+      <span class="btn-text">▶ ENTRAR AL JUEGO</span>
+    </button>
+
+    <button class="btn-guest">
+      <div class="register-link-row">
+      <span>¿NO TIENES CUENTA?</span>
+      <a href="register.html">REGISTRATE →</a>
+    </div>
+    </button>
+
+  </div>
+</div>
+
+<script>
+function handleLogin(btn) {
+  btn.classList.add('loading');
+  btn.disabled = true;
+  const msgs = ['¡Conectando al servidor!','¡Cargando datos del entrenador!','¡Preparando equipo Pokémon!','¡Entrando al campo de batalla!'];
+  let i = 0;
+  const msgEl = document.getElementById('battle-msg');
+  const iv = setInterval(() => {
+    if (msgEl && msgs[i]) msgEl.textContent = msgs[i];
+    i++;
+    if (i >= msgs.length) {
+      clearInterval(iv);
+      setTimeout(() => {
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        if (msgEl) msgEl.textContent = '¡Bienvenido de vuelta, entrenador!';
+      }, 500);
+    }
+  }, 650);
+}
+</script>
+</body>
+</html>
