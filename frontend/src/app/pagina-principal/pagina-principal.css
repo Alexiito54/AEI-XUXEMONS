@@ -1,74 +1,259 @@
-:root{
-  --bg:#f6f6f6;
-  --panel:#ffffff;
-  --accent:#8a49f0;
-  --muted:#6d6d6d;
-  --text:#111;
+/* Variables de colores y temas globales */
+:root {
+  --bg: #f6f6f6;
+  --panel: #ffffff;
+  --accent: #8a49f0;
+  --muted: #6d6d6d;
+  --text: #111;
+  --border-dark: #111111;
 }
 
-*{box-sizing:border-box}
-body{font-family:Roboto, system-ui, 'Segoe UI', Arial; margin:0; background:var(--bg); color:var(--text)}
-
-/* Menu lateral fijo (se adapta a la estructura existente en index.html) */
-.menu-section{
-  position:fixed;
-  left:0;
-  top:0;
-  bottom:0;
-  width:220px;
-  background:var(--accent);
-  padding:28px 18px;
-  color:#000;
-  display:flex;
-  flex-direction:column;
-  gap:18px;
-}
-.menu-section .logo-section .logo-title{
-  font-family: 'Fredoka One', sans-serif;
-  font-size:32px;
-  margin:0;
-}
-.menu-section .menu-title{display:flex; flex-direction:column; gap:8px}
-.menu-section .menu-title h3{margin:0; font-weight:500; color:#0b0b0b}
-
-/* Contenido principal desplazado a la derecha para dejar espacio al menú */
-.main-content{
-  margin-left:260px;
-  padding:36px;
-  max-width:1200px;
+/* Resetea estilos por defecto del navegador */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-/* Bienvenida */
-.welcome-section .welcome-title{font-family:'Fredoka One', sans-serif; font-size:36px; margin:0}
-.welcome-section .welcome-description{color:var(--muted); margin-top:6px}
-
-/* Estadísticas estilo tarjetas */
-.xuxemons-section, .fights-section, .friends-section, .level-section{
-  display:inline-block;
-  width:220px;
-  background:var(--panel);
-  padding:16px;
-  margin:18px 12px 0 0;
-  border-radius:12px;
-  box-shadow:0 6px 0 rgba(0,0,0,0.06);
-  border:1px solid rgba(0,0,0,0.08);
-  vertical-align:top;
-}
-.xuxemons-section h2, .fights-section h2, .friends-section h2, .level-section h2{margin:0 0 8px 0; font-size:14px; color:#333}
-.xuxemons-total, .fights-total, .friends-total, .level-total{font-size:22px; color:var(--text); margin:0}
-
-/* Responsive: apilar en pantallas pequeñas */
-@media (max-width:900px){
-  .menu-section{position:static;width:100%;height:auto;padding:14px}
-  .main-content{margin-left:0;padding:18px}
-  .xuxemons-section, .fights-section, .friends-section, .level-section{width:100%; margin-right:0}
+/* Estilo base del body con fondo de imagen retro */
+body {
+  margin: 0;
+  font-family: "Press Start 2P", system-ui, "Segoe UI", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+background-image: url("./noche.gif");
+  background-repeat: no-repeat;
+  background-size: cover;      /* o "contain" si no quieres recortar */
+  background-position: center;
+  background-attachment: fixed; /* efecto tipo "parallax" retro */
 }
 
-/* Tu equipo */
-.team-section .team-title{font-family:'Fredoka One', sans-serif; font-size:36px; margin:0}
+/* Contenedor principal centrado con efecto retro arcade */
+.main-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+}
 
-/* Estilos para resumen por Xuxemon */
-.xuxemons-summary{margin-top:24px}
-.xuxemons-section{display:inline-block; width:220px; background:var(--panel); padding:16px; margin:8px 12px 0 0; border-radius:12px; box-shadow:0 4px 0 rgba(0,0,0,0.05); border:1px solid rgba(0,0,0,0.08); vertical-align:top}
-.xuxemons-section h2{margin:0 0 8px 0; font-size:14px; color:#333}
-.xuxemons-total{font-size:20px; color:var(--text); margin:0}
+.main-content {
+  width: 100%;
+  max-width: 1100px;
+  background: var(--panel);
+  border-radius: 0;
+  border: 4px solid var(--border-dark);
+  box-shadow: 0 0 0 4px #e0e0e0, 0 0 0 8px var(--border-dark);
+  padding: 24px 28px 28px;
+  position: relative;
+  margin-left: 260px; /* deja hueco al menú lateral */
+  
+  
+}
+
+/* Menú lateral fijo con temas y navegación */
+.menu-section {
+  position: fixed;
+  inset-block: 24px 24px;
+  inset-inline-start: 24px;
+  width: 220px;
+  background: var(--accent);
+  border: 3px solid var(--border-dark);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
+  padding: 16px 12px;
+  color: #000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Logo/título del sitio en la esquina del menú */
+.logo-section .logo-title {
+  font-size: 16px;
+  margin: 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 6px 4px;
+  background: #fff;
+  border: 3px solid var(--border-dark);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.4);
+}
+
+/* Opciones/botones del menú lateral con efectos hover */
+.menu-title {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.menu-title h3 {
+  margin: 0;
+  font-weight: 400;
+  font-size: 10px;
+  padding: 6px 8px;
+  border-radius: 0;
+  border: 2px solid var(--border-dark);
+  background: #fdfdfd;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
+}
+
+.menu-title h3:hover {
+  background: #e5dbff;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.7);
+}
+
+.menu-title h3:active {
+  transform: translate(1px, 1px);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.7);
+  background: #d0c2ff;
+}
+
+/* Sección de bienvenida al usuario */
+.welcome-section {
+  margin-bottom: 20px;
+  border: 3px solid var(--border-dark);
+  background: #fdfdfd;
+  padding: 10px 12px;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.4);
+}
+
+.welcome-title {
+  font-size: 14px;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.welcome-description {
+  color: var(--muted);
+  margin-top: 8px;
+  font-size: 9px;
+}
+
+/* Contenedor para las tarjetas de estadísticas */
+.stats-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* Tarjetas individuales para mostrar información estilo arcade */
+.card {
+  flex: 0 1 220px;
+  background: var(--panel);
+  border-radius: 0;
+  border: 3px solid var(--border-dark);
+  padding: 10px 12px;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.35);
+}
+
+.card-title {
+  margin: 0 0 6px 0;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+
+.card-value {
+  margin: 0;
+  font-size: 16px;
+  color: var(--text);
+}
+
+/* Barras de color decorativas en la parte superior de cada tarjeta */
+.card--xuxemons {
+  border-top: 6px solid #ff4b4b;
+}
+
+.card--fights {
+  border-top: 6px solid #ff8c42;
+}
+
+.card--friends {
+  border-top: 6px solid #4ade80;
+}
+
+.card--level {
+  border-top: 6px solid #3b82f6;
+}
+
+/* Sección del equipo de Xuxemons del usuario */
+.team-section {
+  margin-top: 32px;
+  border: 3px solid var(--border-dark);
+  background: #fdfdfd;
+  padding: 8px 10px;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.4);
+}
+
+.team-title {
+  font-size: 14px;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+/* Resumen con tarjetas de Xuxemons agrupados por tipo */
+.xuxemons-summary {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.xuxemons-summary .card {
+  flex: 0 1 220px;
+}
+
+/* Ajustes para pantallas medianas - menú pasa a horizontal */
+@media (max-width: 900px) {
+  .menu-section {
+    position: static;
+    width: 100%;
+    inset: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .menu-title {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: flex-end;
+  }
+
+  .menu-title h3 {
+    font-size: 8px;
+    padding: 4px 6px;
+  }
+
+  .main-content {
+    margin-left: 0;
+    box-shadow: 0 0 0 4px #e0e0e0, 0 0 0 8px var(--border-dark);
+  }
+
+  .card,
+  .xuxemons-summary .card {
+    flex: 1 1 100%;
+  }
+}
+
+/* Ajustes para pantallas pequeñas/móviles */
+@media (max-width: 540px) {
+  .welcome-title,
+  .team-title {
+    font-size: 12px;
+  }
+
+  .logo-section .logo-title {
+    font-size: 14px;
+  }
+}
