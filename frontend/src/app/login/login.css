@@ -1,22 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&display=swap');
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Pàgina dividida en dues meitats */
+/* ─── PÁGINA DIVIDIDA ─── */
 .login-page {
   display: flex;
   flex-direction: row;
   min-height: 100vh;
   width: 100%;
+  font-family: 'Press Start 2P', monospace;
 }
 
-/* Meitat esquerra — imatge */
+/* ─── MITAD IZQUIERDA — imagen ─── */
 .logo-section {
   width: 55%;
   min-height: 100vh;
   overflow: hidden;
+  position: relative;
+  background-image: url('./gif background Negro.gif');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
 }
 
 .logo-img {
@@ -24,9 +32,33 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  image-rendering: pixelated;
 }
 
-/* Meitat dreta — formulari */
+/* Overlay con esquinas pixeladas */
+.logo-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.pixel-decoration {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-color: rgba(168, 85, 247, 0.7);
+  border-style: solid;
+}
+.pixel-decoration.top-left    { top: 16px; left: 16px;  border-width: 4px 0 0 4px; }
+.pixel-decoration.top-right   { top: 16px; right: 16px; border-width: 4px 4px 0 0; }
+.pixel-decoration.bottom-left { bottom: 16px; left: 16px;  border-width: 0 0 4px 4px; }
+.pixel-decoration.bottom-right{ bottom: 16px; right: 16px; border-width: 0 4px 4px 0; }
+
+.login-content {
+  display: contents;
+}
+
+/* ─── MITAD DERECHA — formulario ─── */
 .form-section {
   width: 45%;
   min-height: 100vh;
@@ -34,48 +66,174 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 60px 50px;
+  padding: 48px 44px;
+  position: relative;
+  overflow: hidden;
+
+  /* Fondo con patrón de puntos pixelados */
+  background-image:
+    radial-gradient(circle, rgba(168,85,247,0.08) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-color: #1a1030;
+
+  /* Borde izquierdo pixelado */
+  border-left: 4px solid rgba(168, 85, 247, 0.4);
 }
 
-/* Treu estils antics del login-content */
-.login-content {
-  display: contents; /* deixa que logo-section i form-section siguin fills directes de login-page */
+/* ─── CABECERA PIXELADA ─── */
+.pixel-header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
-.form-section h2 {
-  color: white;
-  font-size: 1.8rem;
-  font-weight: bold;
+.pixel-row {
+  display: flex;
+  gap: 5px;
+}
+
+.px {
+  display: block;
+  width: 8px;
+  height: 8px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 1px;
+}
+
+.px.accent {
+  background: #a855f7;
+  box-shadow: 0 0 6px #a855f7;
+  animation: pixelBlink 1.4s infinite alternate;
+}
+
+.px.accent:nth-child(4)  { animation-delay: 0s; }
+.px.accent:nth-child(6)  { animation-delay: 0.3s; }
+.px.accent:nth-child(8)  { animation-delay: 0.6s; }
+
+@keyframes pixelBlink {
+  0%   { opacity: 1; }
+  100% { opacity: 0.25; }
+}
+
+/* ─── CAJA DE TÍTULO ─── */
+.game-title-box {
   text-align: center;
-  letter-spacing: 2px;
-  margin-bottom: 30px;
+  margin-bottom: 32px;
+  padding: 18px 20px 14px;
+  border: 3px solid rgba(168, 85, 247, 0.5);
+  position: relative;
+  background: rgba(168, 85, 247, 0.06);
+
+  /* Efecto esquinas cortadas estilo GameBoy */
+  clip-path: polygon(
+    8px 0%, calc(100% - 8px) 0%,
+    100% 8px, 100% calc(100% - 8px),
+    calc(100% - 8px) 100%, 8px 100%,
+    0% calc(100% - 8px), 0% 8px
+  );
 }
 
+.game-title-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.game-title-box h2 {
+  color: white;
+  font-size: 1.6rem;
+  font-weight: normal;
+  letter-spacing: 6px;
+  font-family: 'Press Start 2P', monospace;
+  text-shadow:
+    0 0 12px #a855f7,
+    0 0 24px rgba(168,85,247,0.4);
+}
+
+.title-blink {
+  color: #a855f7;
+  font-size: 1.1rem;
+  animation: blinkArrow 0.8s step-end infinite;
+}
+
+@keyframes blinkArrow {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.subtitle {
+  color: rgba(168, 85, 247, 0.7);
+  font-size: 0.5rem;
+  letter-spacing: 4px;
+  margin-top: 8px;
+  animation: pixelBlink 2s infinite alternate;
+}
+
+/* ─── GRUPOS DE CAMPO ─── */
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 14px;
+  margin-bottom: 18px;
 }
 
 .form-group label {
   color: #ccc;
-  font-size: 0.85rem;
-  margin-bottom: 5px;
+  font-size: 0.6rem;
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
+.label-icon {
+  color: #a855f7;
+  font-size: 0.55rem;
+}
+
+/* Wrapper para las esquinas decorativas del input */
+.input-wrapper {
+  position: relative;
+}
+
+.input-corner {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: rgba(168, 85, 247, 0.6);
+  border-style: solid;
+  pointer-events: none;
+}
+.input-corner.tl { top: -1px;    left: -1px;   border-width: 2px 0 0 2px; }
+.input-corner.tr { top: -1px;    right: -1px;  border-width: 2px 2px 0 0; }
+.input-corner.bl { bottom: -1px; left: -1px;   border-width: 0 0 2px 2px; }
+.input-corner.br { bottom: -1px; right: -1px;  border-width: 0 2px 2px 0; }
+
 .form-group input {
+  width: 100%;
   padding: 12px 16px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.08);
+  border-radius: 0;                               /* Sin bordes redondeados — estilo retro */
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
   color: white;
-  font-size: 0.95rem;
+  font-size: 0.75rem;
+  font-family: 'VT323', monospace;
+  font-size: 1.1rem;
   outline: none;
-  transition: border 0.2s;
+  transition: border-color 0.15s, background 0.15s;
+  letter-spacing: 1px;
+}
+
+.form-group input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+  font-family: 'VT323', monospace;
 }
 
 .form-group input:focus {
   border-color: #a855f7;
+  background: rgba(168, 85, 247, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(168,85,247,0.2);
 }
 
 .input-error {
@@ -84,24 +242,157 @@
 
 .error-message {
   color: #f87171;
-  font-size: 0.78rem;
-  margin-top: 4px;
+  font-size: 0.5rem;
+  margin-top: 6px;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.error-general {
+  margin-bottom: 10px;
+}
+
+/* ─── BOTÓN ─── */
+.btn-wrapper {
+  position: relative;
+  margin-top: 14px;
 }
 
 .btn-login {
   width: 100%;
-  padding: 14px;
+  padding: 14px 20px;
   border: none;
-  border-radius: 10px;
+  border-radius: 0;
   background: linear-gradient(90deg, #a855f7, #3b82f6);
   color: white;
-  font-size: 1rem;
-  font-weight: bold;
-  letter-spacing: 2px;
+  font-size: 0.75rem;
+  font-family: 'Press Start 2P', monospace;
+  letter-spacing: 3px;
   cursor: pointer;
-  margin-top: 10px;
-  transition: opacity 0.2s;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.08s, box-shadow 0.08s;
+
+  /* Borde pixelado */
+  clip-path: polygon(
+    6px 0%, calc(100% - 6px) 0%,
+    100% 6px, 100% calc(100% - 6px),
+    calc(100% - 6px) 100%, 6px 100%,
+    0% calc(100% - 6px), 0% 6px
+  );
 }
 
-.btn-login:hover { opacity: 0.85; }
-.btn-login:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-login:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+}
+
+.btn-login:active:not(:disabled) {
+  transform: translateY(2px);
+}
+
+.btn-login:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Sombra pixelada del botón */
+.btn-shadow {
+  position: absolute;
+  bottom: -4px;
+  left: 4px;
+  right: -4px;
+  height: 100%;
+  background: rgba(59, 130, 246, 0.25);
+  z-index: 0;
+  clip-path: polygon(
+    6px 0%, calc(100% - 6px) 0%,
+    100% 6px, 100% calc(100% - 6px),
+    calc(100% - 6px) 100%, 6px 100%,
+    0% calc(100% - 6px), 0% 6px
+  );
+}
+
+.btn-arrow {
+  margin-right: 8px;
+  animation: blinkArrow 0.8s step-end infinite;
+}
+
+/* ─── PIE PIXELADO ─── */
+.pixel-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.footer-text {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 0.45rem;
+  letter-spacing: 3px;
+}
+
+/* Pokéballs decorativas en miniatura */
+.pokeball-mini {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(255,255,255,0.2);
+  position: relative;
+  opacity: 0.4;
+}
+
+.pb-top {
+  height: 7px;
+  background: #a855f7;
+}
+
+.pb-mid {
+  height: 2px;
+  background: rgba(255,255,255,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pb-btn {
+  width: 5px;
+  height: 5px;
+  background: white;
+  border-radius: 50%;
+  margin-top: -1px;
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgba(0,0,0,0.3);
+}
+
+.pb-bot {
+  height: 7px;
+  background: #1a1030;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+  .login-page {
+    flex-direction: column;
+  }
+
+  .logo-section {
+    width: 100%;
+    min-height: 35vh;
+  }
+
+  .form-section {
+    width: 100%;
+    min-height: 65vh;
+    padding: 36px 28px;
+  }
+
+  .game-title-box h2 {
+    font-size: 1.1rem;
+  }
+}
