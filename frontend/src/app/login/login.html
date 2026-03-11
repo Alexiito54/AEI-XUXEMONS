@@ -1,6 +1,7 @@
 <section class="login-page">
   <div class="login-content">
 
+
     <!-- Imagen izquierda -->
     <div class="logo-section">
       <img src="images/img_registro.png" alt="XUXEMONS" class="logo-img" loading="eager">
@@ -12,8 +13,10 @@
       </div>
     </div>
 
+
     <!-- Formulario de login -->
     <div class="form-section">
+
 
       <!-- Decoración pixelada superior -->
       <div class="pixel-header">
@@ -26,6 +29,7 @@
         </div>
       </div>
 
+
       <!-- Título estilo GameBoy -->
       <div class="game-title-box">
         <div class="game-title-inner">
@@ -36,7 +40,9 @@
         <p class="subtitle">— PRESS START —</p>
       </div>
 
+
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
 
         <!-- Campo ID -->
         <div class="form-group">
@@ -60,6 +66,7 @@
             </div>
           }
         </div>
+
 
         <!-- Campo contraseña -->
         <div class="form-group">
@@ -87,12 +94,14 @@
           }
         </div>
 
+
         <!-- Error general -->
         @if (errorMsg) {
           <div class="error-message error-general">
             <small>✕ {{ errorMsg }}</small>
           </div>
         }
+
 
         <!-- Botón enviar -->
         <div class="btn-wrapper">
@@ -103,7 +112,9 @@
           <div class="btn-shadow"></div>
         </div>
 
+
       </form>
+
 
       <!-- Decoración pixelada inferior -->
       <div class="pixel-footer">
@@ -119,6 +130,7 @@
           <div class="pb-bot"></div>
         </div>
       </div>
+
 
     </div>
   </div>
