@@ -1,14 +1,21 @@
 <section class="register-page">
   <div class="register-content">
 
-    <!-- Imagen izquierda -->
-    <div class="logo-section">
-      <img src="images/img_registro.png" alt="XUXEMONS" class="logo-img" loading="eager">
-    </div>
+   <div class="logo-section">
+  <h1 class="logo-text">XUXEMONS</h1>
+</div>
 
     <!-- Formulario de registro -->
     <div class="form-section">
-      <h2>REGISTRO</h2>
+      <!-- Título estilo GameBoy -->
+      <div class="game-title-box">
+        <div class="game-title-inner">
+          <span class="title-blink">▶</span>
+          <h2>REGISTRO</h2>
+          <span class="title-blink">◀</span>
+        </div>
+        <p class="subtitle">— PRESS START —</p>
+      </div>
       
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
 
@@ -27,12 +34,12 @@
 
         <!-- Campo apellidos -->
         <div class="form-group">
-          <label for="surname">Cognoms</label>
-          <input id="surname" formControlName="surname" placeholder="Introduce tus cognoms" 
+          <label for="surname">Apellidos</label>
+          <input id="surname" formControlName="surname" placeholder="Introduce tus apellidos" 
                  [class.input-error]="surnameControl.invalid && surnameControl.touched"
                  (blur)="surnameControl.markAsTouched()" />
           <div class="error-message" *ngIf="surnameControl.invalid && surnameControl.touched">
-            <small *ngIf="surnameControl.errors?.['required']">Cognoms requeridos</small>
+            <small *ngIf="surnameControl.errors?.['required']">Apellidos requeridos</small>
             <small *ngIf="surnameControl.errors?.['maxlength']">Máx. 100 caracteres</small>
           </div>
         </div>
