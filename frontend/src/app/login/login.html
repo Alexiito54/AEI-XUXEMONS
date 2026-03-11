@@ -1,16 +1,6 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PokeRogue - Login</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="login.css">
-</head>
-<body>
-<div class="gif-bg"></div>
-<div class="stars" id="stars"></div>
-<div class="pokemon-bg" id="pokebg"></div>
+<section class="login-page">
+  <div class="login-content">
+
 
     <!-- Imagen izquierda -->
     <div class="logo-section">
@@ -23,8 +13,10 @@
       </div>
     </div>
 
+
     <!-- Formulario de login -->
     <div class="form-section">
+
 
       <!-- Decoración pixelada superior -->
       <div class="pixel-header">
@@ -37,6 +29,7 @@
         </div>
       </div>
 
+
       <!-- Título estilo GameBoy -->
       <div class="game-title-box">
         <div class="game-title-inner">
@@ -47,7 +40,9 @@
         <p class="subtitle">— PRESS START —</p>
       </div>
 
+
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
 
         <!-- Campo ID -->
         <div class="form-group">
@@ -71,6 +66,7 @@
             </div>
           }
         </div>
+
 
         <!-- Campo contraseña -->
         <div class="form-group">
@@ -98,12 +94,14 @@
           }
         </div>
 
+
         <!-- Error general -->
         @if (errorMsg) {
           <div class="error-message error-general">
             <small>✕ {{ errorMsg }}</small>
           </div>
         }
+
 
         <!-- Botón enviar -->
         <div class="btn-wrapper">
@@ -114,7 +112,9 @@
           <div class="btn-shadow"></div>
         </div>
 
+
       </form>
+
 
       <!-- Decoración pixelada inferior -->
       <div class="pixel-footer">
@@ -130,6 +130,7 @@
           <div class="pb-bot"></div>
         </div>
       </div>
+
 
     </div>
   </div>
