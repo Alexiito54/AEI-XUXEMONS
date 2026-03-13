@@ -1,4 +1,5 @@
 import { Component, ViewEncapsulation } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-pagina-principal',
@@ -9,5 +10,10 @@ import { Component, ViewEncapsulation } from '@angular/core';
    encapsulation: ViewEncapsulation.None  // <–– deja que :root afecte
 })
 export class PaginaPrincipal {
+  constructor(private router: Router) {}
+
+  navegarAlPerfil() {
+    this.router.navigate(['/info-usuario']);
+  }
 
 }
