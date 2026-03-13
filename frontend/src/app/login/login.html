@@ -2,15 +2,10 @@
   <div class="login-content">
 
     <!-- Imagen izquierda -->
-    <div class="logo-section">
-      <img src="images/img_registro.png" alt="XUXEMONS" class="logo-img" loading="eager">
-      <div class="logo-overlay">
-        <div class="pixel-decoration top-left"></div>
-        <div class="pixel-decoration top-right"></div>
-        <div class="pixel-decoration bottom-left"></div>
-        <div class="pixel-decoration bottom-right"></div>
-      </div>
-    </div>
+     <div class="logo-section">
+  <h1 class="logo-text">XUXEMONS</h1>
+</div>
+    
 
     <!-- Formulario de login -->
     <div class="form-section">
@@ -97,29 +92,12 @@
         <!-- Botón enviar -->
         <div class="btn-wrapper">
           <button type="submit" class="btn-login" [disabled]="loading || loginForm.invalid">
-            <span class="btn-arrow">{{ loading ? '' : '▶' }}</span>
             {{ loading ? 'ENTRANT...' : 'ENTRAR' }}
           </button>
           <div class="btn-shadow"></div>
         </div>
 
       </form>
-
-      <!-- Decoración pixelada inferior -->
-      <div class="pixel-footer">
-        <div class="pokeball-mini">
-          <div class="pb-top"></div>
-          <div class="pb-mid"><div class="pb-btn"></div></div>
-          <div class="pb-bot"></div>
-        </div>
-        <span class="footer-text">© XUXEMONS</span>
-        <div class="pokeball-mini">
-          <div class="pb-top"></div>
-          <div class="pb-mid"><div class="pb-btn"></div></div>
-          <div class="pb-bot"></div>
-        </div>
-      </div>
-
     </div>
   </div>
 </section>

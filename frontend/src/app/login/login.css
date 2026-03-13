@@ -6,125 +6,106 @@
   box-sizing: border-box;
 }
 
-/* ─── PÁGINA DIVIDIDA ─── */
+html, body {
+  height: 100vh;       /* viewport height fijo */
+  width: 100vw;        /* viewport width fijo */
+  margin: 0;
+  padding: 0;
+  overflow: hidden;    /* bloquea scroll TOTAL */
+  position: fixed;     /* ← bloquea el scroll del navegador sin excepciones */
+  top: 0; left: 0;
+}
+
+/* ─── PÁGINA ─── */
 .login-page {
+  position: fixed;     /* ← ocupa exactamente el viewport, sin poder crecer */
+  inset: 0;
+  overflow: hidden;
   display: flex;
   flex-direction: row;
-  min-height: 100vh;
   width: 100%;
   font-family: 'Press Start 2P', monospace;
 }
 
-/* ─── MITAD IZQUIERDA — imagen ─── */
+.login-content {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* ─── IZQUIERDA — imagen ─── */
 .logo-section {
   width: 55%;
-  min-height: 100vh;
+  height: 100%;
   overflow: hidden;
   position: relative;
-  background-image: url('./gif background Negro.gif');
+  flex-shrink: 0;
+  background-image: url('../imgLoginRegister/gif background Negro.gif');
   background-size: cover;
-  background-position: center center;
+  background-position: center;
   background-repeat: no-repeat;
 }
 
-.logo-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  image-rendering: pixelated;
-}
-
-/* Overlay con esquinas pixeladas */
 .logo-overlay {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  background: linear-gradient(to right, transparent 70%, #1a1030 100%);
+}
+
+.logo-text {
+  position: absolute;
+  bottom: 36px;
+  left: 0; right: 0;
+  text-align: center;
+  z-index: 2;
+  font-size: 1.8em;
+  color: #fff;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 10px #a855f7,
+    0 0 25px rgba(168,85,247,0.6),
+    3px 3px 0 rgba(59,130,246,0.7);
+  animation: neon-flicker 5s infinite;
 }
 
 .pixel-decoration {
   position: absolute;
-  width: 40px;
-  height: 40px;
-  border-color: rgba(168, 85, 247, 0.7);
+  width: 40px; height: 40px;
+  border-color: rgba(168,85,247,0.7);
   border-style: solid;
 }
-.pixel-decoration.top-left    { top: 16px; left: 16px;  border-width: 4px 0 0 4px; }
-.pixel-decoration.top-right   { top: 16px; right: 16px; border-width: 4px 4px 0 0; }
-.pixel-decoration.bottom-left { bottom: 16px; left: 16px;  border-width: 0 0 4px 4px; }
-.pixel-decoration.bottom-right{ bottom: 16px; right: 16px; border-width: 0 4px 4px 0; }
+.pixel-decoration.top-left     { top:16px;    left:16px;   border-width: 4px 0 0 4px; }
+.pixel-decoration.top-right    { top:16px;    right:16px;  border-width: 4px 4px 0 0; }
+.pixel-decoration.bottom-left  { bottom:16px; left:16px;   border-width: 0 0 4px 4px; }
+.pixel-decoration.bottom-right { bottom:16px; right:16px;  border-width: 0 4px 4px 0; }
 
-.login-content {
-  display: contents;
-}
-
-/* ─── MITAD DERECHA — formulario ─── */
+/* ─── DERECHA — formulario ─── */
 .form-section {
   width: 45%;
-  min-height: 100vh;
-  background: #1a1030;
+  height: 100%;
+  overflow: hidden;    /* ← nunca scroll */
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 48px 44px;
-  position: relative;
-  overflow: hidden;
-
-  /* Fondo con patrón de puntos pixelados */
-  background-image:
-    radial-gradient(circle, rgba(168,85,247,0.08) 1px, transparent 1px);
-  background-size: 20px 20px;
+  padding: 40px 44px;
   background-color: #1a1030;
-
-  /* Borde izquierdo pixelado */
-  border-left: 4px solid rgba(168, 85, 247, 0.4);
+  background-image: radial-gradient(circle, rgba(168,85,247,0.08) 1px, transparent 1px);
+  background-size: 20px 20px;
+  border-left: 4px solid rgba(168,85,247,0.4);
 }
 
-/* ─── CABECERA PIXELADA ─── */
-.pixel-header {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.pixel-row {
-  display: flex;
-  gap: 5px;
-}
-
-.px {
-  display: block;
-  width: 8px;
-  height: 8px;
-  background: rgba(255,255,255,0.12);
-  border-radius: 1px;
-}
-
-.px.accent {
-  background: #a855f7;
-  box-shadow: 0 0 6px #a855f7;
-  animation: pixelBlink 1.4s infinite alternate;
-}
-
-.px.accent:nth-child(4)  { animation-delay: 0s; }
-.px.accent:nth-child(6)  { animation-delay: 0.3s; }
-.px.accent:nth-child(8)  { animation-delay: 0.6s; }
-
-@keyframes pixelBlink {
-  0%   { opacity: 1; }
-  100% { opacity: 0.25; }
-}
-
-/* ─── CAJA DE TÍTULO ─── */
+/* Título estilo GameBoy */
 .game-title-box {
-  text-align: center;
-  margin-bottom: 32px;
-  padding: 18px 20px 14px;
-  border: 3px solid rgba(168, 85, 247, 0.5);
-  position: relative;
-  background: rgba(168, 85, 247, 0.06);
-
-  /* Efecto esquinas cortadas estilo GameBoy */
+  flex-shrink: 0;
+  margin-bottom: 24px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(59,130,246,0.1));
+  border: 2px solid rgba(168,85,247,0.3);
   clip-path: polygon(
     8px 0%, calc(100% - 8px) 0%,
     100% 8px, 100% calc(100% - 8px),
@@ -142,13 +123,14 @@
 
 .game-title-box h2 {
   color: white;
-  font-size: 1.6rem;
+  font-size: 1.2rem;
   font-weight: normal;
   letter-spacing: 6px;
   font-family: 'Press Start 2P', monospace;
   text-shadow:
     0 0 12px #a855f7,
     0 0 24px rgba(168,85,247,0.4);
+  margin: 0;
 }
 
 .title-blink {
@@ -157,67 +139,50 @@
   animation: blinkArrow 0.8s step-end infinite;
 }
 
-@keyframes blinkArrow {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0; }
-}
-
 .subtitle {
   color: rgba(168, 85, 247, 0.7);
   font-size: 0.5rem;
   letter-spacing: 4px;
   margin-top: 8px;
+  text-align: center;
   animation: pixelBlink 2s infinite alternate;
 }
 
-/* ─── GRUPOS DE CAMPO ─── */
+/* Formulario — NO usa flex dinámico, usa gap fijo */
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;           /* espacio fijo y predecible entre campos */
+  flex-shrink: 0;      /* no se estira ni encoge */
+}
+
+/* ─── CAMPOS ─── */
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 18px;
+  gap: 6px;
+  flex-shrink: 0;      /* tamaño fijo, no crece */
 }
 
 .form-group label {
   color: #ccc;
-  font-size: 0.6rem;
-  margin-bottom: 8px;
+  font-size: 0.55rem;
   letter-spacing: 2px;
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.label-icon {
-  color: #a855f7;
-  font-size: 0.55rem;
-}
-
-/* Wrapper para las esquinas decorativas del input */
-.input-wrapper {
-  position: relative;
-}
-
-.input-corner {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border-color: rgba(168, 85, 247, 0.6);
-  border-style: solid;
-  pointer-events: none;
-}
-.input-corner.tl { top: -1px;    left: -1px;   border-width: 2px 0 0 2px; }
-.input-corner.tr { top: -1px;    right: -1px;  border-width: 2px 2px 0 0; }
-.input-corner.bl { bottom: -1px; left: -1px;   border-width: 0 0 2px 2px; }
-.input-corner.br { bottom: -1px; right: -1px;  border-width: 0 2px 2px 0; }
+.label-icon { color: #a855f7; font-size: 0.5rem; }
 
 .form-group input {
   width: 100%;
-  padding: 12px 16px;
-  border-radius: 0;                               /* Sin bordes redondeados — estilo retro */
-  border: 2px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.06);
+  padding: 10px 14px;
+  border-radius: 0;
+  border: 2px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
   color: white;
-  font-size: 0.75rem;
   font-family: 'VT323', monospace;
   font-size: 1.1rem;
   outline: none;
@@ -226,24 +191,25 @@
 }
 
 .form-group input::placeholder {
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(255,255,255,0.25);
   font-family: 'VT323', monospace;
 }
 
 .form-group input:focus {
   border-color: #a855f7;
-  background: rgba(168, 85, 247, 0.08);
+  background: rgba(168,85,247,0.08);
   box-shadow: inset 0 0 0 1px rgba(168,85,247,0.2);
 }
 
 .input-error {
   border-color: #f87171 !important;
+  background: rgba(248,113,113,0.07) !important;
+  animation: shake 0.4s ease-in-out;
 }
 
 .error-message {
   color: #f87171;
-  font-size: 0.5rem;
-  margin-top: 6px;
+  font-size: 0.45rem;
   letter-spacing: 1px;
   display: flex;
   align-items: center;
@@ -257,25 +223,24 @@
 /* ─── BOTÓN ─── */
 .btn-wrapper {
   position: relative;
-  margin-top: 14px;
+  margin-top: 6px;
+  flex-shrink: 0;
 }
 
 .btn-login {
   width: 100%;
-  padding: 14px 20px;
+  padding: 13px 20px;
   border: none;
   border-radius: 0;
   background: linear-gradient(90deg, #a855f7, #3b82f6);
   color: white;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-family: 'Press Start 2P', monospace;
   letter-spacing: 3px;
   cursor: pointer;
   position: relative;
   z-index: 1;
   transition: transform 0.08s, box-shadow 0.08s;
-
-  /* Borde pixelado */
   clip-path: polygon(
     6px 0%, calc(100% - 6px) 0%,
     100% 6px, 100% calc(100% - 6px),
@@ -286,26 +251,16 @@
 
 .btn-login:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+  box-shadow: 0 6px 20px rgba(168,85,247,0.5);
 }
+.btn-login:active:not(:disabled) { transform: translateY(2px); }
+.btn-login:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.btn-login:active:not(:disabled) {
-  transform: translateY(2px);
-}
-
-.btn-login:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-/* Sombra pixelada del botón */
 .btn-shadow {
   position: absolute;
-  bottom: -4px;
-  left: 4px;
-  right: -4px;
+  bottom: -4px; left: 4px; right: -4px;
   height: 100%;
-  background: rgba(59, 130, 246, 0.25);
+  background: rgba(59,130,246,0.25);
   z-index: 0;
   clip-path: polygon(
     6px 0%, calc(100% - 6px) 0%,
@@ -320,79 +275,53 @@
   animation: blinkArrow 0.8s step-end infinite;
 }
 
-/* ─── PIE PIXELADO ─── */
-.pixel-footer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 28px;
+/* ─── ANIMACIONES ─── */
+@keyframes neon-flicker {
+  0%, 91%, 96%, 100% { opacity: 1; }
+  92%, 95%            { opacity: 0.6; text-shadow: none; }
 }
-
-.footer-text {
-  color: rgba(255, 255, 255, 0.2);
-  font-size: 0.45rem;
-  letter-spacing: 3px;
+@keyframes pixelBlink {
+  from { opacity: 1; } to { opacity: 0.3; }
 }
-
-/* Pokéballs decorativas en miniatura */
-.pokeball-mini {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid rgba(255,255,255,0.2);
-  position: relative;
-  opacity: 0.4;
+@keyframes blinkArrow {
+  0%, 100% { opacity: 1; } 50% { opacity: 0; }
 }
-
-.pb-top {
-  height: 7px;
-  background: #a855f7;
-}
-
-.pb-mid {
-  height: 2px;
-  background: rgba(255,255,255,0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.pb-btn {
-  width: 5px;
-  height: 5px;
-  background: white;
-  border-radius: 50%;
-  margin-top: -1px;
-  position: relative;
-  z-index: 1;
-  border: 1px solid rgba(0,0,0,0.3);
-}
-
-.pb-bot {
-  height: 7px;
-  background: #1a1030;
+@keyframes shake {
+  0%, 100% { transform: translateX(0);   }
+  25%      { transform: translateX(-5px); }
+  75%      { transform: translateX(5px);  }
 }
 
 /* ─── RESPONSIVE ─── */
 @media (max-width: 768px) {
+  html, body {
+    position: fixed;     /* ← SIN scroll en mobile */
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
   .login-page {
+    position: fixed;
+    height: 100vh;
+    overflow: hidden;
     flex-direction: column;
   }
 
-  .logo-section {
-    width: 100%;
-    min-height: 35vh;
+  .login-content { 
+    flex-direction: column;
+    height: 100vh;
   }
+
+  .logo-section { width: 100%; height: 28vh; }
+  .logo-text    { font-size: 1.1em; }
 
   .form-section {
     width: 100%;
-    min-height: 65vh;
-    padding: 36px 28px;
+    height: auto;
+    overflow: hidden;
+    padding: 28px 22px;
   }
 
-  .game-title-box h2 {
-    font-size: 1.1rem;
-  }
+  .game-title-box h2 { font-size: 1rem; }
 }

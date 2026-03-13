@@ -37,7 +37,7 @@ html, body {
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
-  background-image: url('imgRegister/gif background Negro.gif');
+  background-image: url('../imgLoginRegister/gif background Negro.gif');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
