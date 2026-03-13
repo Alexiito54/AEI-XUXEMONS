@@ -3,6 +3,7 @@ import { RegisterComponent } from './register/register';
 import { PaginaPrincipal } from './pagina-principal/pagina-principal';
 import { LoginComponent } from './login/login';
 import { PagInfoUsuario } from './pag-info-usuario/pag-info-usuario';
+import { MochilaComponent } from './mochila/mochila.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/register', pathMatch: 'full' },
@@ -16,6 +17,8 @@ export const routes: Routes = [
 
  // Ruta info-usuario
   { path: 'info-usuario', component: PagInfoUsuario },
+
+  { path: 'mochila', component: MochilaComponent },
 
   // Cualquier otra → register
 

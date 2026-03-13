@@ -42,7 +42,7 @@ export class LoginComponent {
         localStorage.setItem('token', res.token);
         localStorage.setItem('role', res.user.role);
         this.loading = false;
-        this.router.navigate(['/home']);
+        this.router.navigate(['/pagina-principal']);
       },
       error: () => {
         this.errorMsg = 'ID o contrasenya incorrectes';
