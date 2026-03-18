@@ -215,9 +215,6 @@ export class PagInfoUsuario implements OnInit {
     this.errorMsg = '';
   }
   
-export class PagInfoUsuario {
-  constructor(private router: Router) {}
-
   navegarAlInicio() {
     this.router.navigate(['/pagina-principal']);
   }
