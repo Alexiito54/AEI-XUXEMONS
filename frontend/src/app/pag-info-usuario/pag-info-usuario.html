@@ -1,213 +1,201 @@
 <body>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-
-<div class="app-frame">
-
-  <aside class="sidebar">
-    <div class="sidebar-logo">XUXEMONS</div>
-    <nav class="sidebar-nav">
-      <a href="#">INICIO</a>
-      <a href="#">XUXEDEX</a>
-      <a href="#">MOCHILA</a>
-      <a href="#">AMIGOS</a>
-      <a href="#">BATALLA</a>
-      <a href="#">CHAT</a>
-      <a href="#" class="active">PERFIL</a>
-      <a href="#">ADMIN</a>
-    </nav>
-  </aside>
-
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <div class="menu-section">
+      <div class="logo-section">
+          <h1 class="logo-title">XUXEMONS</h1>
+      </div>
+      <div class="menu-title">
+          <h3 (click)="navegarAlInicio()" style="cursor: pointer;">Inicio</h3>
+          <h3 (click)="navegarAlXuxedex()" style="cursor: pointer;">Xuxedex</h3>
+          <h3 (click)="navegarAlInventario()" style="cursor: pointer;">Mochila</h3>
+          <h3 (click)="navegarAlAmigos()" style="cursor: pointer;">Amigos</h3>
+          <h3 (click)="navegarAlBatalla()" style="cursor: pointer;">Batalla</h3>
+          <h3 (click)="navegarAlChat()" style="cursor: pointer;">Chat</h3>
+          <h3 (click)="navegarAlPerfil()" style="cursor: pointer;">Perfil</h3>
+          <h3 (click)="navegarAlAdmin()" style="cursor: pointer;">Admin</h3>
+      </div>
+  </div>
   <main class="main">
-
-    <div class="welcome-box">
-      <h1>¡BIENVENIDO, ENTRENADOR! <span class="cursor"></span></h1>
-      <p>- Resumen de tu perfil de entrenador -</p>
-    </div>
-
-    <div class="cards-row">
-      <div class="stat-card card-red">
-        <span class="card-label">XUXEMONS TOTALES</span>
-        <span class="card-value">25</span>
+      <div class="welcome-box">
+        <h1>¡BIENVENIDO, ENTRENADOR! <span class="cursor"></span></h1>
+        <p>- Resumen de tu perfil de entrenador -</p>
       </div>
-      <div class="stat-card card-orange">
-        <span class="card-label">BATALLAS DISPUTADAS</span>
-        <span class="card-value">12</span>
+      <div class="cards-row">
+        <div class="stat-card card-red">
+          <span class="card-label">XUXEMONS TOTALES</span>
+          <span class="card-value">25</span>
+        </div>
+        <div class="stat-card card-orange">
+          <span class="card-label">BATALLAS DISPUTADAS</span>
+          <span class="card-value">12</span>
+        </div>
+        <div class="stat-card card-green">
+          <span class="card-label">AMIGOS TOTALES</span>
+          <span class="card-value">8</span>
+        </div>
+        <div class="stat-card card-blue">
+          <span class="card-label">NIVEL ENTRENADOR</span>
+          <span class="card-value">15</span>
+        </div>
+        <div class="stat-card card-yellow">
+          <span class="card-label">% VICTORIAS</span>
+          <span class="card-value">68%</span>
+        </div>
       </div>
-      <div class="stat-card card-green">
-        <span class="card-label">AMIGOS TOTALES</span>
-        <span class="card-value">8</span>
+      <div class="xp-block">
+        <div class="xp-header">
+          <span>BARRA DE EXPERIENCIA</span>
+          <span>750 / 1000 XP</span>
+        </div>
+        <div class="xp-track">
+          <div class="xp-fill"></div>
+        </div>
       </div>
-      <div class="stat-card card-blue">
-        <span class="card-label">NIVEL ENTRENADOR</span>
-        <span class="card-value">15</span>
-      </div>
-      <div class="stat-card card-yellow">
-        <span class="card-label">% VICTORIAS</span>
-        <span class="card-value">68%</span>
-      </div>
-    </div>
-
-    <div class="xp-block">
-      <div class="xp-header">
-        <span>BARRA DE EXPERIENCIA</span>
-        <span>750 / 1000 XP</span>
-      </div>
-      <div class="xp-track"><div class="xp-fill"></div></div>
-    </div>
-
-    <div class="two-col">
-
-      <div class="trainer-block">
-        <div class="section-label">- TARJETA DE ENTRENADOR -</div>
-        <div class="trainer-avatar-row">
-          <div class="avatar-box">🧢</div>
-          <div class="trainer-info">
-            <span class="trainer-name">ENTRENADOR</span>
-            <span class="trainer-badge">★ RANGO PRO</span>
-            <span class="trainer-email">entrenador&#64;xuxemons.com</span>
-            <span class="trainer-id">ID: #004821</span>
+      <div class="two-col">
+        <div class="trainer-block">
+          <div class="section-label">- TARJETA DE ENTRENADOR -</div>
+          <div class="trainer-avatar-row">
+            <div class="avatar-box">🧢</div>
+            <div class="trainer-info">
+              <span class="trainer-name">ENTRENADOR</span>
+              <span class="trainer-badge">★ RANGO PRO</span>
+              <span class="trainer-email">entrenador&#64;xuxemons.com</span>
+              <span class="trainer-id">ID: #004821</span>
+            </div>
+          </div>
+          <div class="bio-lines">
+            <div class="bio-line"><span>BIO:</span> Fan del tipo Fuego.</div>
+            <div class="bio-line"><span>CIUDAD:</span> Ciudad Xuxemons</div>
+            <div class="bio-line"><span>DESDE:</span> Junio de 2023</div>
+          </div>
+          <button class="btn-edit" (click)="toggleEditMode()">▶ EDITAR PERFIL</button>
+        </div>
+        <!-- FORMULARIO DE EDICIÓN -->
+        <div class="edit-form-container" *ngIf="isEditing">
+          <div class="section-label">- EDITAR INFORMACIÓN -</div>
+          <div class="form-group">
+            <label>► NOMBRE:</label>
+            <input type="text" [(ngModel)]="userData.name" placeholder="Tu nombre" class="form-input">
+          </div>
+          <div class="form-group">
+            <label>► EMAIL:</label>
+            <input type="email" [(ngModel)]="userData.email" placeholder="correo@email.com" class="form-input">
+          </div>
+          <div class="form-group">
+            <label>► TELÉFONO:</label>
+            <input type="text" [(ngModel)]="userData.phone" placeholder="+34 123456789" class="form-input">
+          </div>
+          <div class="form-group">
+            <label>► FECHA DE NACIMIENTO:</label>
+            <input type="date" [(ngModel)]="userData.fecha_nacimiento" class="form-input">
+          </div>
+          <div class="form-group">
+            <label>► CIUDAD:</label>
+            <input type="text" [(ngModel)]="userData.ciudad" placeholder="Tu ciudad" class="form-input">
+          </div>
+          <div class="button-group">
+            <button class="btn-primary" (click)="saveUserData()">✓ GUARDAR CAMBIOS</button>
+            <button class="btn-secondary" (click)="cancelEdit()">✗ CANCELAR</button>
           </div>
         </div>
-        <div class="bio-lines">
-          <div class="bio-line"><span>BIO:</span> Fan del tipo Fuego.</div>
-          <div class="bio-line"><span>CIUDAD:</span> Ciudad Xuxemons</div>
-          <div class="bio-line"><span>DESDE:</span> Junio de 2023</div>
-        </div>
-        <button class="btn-edit" (click)="toggleEditMode()">▶ EDITAR PERFIL</button>
-      </div>
-
-      <!-- FORMULARIO DE EDICIÓN -->
-      <div class="edit-form-container" *ngIf="isEditing">
-        <div class="section-label">- EDITAR INFORMACIÓN -</div>
-        
-        <div class="form-group">
-          <label>► NOMBRE:</label>
-          <input type="text" [(ngModel)]="userData.name" placeholder="Tu nombre" class="form-input">
-        </div>
-
-        <div class="form-group">
-          <label>► EMAIL:</label>
-          <input type="email" [(ngModel)]="userData.email" placeholder="correo@email.com" class="form-input">
-        </div>
-
-        <div class="form-group">
-          <label>► TELÉFONO:</label>
-          <input type="text" [(ngModel)]="userData.phone" placeholder="+34 123456789" class="form-input">
-        </div>
-
-        <div class="form-group">
-          <label>► FECHA DE NACIMIENTO:</label>
-          <input type="date" [(ngModel)]="userData.fecha_nacimiento" class="form-input">
-        </div>
-
-        <div class="form-group">
-          <label>► CIUDAD:</label>
-          <input type="text" [(ngModel)]="userData.ciudad" placeholder="Tu ciudad" class="form-input">
-        </div>
-
-        <div class="button-group">
-          <button class="btn-primary" (click)="saveUserData()">✓ GUARDAR CAMBIOS</button>
-          <button class="btn-secondary" (click)="cancelEdit()">✗ CANCELAR</button>
-        </div>
-      </div>
-
-      <div class="badges-block">
-        <div class="section-label">- INSIGNIAS Y LOGROS -</div>
-        <div class="badges-grid">
-          <div class="badge-card">
-            <span class="badge-icon">🔥</span>
-            <span class="badge-name">PRIMER XUXEMON</span>
-            <span class="badge-desc">Atrapa tu primer Xuxemon</span>
-            <span class="badge-status status-ok">✓ OBTENIDO</span>
-          </div>
-          <div class="badge-card">
-            <span class="badge-icon">🏆</span>
-            <span class="badge-name">MAESTRO FUEGO</span>
-            <span class="badge-desc">Captura 10 de Fuego</span>
-            <span class="badge-status status-ok">✓ OBTENIDO</span>
-          </div>
-          <div class="badge-card">
-            <span class="badge-icon">⚔️</span>
-            <span class="badge-name">10 VICTORIAS</span>
-            <span class="badge-desc">Gana 10 batallas</span>
-            <span class="badge-status status-ok">✓ OBTENIDO</span>
-          </div>
-          <div class="badge-card locked">
-            <span class="badge-icon">🔒</span>
-            <span class="badge-name">COLECCIONISTA</span>
-            <span class="badge-desc">Atrapa 50 diferentes</span>
-            <span class="badge-status status-no">✦ BLOQUEADO</span>
+        <div class="badges-block">
+          <div class="section-label">- INSIGNIAS Y LOGROS -</div>
+          <div class="badges-grid">
+            <div class="badge-card">
+              <span class="badge-icon">🔥</span>
+              <span class="badge-name">PRIMER XUXEMON</span>
+              <span class="badge-desc">Atrapa tu primer Xuxemon</span>
+              <span class="badge-status status-ok">✓ OBTENIDO</span>
+            </div>
+            <div class="badge-card">
+              <span class="badge-icon">🏆</span>
+              <span class="badge-name">MAESTRO FUEGO</span>
+              <span class="badge-desc">Captura 10 de Fuego</span>
+              <span class="badge-status status-ok">✓ OBTENIDO</span>
+            </div>
+            <div class="badge-card">
+              <span class="badge-icon">⚔️</span>
+              <span class="badge-name">10 VICTORIAS</span>
+              <span class="badge-desc">Gana 10 batallas</span>
+              <span class="badge-status status-ok">✓ OBTENIDO</span>
+            </div>
+            <div class="badge-card locked">
+              <span class="badge-icon">🔒</span>
+              <span class="badge-name">COLECCIONISTA</span>
+              <span class="badge-desc">Atrapa 50 diferentes</span>
+              <span class="badge-status status-no">✦ BLOQUEADO</span>
+            </div>
           </div>
         </div>
       </div>
-
-    </div>
-
-    <div class="equipo-block">
-      <div class="section-label">- TU EQUIPO -</div>
-      <div class="equipo-grid">
-        <div class="tipo-card tipo-agua">
-          <span class="tipo-icon">💧</span>
-          <span class="tipo-name">AGUA</span>
-          <span class="tipo-count">5</span>
-          <span class="tipo-sub">capturados</span>
-        </div>
-        <div class="tipo-card tipo-fuego">
-          <span class="tipo-icon">🔥</span>
-          <span class="tipo-name">FUEGO</span>
-          <span class="tipo-count">7</span>
-          <span class="tipo-sub">capturados</span>
-        </div>
-        <div class="tipo-card tipo-planta">
-          <span class="tipo-icon">🌿</span>
-          <span class="tipo-name">PLANTA</span>
-          <span class="tipo-count">3</span>
-          <span class="tipo-sub">capturados</span>
-        </div>
-        <div class="tipo-card tipo-roca">
-          <span class="tipo-icon">🪨</span>
-          <span class="tipo-name">ROCA</span>
-          <span class="tipo-count">3</span>
-          <span class="tipo-sub">capturados</span>
+      <div class="equipo-block">
+        <div class="section-label">- TU EQUIPO -</div>
+        <div class="equipo-grid">
+          <div class="tipo-card tipo-agua">
+            <span class="tipo-icon">💧</span>
+            <span class="tipo-name">AGUA</span>
+            <span class="tipo-count">5</span>
+            <span class="tipo-sub">capturados</span>
+          </div>
+          <div class="tipo-card tipo-fuego">
+            <span class="tipo-icon">🔥</span>
+            <span class="tipo-name">FUEGO</span>
+            <span class="tipo-count">7</span>
+            <span class="tipo-sub">capturados</span>
+          </div>
+          <div class="tipo-card tipo-planta">
+            <span class="tipo-icon">🌿</span>
+            <span class="tipo-name">PLANTA</span>
+            <span class="tipo-count">3</span>
+            <span class="tipo-sub">capturados</span>
+          </div>
+          <div class="tipo-card tipo-roca">
+            <span class="tipo-icon">🪨</span>
+            <span class="tipo-name">ROCA</span>
+            <span class="tipo-count">3</span>
+            <span class="tipo-sub">capturados</span>
+          </div>
         </div>
       </div>
-    </div>
-
-    <div class="prefs-block">
-      <div class="section-label">- PREFERENCIAS -</div>
-      <div class="pref-row">
-        <div class="pref-text">
-          <strong>NOTIFICACIONES DE BATALLA</strong>
-          <p>Recibir notificaciones de desafíos</p>
+      <div class="prefs-block">
+        <div class="section-label">- PREFERENCIAS -</div>
+        <div class="pref-row">
+          <div class="pref-text">
+            <strong>NOTIFICACIONES DE BATALLA</strong>
+            <p>Recibir notificaciones de desafíos</p>
+          </div>
+          <label class="px-toggle">
+            <input type="checkbox" checked>
+            <div class="px-track">
+              <div class="px-thumb"></div>
+            </div>
+          </label>
         </div>
-        <label class="px-toggle">
-          <input type="checkbox" checked>
-          <div class="px-track"><div class="px-thumb"></div></div>
-        </label>
-      </div>
-      <div class="pref-row">
-        <div class="pref-text">
-          <strong>PERFIL PÚBLICO</strong>
-          <p>Otros entrenadores pueden ver tu perfil</p>
+        <div class="pref-row">
+          <div class="pref-text">
+            <strong>PERFIL PÚBLICO</strong>
+            <p>Otros entrenadores pueden ver tu perfil</p>
+          </div>
+          <label class="px-toggle">
+            <input type="checkbox" checked>
+            <div class="px-track">
+              <div class="px-thumb"></div>
+            </div>
+          </label>
         </div>
-        <label class="px-toggle">
-          <input type="checkbox" checked>
-          <div class="px-track"><div class="px-thumb"></div></div>
-        </label>
-      </div>
-      <div class="pref-row">
-        <div class="pref-text">
-          <strong>MENSAJES PRIVADOS</strong>
-          <p>Permitir mensajes de cualquier usuario</p>
+        <div class="pref-row">
+          <div class="pref-text">
+            <strong>MENSAJES PRIVADOS</strong>
+            <p>Permitir mensajes de cualquier usuario</p>
+          </div>
+          <label class="px-toggle">
+            <input type="checkbox">
+            <div class="px-track">
+              <div class="px-thumb"></div>
+            </div>
+          </label>
         </div>
-        <label class="px-toggle">
-          <input type="checkbox">
-          <div class="px-track"><div class="px-thumb"></div></div>
-        </label>
       </div>
-    </div>
 
-  </main>
-</div>
-
+    </main>
 </body>
