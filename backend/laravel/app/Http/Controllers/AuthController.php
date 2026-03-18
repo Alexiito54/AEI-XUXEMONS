@@ -70,5 +70,12 @@ public function logout(Request $request)
     $request->user()->currentAccessToken()->delete();
     return response()->json(['message' => 'Logout exitós']);
 }
+
+public function me(Request $request)
+{
+    return response()->json($request->user());
 }
+
+}
+
 
