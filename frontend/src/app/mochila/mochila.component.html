@@ -8,113 +8,67 @@
         <!-- Sección de bienvenida al entrenador -->
         <div class="welcome-section">
             <h2 class="welcome-title">¡Bienvenido, Negro!</h2>
-
             <br>
             <br>
-
             <p class="welcome-description">- Resumen de tu aventura -</p>
-
             <br>
-
         </div>
-
         <!-- Menú lateral de navegación -->
         <div class="menu-section">
             <div class="logo-section">
                 <h1 class="logo-title">XUXEMONS</h1>
             </div>
-
             <div class="menu-title">
-                <h3>Inicio</h3>
-                <h3>Xuxedex</h3>
+                <h3 (click)="navegarAlInicio()" style="cursor: pointer;">Inicio</h3>
+                <h3 (click)="navegarAlXuxedex()" style="cursor: pointer;">Xuxedex</h3>
                 <h3 (click)="navegarAlInventario()" style="cursor: pointer;">Mochila</h3>
-                <h3>Amigos</h3>
-                <h3>Batalla</h3>
-                <h3>Chat</h3>
+                <h3 (click)="navegarAlAmigos()" style="cursor: pointer;">Amigos</h3>
+                <h3 (click)="navegarAlBatalla()" style="cursor: pointer;">Batalla</h3>
+                <h3 (click)="navegarAlChat()" style="cursor: pointer;">Chat</h3>
                 <h3 (click)="navegarAlPerfil()" style="cursor: pointer;">Perfil</h3>
-                <h3>Admin</h3>
-            </div>
-
-        </div>
-
-        <!-- Grid de estadísticas principales del entrenador -->
-        <div class="stats-grid">
-            <div class="card card--xuxemons">
-                <h2 class="card-title">Xuxemons totales</h2>
-                <p class="card-value">25</p>
-            </div>
-
-            <div class="card card--fights">
-                <h2 class="card-title">Batallas disputadas</h2>
-                <p class="card-value">12</p>
-            </div>
-
-            <div class="card card--friends">
-                <h2 class="card-title">Amigos totales</h2>
-                <p class="card-value">8</p>
-            </div>
-
-            <div class="card card--level" >
-                <h2 class="card-title">Nivel del entrenador</h2>
-                <p class="card-value">15</p>
+                <h3 (click)="navegarAlAdmin()" style="cursor: pointer;">Admin</h3>
             </div>
         </div>
+       
 
-        <!-- Separador visual -->
-        <br><br><br><br><br><br>
+        <section class="mochila-page">
+  <div class="mochila-header">
+    <h2>🎒 Motxilla</h2>
+    <p>Espais ocupats: {{ mochila.length }}/20</p>
+  </div>
 
-        <div class="team-section">
-            <h2 class="team-title"> - Tu equipo -</h2>
-        </div>
+  <div class="mochila-grid">
+    <div *ngFor="let slot of slots; let i = index" class="mochila-slot" [ngClass]="{
+      'apilable': slot?.apilable,
+      'no-apilable': slot && !slot.apilable,
+      'vacio': !slot
+    }">
+      <ng-container *ngIf="slot; else emptySlot">
+        <div class="item-icon">{{ slot.icono }}</div>
+        <div class="item-nombre">{{ slot.nombre }}</div>
+        <div class="item-cantidad" *ngIf="slot.apilable">x{{ slot.cantidad }}</div>
+      </ng-container>
+      <ng-template #emptySlot>
+        <div class="item-vacio">—</div>
+      </ng-template>
+    </div>
+  </div>
 
-        <!-- Resumen del equipo de Xuxemons para batalla -->
-        <div class="xuxemons-summary">
-            <!-- Xuxemon 1: Agua -->
-            <div class="card card--team">
-                <div class="card-xuxemon-image-placeholder"></div>
-                <div class="card-xuxemon-content">
-                    <div class="card-xuxemon-header">
-                        <h3 class="card-xuxemon-name">Aquader</h3>
-                        <span class="card-xuxemon-level">Lvl 18</span>
-                    </div>
-                    <div class="card-xuxemon-type">
-                        <span class="type-badge type-agua">AGUA</span>
-                    </div>
-                    <p class="card-xuxemon-stats">HP: 65 | ATK: 52 | DEF: 48</p>
-                </div>
-            </div>
-
-            <!-- Xuxemon 2: Fuego -->
-            <div class="card card--team">
-                <div class="card-xuxemon-image-placeholder"></div>
-                <div class="card-xuxemon-content">
-                    <div class="card-xuxemon-header">
-                        <h3 class="card-xuxemon-name">Flamix</h3>
-                        <span class="card-xuxemon-level">Lvl 20</span>
-                    </div>
-                    <div class="card-xuxemon-type">
-                        <span class="type-badge type-fuego">FUEGO</span>
-                    </div>
-                    <p class="card-xuxemon-stats">HP: 58 | ATK: 62 | DEF: 40</p>
-                </div>
-            </div>
-
-            <!-- Xuxemon 3: Planta -->
-            <div class="card card--team">
-                <div class="card-xuxemon-image-placeholder"></div>
-                <div class="card-xuxemon-content">
-                    <div class="card-xuxemon-header">
-                        <h3 class="card-xuxemon-name">Verdenta</h3>
-                        <span class="card-xuxemon-level">Lvl 19</span>
-                    </div>
-                    <div class="card-xuxemon-type">
-                        <span class="type-badge type-planta">PLANTA</span>
-                    </div>
-                    <p class="card-xuxemon-stats">HP: 60 | ATK: 55 | DEF: 58</p>
-                </div>
-            </div>
-
-            <!-- Xuxemon 4: Roca -->
+  <!-- Panel admin -->
+  <div *ngIf="isAdmin" class="admin-panel">
+    <h3>Panel Admin: Añadir Xuxes</h3>
+    <label>Tipo:
+      <select [(ngModel)]="adminXuxeId">
+        <option *ngFor="let x of tiposXuxes" [value]="x.id">{{ x.nombre }}</option>
+      </select>
+    </label>
+    <label>Cantidad:
+      <input type="number" [(ngModel)]="adminCantidad" min="1" max="99">
+    </label>
+    <button (click)="adminAddXuxes()">Añadir</button>
+    <span class="admin-error" *ngIf="adminError">{{ adminError }}</span>
+  </div>
+</section>
             <div class="card card--team">
                 <div class="card-xuxemon-image-placeholder"></div>
                 <div class="card-xuxemon-content">
@@ -129,5 +83,4 @@
                 </div>
             </div>
         </div>
-    </div>
 </section>
