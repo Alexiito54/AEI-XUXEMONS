@@ -39,6 +39,7 @@ services:
         condition: service_healthy
 
   # Backend Laravel
+   # Backend Laravel
   laravel:
     build:
       context: ./docker/backend/laravel    
@@ -55,15 +56,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    command: >  
-          sh -c "
-          until mysqladmin ping -h db -P3306 -u xuxemons -pxuxemons; do
-          echo 'Esperando MySQL...'
-          sleep 2
-          done;
-          php artisan migrate:fresh --seed;
-          apache2-foreground
-          "
+    command: sh -c "php artisan migrate:fresh --seed && apache2-foreground"
+
 
   # Frontend Angular
   angular:

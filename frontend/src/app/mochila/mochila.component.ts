@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   imports: [],
   templateUrl: './mochila.component.html',
   styleUrls: ['./mochila.component.css'],
-     encapsulation: ViewEncapsulation.None  // <–– deja que :root afecte
+     encapsulation: ViewEncapsulation.None  
 })
 export class MochilaComponent {
   constructor(private router: Router) {}
