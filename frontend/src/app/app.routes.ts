@@ -4,7 +4,7 @@ import { PaginaPrincipal } from './pagina-principal/pagina-principal';
 import { LoginComponent } from './login/login';
 import { PagInfoUsuario } from './pag-info-usuario/pag-info-usuario';
 import { MochilaComponent } from './mochila/mochila.component';
-import { authGuard } from './guards/auth.guard'; // ← añade esto
+import { authGuard } from './guards/auth.guard'; 
 
 export const routes: Routes = [
   { path: '', redirectTo: '/register', pathMatch: 'full' },

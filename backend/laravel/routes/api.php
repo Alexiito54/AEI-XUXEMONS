@@ -5,6 +5,7 @@ use App\Http\Controllers\XuxemonController;
 use App\Http\Controllers\ColeccionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MochilaController;
 
     // Rutas públicas
     Route::post('/register', [AuthController::class, 'register']);
@@ -42,4 +43,10 @@ use Illuminate\Support\Facades\Route;
     Route::post('/combates',     [CombateController::class, 'store']);
 
     });
+
+    Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/mochila',        [MochilaController::class, 'index']);
+    Route::post('/mochila',       [MochilaController::class, 'store']);
+    Route::delete('/mochila/{id}',[MochilaController::class, 'destroy']);
+});
 });
