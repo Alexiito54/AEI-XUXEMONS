@@ -16,9 +16,15 @@
         </div>
         <p class="subtitle">— PRESS START —</p>
       </div>
-      
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
 
+   <div *ngIf="registeredUserId" class="success-box">
+    <p>✅ Registro exitoso!</p>
+    <p>Tu ID de usuario es: <strong>{{ registeredUserId }}</strong></p>
+    <p>Anótalo, lo necesitas para hacer login</p>
+    <a routerLink="/login">Ir al login →</a>
+  </div>
+
+  <form *ngIf="!registeredUserId" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <!-- Campo nombre -->
         <div class="form-group">
           <label for="name">Nombre</label>
