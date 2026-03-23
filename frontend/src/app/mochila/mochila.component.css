@@ -1,3 +1,76 @@
+/* --- MOTXILLA --- */
+.mochila-page {
+  max-width: 700px;
+  margin: 40px auto;
+  background: #fff;
+  border: 4px solid #111;
+  box-shadow: 0 0 0 4px #e0e0e0, 0 0 0 8px #111;
+  padding: 32px 32px 24px;
+  border-radius: 12px;
+}
+
+.mochila-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.mochila-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 32px;
+}
+
+.mochila-slot {
+  background: #f6f6f6;
+  border: 2.5px solid #bbb;
+  border-radius: 8px;
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  position: relative;
+  transition: border 0.2s;
+}
+.mochila-slot.apilable { border-color: #8a49f0; }
+.mochila-slot.no-apilable { border-color: #e03030; }
+.mochila-slot.vacio { border-style: dashed; color: #bbb; }
+
+.item-icon { font-size: 2.2em; margin-bottom: 4px; }
+.item-nombre { font-size: 11px; text-align: center; margin-bottom: 2px; }
+.item-cantidad { font-size: 13px; color: #8a49f0; font-weight: bold; }
+.item-vacio { color: #bbb; font-size: 2em; }
+
+/* Panel admin */
+.admin-panel {
+  margin-top: 32px;
+  padding: 18px 16px;
+  border: 2px solid #8a49f0;
+  background: #faf7ff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.admin-panel label { font-size: 13px; }
+.admin-panel input, .admin-panel select { font-size: 13px; margin-left: 6px; }
+.admin-panel button {
+  background: #8a49f0;
+  color: #fff;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+.admin-panel button:hover { background: #6d2fc7; }
+.admin-error { color: #e03030; font-size: 13px; margin-left: 10px; }
 /* Variables de colores y temas globales */
 :root {
   --bg: #f6f6f6;

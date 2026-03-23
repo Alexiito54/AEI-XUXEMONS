@@ -50,4 +50,24 @@ export class AuthService {
   isAdmin(): boolean {
     return this.getUser()?.role === 'admin';
   }
+
+  getUser(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/user`);
+  }
+
+  updateUser(userData: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/user`, userData);
+  }
+
+  changePassword(passwordData: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/change-password`, passwordData);
+  }
+
+  deleteUser(): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/user`);
+  }
+
+  logout(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/logout`, {});
+  }
 }
