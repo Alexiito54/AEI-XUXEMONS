@@ -1,19 +1,15 @@
 <!-- Página principal del entrenador -->
 <section class="main-page">
-    <!-- Importar fuente de estilo retro -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
-    <!-- Contenedor principal con menú y contenido -->
     <div class="main-content">
-        <!-- Sección de bienvenida al entrenador -->
         <div class="welcome-section">
             <h2 class="welcome-title">¡Bienvenido, Negro!</h2>
-            <br>
-            <br>
+            <br><br>
             <p class="welcome-description">- Resumen de tu aventura -</p>
             <br>
         </div>
-        <!-- Menú lateral de navegación -->
+
         <div class="menu-section">
             <div class="logo-section">
                 <h1 class="logo-title">XUXEMONS</h1>
@@ -29,58 +25,62 @@
                 <h3 (click)="navegarAlAdmin()" style="cursor: pointer;">Admin</h3>
             </div>
         </div>
-       
 
         <section class="mochila-page">
-  <div class="mochila-header">
-    <h2>🎒 Motxilla</h2>
-    <p>Espais ocupats: {{ mochila.length }}/20</p>
-  </div>
+            <div class="mochila-header">
+                <h2>🎒 Motxilla</h2>
+                <p>Espais ocupats: {{ mochila.length }}/20</p>
+            </div>
 
-  <div class="mochila-grid">
-    <div *ngFor="let slot of slots; let i = index" class="mochila-slot" [ngClass]="{
-      'apilable': slot?.apilable,
-      'no-apilable': slot && !slot.apilable,
-      'vacio': !slot
-    }">
-      <ng-container *ngIf="slot; else emptySlot">
-        <div class="item-icon">{{ slot.icono }}</div>
-        <div class="item-nombre">{{ slot.nombre }}</div>
-        <div class="item-cantidad" *ngIf="slot.apilable">x{{ slot.cantidad }}</div>
-      </ng-container>
-      <ng-template #emptySlot>
-        <div class="item-vacio">—</div>
-      </ng-template>
-    </div>
-  </div>
+            <div *ngIf="cargando">Carregant...</div>
+            <div *ngIf="error" class="admin-error">{{ error }}</div>
 
-  <!-- Panel admin -->
-  <div *ngIf="isAdmin" class="admin-panel">
-    <h3>Panel Admin: Añadir Xuxes</h3>
-    <label>Tipo:
-      <select [(ngModel)]="adminXuxeId">
-        <option *ngFor="let x of tiposXuxes" [value]="x.id">{{ x.nombre }}</option>
-      </select>
-    </label>
-    <label>Cantidad:
-      <input type="number" [(ngModel)]="adminCantidad" min="1" max="99">
-    </label>
-    <button (click)="adminAddXuxes()">Añadir</button>
-    <span class="admin-error" *ngIf="adminError">{{ adminError }}</span>
-  </div>
-</section>
-            <div class="card card--team">
-                <div class="card-xuxemon-image-placeholder"></div>
-                <div class="card-xuxemon-content">
-                    <div class="card-xuxemon-header">
-                        <h3 class="card-xuxemon-name">Rocky</h3>
-                        <span class="card-xuxemon-level">Lvl 21</span>
-                    </div>
-                    <div class="card-xuxemon-type">
-                        <span class="type-badge type-roca">ROCA</span>
-                    </div>
-                    <p class="card-xuxemon-stats">HP: 52 | ATK: 68 | DEF: 55</p>
+            <div class="mochila-grid">
+                <div *ngFor="let slot of slots; let i = index" class="mochila-slot" [ngClass]="{
+                    'apilable':    slot?.item?.apilable,
+                    'no-apilable': slot && !slot.item?.apilable,
+                    'vacio':       !slot
+                }">
+                    <ng-container *ngIf="slot; else emptySlot">
+                        <div class="item-icon">{{ slot.item.icono }}</div>
+                        <div class="item-nombre">{{ slot.item.nombre }}</div>
+                        <div class="item-cantidad" *ngIf="slot.item.apilable">x{{ slot.cantidad }}</div>
+                        <button class="item-eliminar" (click)="eliminarItem(slot.id)">🗑️</button>
+                    </ng-container>
+                    <ng-template #emptySlot>
+                        <div class="item-vacio">—</div>
+                    </ng-template>
                 </div>
             </div>
+
+            <!-- Panel admin -->
+            <div *ngIf="isAdmin" class="admin-panel">
+                <h3>Panel Admin: Añadir Xuxes</h3>
+                <label>Tipo:
+                    <select [(ngModel)]="adminXuxeId">
+                        <option *ngFor="let x of tiposXuxes" [value]="x.id">{{ x.nombre }}</option>
+                    </select>
+                </label>
+                <label>Cantidad:
+                    <input type="number" [(ngModel)]="adminCantidad" min="1" max="99">
+                </label>
+                <button (click)="adminAddXuxes()">Añadir</button>
+                <span class="admin-error" *ngIf="adminError">{{ adminError }}</span>
+            </div>
+        </section>
+
+        <div class="card card--team">
+            <div class="card-xuxemon-image-placeholder"></div>
+            <div class="card-xuxemon-content">
+                <div class="card-xuxemon-header">
+                    <h3 class="card-xuxemon-name">Rocky</h3>
+                    <span class="card-xuxemon-level">Lvl 21</span>
+                </div>
+                <div class="card-xuxemon-type">
+                    <span class="type-badge type-roca">ROCA</span>
+                </div>
+                <p class="card-xuxemon-stats">HP: 52 | ATK: 68 | DEF: 55</p>
+            </div>
         </div>
+    </div>
 </section>

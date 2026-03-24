@@ -1,24 +1,21 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './guards/auth.guard';
-import { adminGuard } from './guards/admin.guard';
+import { RegisterComponent } from './register/register';
+import { PaginaPrincipal } from './pagina-principal/pagina-principal';
+import { LoginComponent } from './login/login';
+import { PagInfoUsuario } from './pag-info-usuario/pag-info-usuario';
+import { MochilaComponent } from './mochila/mochila.component';
+import { authGuard } from './guards/auth.guard'; 
 
 export const routes: Routes = [
-  // Rutas públicas
-  { path: 'login',    loadComponent: () => import('./login/login').then(m => m.LoginComponent) },
-  { path: 'register', loadComponent: () => import('./register/register').then(m => m.RegisterComponent) },
+  { path: '', redirectTo: '/register', pathMatch: 'full' },
+  
+  { path: 'login',    component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
 
-  // Rutas protegidas (login requerido)
-  {
-    path: 'home',
-    canActivate: [authGuard],
-    loadComponent: () => import('./pagina-principal/pagina-principal').then(m => m.PaginaPrincipal)
-  },
-  {
-    path: 'mochila',
-    canActivate: [authGuard],
-    loadComponent: () => import('./mochila/mochila.component').then(m => m.MochilaComponent)
-  },
+  // Rutas protegidas 
+  { path: 'pagina-principal', component: PaginaPrincipal, canActivate: [authGuard] },
+  { path: 'info-usuario',     component: PagInfoUsuario,  canActivate: [authGuard] },
+  { path: 'mochila',          component: MochilaComponent, canActivate: [authGuard] },
 
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: '**', redirectTo: 'login' }
+  { path: '**', redirectTo: 'register', pathMatch: 'full' }
 ];
