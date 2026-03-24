@@ -7,7 +7,7 @@
     <div class="main-content">
         <!-- Sección de bienvenida al entrenador -->
         <div class="welcome-section">
-            <h2 class="welcome-title">¡Bienvenido, Negro!</h2>
+            <h2 class="welcome-title">Explora tu mochila</h2>
             <br>
             <br>
             <p class="welcome-description">- Resumen de tu aventura -</p>
@@ -33,8 +33,8 @@
 
         <section class="mochila-page">
   <div class="mochila-header">
-    <h2>🎒 Motxilla</h2>
-    <p>Espais ocupats: {{ mochila.length }}/20</p>
+    <h2>🎒 Mochila</h2>
+    <p>Espacios ocupados: {{ mochila.length }}/20</p>
   </div>
 
   <div class="mochila-grid">
@@ -56,7 +56,7 @@
 
   <!-- Panel admin -->
   <div *ngIf="isAdmin" class="admin-panel">
-    <h3>Panel Admin: Añadir Xuxes</h3>
+    <h3>Panel Admin: Añadir Chuches</h3>
     <label>Tipo:
       <select [(ngModel)]="adminXuxeId">
         <option *ngFor="let x of tiposXuxes" [value]="x.id">{{ x.nombre }}</option>
