@@ -3,11 +3,12 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractContro
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../auth.service';
 import { HttpClientModule } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
+   imports: [CommonModule, ReactiveFormsModule, HttpClientModule, RouterModule],
   templateUrl: './register.html',
   styleUrls: ['./register.css']  
 })
@@ -44,21 +45,23 @@ export class RegisterComponent {
     this.confirmTouched = true;
   }
 
-  onSubmit() {
-    if (this.registerForm.valid) {
-      this.loading = true;
-      this.authService.register(this.registerForm.value).subscribe({
-        next: (response: any) => {
-      alert('Registrado! ID: ' + response.user_id);
-      this.loading = false;
-      this.registerForm.reset();
-        },
-        error: (err) => {
-          console.error(err);
-          alert('Error: ' + (err.error?.error || 'Registro falló'));
-          this.loading = false;
-        }
-      });
-    }
+ registeredUserId: string | null = null;
+
+onSubmit() {
+  if (this.registerForm.valid) {
+    this.loading = true;
+    this.authService.register(this.registerForm.value).subscribe({
+      next: (response: any) => {
+        this.registeredUserId = response.user_id;
+        this.loading = false;
+        this.registerForm.reset();
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error: ' + (err.error?.error || 'Registro falló'));
+        this.loading = false;
+      }
+    });
   }
+}
 }

@@ -41,6 +41,7 @@ export class LoginComponent {
       next: (res: any) => {
         localStorage.setItem('token', res.token);
         localStorage.setItem('role', res.user.role);
+        localStorage.setItem('user_id', res.user.user_id);
         this.loading = false;
         this.router.navigate(['/pagina-principal']);
       },

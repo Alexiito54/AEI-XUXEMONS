@@ -6,6 +6,7 @@ use App\Http\Controllers\ColeccionController;
 use App\Http\Controllers\CombateController; 
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MochilaController;
 
 // Rutas públicas
 Route::post('/register', [AuthController::class, 'register']);
@@ -42,4 +43,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/users/{id}',    [UserController::class, 'update']);
         Route::delete('/users/{id}', [UserController::class, 'destroy']);
     });
+
+    Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/mochila',        [MochilaController::class, 'index']);
+    Route::post('/mochila',       [MochilaController::class, 'store']);
+    Route::delete('/mochila/{id}',[MochilaController::class, 'destroy']);
+});
 });

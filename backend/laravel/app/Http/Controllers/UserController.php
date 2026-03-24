@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    // GET /api/users — listar todos los entrenadores (solo admin)
+    //listar todos los entrenadores (solo admin)
     public function index()
     {
         $users = User::select('user_id', 'name', 'surname', 'email', 'role', 'created_at')
@@ -17,7 +17,7 @@ class UserController extends Controller
         return response()->json($users);
     }
 
-    // GET /api/users/{user_id} — ver perfil de un entrenador
+    // ver perfil de un entrenador
     public function show($user_id)
     {
         $user = User::where('user_id', $user_id)
@@ -27,7 +27,7 @@ class UserController extends Controller
         return response()->json($user);
     }
 
-    // PUT /api/users/{user_id} — editar entrenador (solo admin)
+    // editar entrenador (solo admin)
     public function update(Request $request, $user_id)
     {
         $user = User::where('user_id', $user_id)->firstOrFail();
@@ -54,7 +54,7 @@ class UserController extends Controller
         ]);
     }
 
-    // DELETE /api/users/{user_id} — eliminar entrenador (solo admin)
+    // eliminar entrenador (solo admin)
     public function destroy($user_id)
     {
         $user = User::where('user_id', $user_id)->firstOrFail();
