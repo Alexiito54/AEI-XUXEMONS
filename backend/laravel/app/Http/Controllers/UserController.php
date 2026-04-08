@@ -5,72 +5,138 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
-    // GET /api/users — listar todos los entrenadores (solo admin)
-    public function index()
+    /**
+     * Get the authenticated user's profile.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getUser(Request $request)
     {
-        $users = User::select('user_id', 'name', 'surname', 'email', 'role', 'created_at')
-            ->get();
-
-        return response()->json($users);
-    }
-
-    // GET /api/users/{user_id} — ver perfil de un entrenador
-    public function show($user_id)
-    {
-        $user = User::where('user_id', $user_id)
-            ->select('user_id', 'name', 'surname', 'email', 'role', 'created_at')
-            ->firstOrFail();
-
-        return response()->json($user);
-    }
-
-    // PUT /api/users/{user_id} — editar entrenador (solo admin)
-    public function update(Request $request, $user_id)
-    {
-        $user = User::where('user_id', $user_id)->firstOrFail();
-
-        $request->validate([
-            'name'     => 'sometimes|string|max:50',
-            'surname'  => 'sometimes|string|max:100',
-            'email'    => 'sometimes|email|unique:users,email,' . $user->id,
-            'role'     => 'sometimes|in:admin,player',
-            'password' => 'sometimes|min:6|confirmed',
-        ]);
-
-        $data = $request->only(['name', 'surname', 'email', 'role']);
-
-        if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
-        }
-
-        $user->update($data);
+        $user = $request->user();
 
         return response()->json([
-            'success' => true,
-            'user'    => $user->only(['user_id', 'name', 'surname', 'email', 'role'])
-        ]);
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'apellidos' => $user->apellidos,
+                'email' => $user->email,
+                'id_usuario' => $user->id_usuario,
+                'rol' => $user->rol,
+            ],
+        ], 200);
     }
 
-    // DELETE /api/users/{user_id} — eliminar entrenador (solo admin)
-    public function destroy($user_id)
+    /**
+     * Update the authenticated user's profile.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function updateUser(Request $request)
     {
-        $user = User::where('user_id', $user_id)->firstOrFail();
+        try {
+            $user = $request->user();
 
-        // Evitar que el admin se elimine a sí mismo
-        if (auth()->user()->user_id === $user_id) {
+            $validated = $request->validate([
+                'name' => 'sometimes|string|max:255',
+                'apellidos' => 'sometimes|string|max:255',
+                'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
+            ]);
+
+            $user->update($validated);
+
             return response()->json([
-                'message' => 'No puedes eliminarte a ti mismo'
+                'message' => 'Perfil actualizado correctamente',
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'apellidos' => $user->apellidos,
+                    'email' => $user->email,
+                    'id_usuario' => $user->id_usuario,
+                    'rol' => $user->rol,
+                ],
+            ], 200);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Error en la validación',
+                'errors' => $e->errors(),
             ], 422);
         }
+    }
 
-        $user->delete();
+    /**
+     * Change the user's password.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function changePassword(Request $request)
+    {
+        try {
+            $user = $request->user();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Entrenador eliminado'
-        ]);
+            $validated = $request->validate([
+                'current_password' => 'required|string',
+                'password' => 'required|string|min:6|confirmed',
+            ]);
+
+            if (!Hash::check($validated['current_password'], $user->password)) {
+                return response()->json([
+                    'message' => 'La contraseña actual es incorrecta',
+                ], 401);
+            }
+
+            $user->update([
+                'password' => Hash::make($validated['password']),
+            ]);
+
+            return response()->json([
+                'message' => 'Contraseña cambiada correctamente',
+            ], 200);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Error en la validación',
+                'errors' => $e->errors(),
+            ], 422);
+        }
+    }
+
+    /**
+     * Delete the user account.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteUser(Request $request)
+    {
+        try {
+            $user = $request->user();
+
+            $validated = $request->validate([
+                'password' => 'required|string',
+            ]);
+
+            if (!Hash::check($validated['password'], $user->password)) {
+                return response()->json([
+                    'message' => 'La contraseña es incorrecta',
+                ], 401);
+            }
+
+            $user->delete();
+
+            return response()->json([
+                'message' => 'Cuenta eliminada correctamente',
+            ], 200);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Error en la validación',
+                'errors' => $e->errors(),
+            ], 422);
+        }
     }
 }

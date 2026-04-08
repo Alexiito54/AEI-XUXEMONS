@@ -2,47 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Xuxemon;
 use Illuminate\Http\Request;
 
 class XuxemonController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return response()->json(Xuxemon::all(), 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'tipo' => 'required|in:Agua,Tierra,Aire',
+            'tamaño' => 'required|in:Pequeño,Mediano,Grande',
+            'imagen' => 'nullable|string',
+        ]);
+
+        $xuxemon = Xuxemon::create($validated);
+        return response()->json($xuxemon, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Xuxemon $xuxemon)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return response()->json($xuxemon, 200);
     }
 }
+

@@ -5,19 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Coleccion extends Model
+class Mochila extends Model
 {
-    protected $table = 'colecciones';
-    protected $fillable = ['id_usuario', 'id_xuxemon'];
+    protected $table = 'mochila';
+    protected $fillable = ['id_usuario', 'id_item', 'cantidad', 'slot'];
 
     public function usuario(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id_usuario');
     }
 
-    public function xuxemon(): BelongsTo
+    public function articulo(): BelongsTo
     {
-        return $this->belongsTo(Xuxemon::class, 'id_xuxemon');
+        return $this->belongsTo(Item::class, 'id_item');
     }
 }
 

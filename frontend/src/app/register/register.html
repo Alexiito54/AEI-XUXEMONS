@@ -16,9 +16,31 @@
         </div>
         <p class="subtitle">— PRESS START —</p>
       </div>
-      
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
 
+ <div *ngIf="registeredUserId" class="success-gameboy">
+  <div class="gameboy-screen">
+    <div class="success-header">
+      <h2>REGISTRO EXITOSO</h2>
+    </div>
+    
+    <div class="success-id-box">
+      <span class="label">ID DE USUARIO:</span>
+      <div class="id-display">{{ registeredUserId }}</div>
+    </div>
+    
+    <div class="success-instructions">
+      <p>ANÓTALO PARA LOGIN</p>
+    </div>
+    
+    <a routerLink="/login" class="btn-gameboy">
+      ▶ IR AL LOGIN
+    </a>
+  </div>
+</div>
+
+
+
+  <form *ngIf="!registeredUserId" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <!-- Campo nombre -->
         <div class="form-group">
           <label for="name">Nombre</label>
@@ -34,13 +56,13 @@
 
         <!-- Campo apellidos -->
         <div class="form-group">
-          <label for="surname">Apellidos</label>
-          <input id="surname" formControlName="surname" placeholder="Introduce tus apellidos" 
-                 [class.input-error]="surnameControl.invalid && surnameControl.touched"
-                 (blur)="surnameControl.markAsTouched()" />
-          <div class="error-message" *ngIf="surnameControl.invalid && surnameControl.touched">
-            <small *ngIf="surnameControl.errors?.['required']">Apellidos requeridos</small>
-            <small *ngIf="surnameControl.errors?.['maxlength']">Máx. 100 caracteres</small>
+          <label for="apellidos">Apellidos</label>
+          <input id="apellidos" formControlName="apellidos" placeholder="Introduce tus apellidos"
+                 [class.input-error]="apellidosControl.invalid && apellidosControl.touched"
+                 (blur)="apellidosControl.markAsTouched()" />
+          <div class="error-message" *ngIf="apellidosControl.invalid && apellidosControl.touched">
+            <small *ngIf="apellidosControl.errors?.['required']">Apellidos requeridos</small>
+            <small *ngIf="apellidosControl.errors?.['maxlength']">Máx. 100 caracteres</small>
           </div>
         </div>
 
