@@ -1,0 +1,18 @@
+[
+  {
+    "/api": {
+      "target": "http://laravel:80",
+      "secure": false,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    }
+  },
+  {
+    "/login": {
+      "target": "http://laravel:80",
+      "secure": false,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    }
+  }
+]

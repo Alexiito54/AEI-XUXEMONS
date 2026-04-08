@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-
   # Base de dades MySQL
   db:
     image: mysql:8.0
@@ -41,22 +40,29 @@ services:
   # Backend Laravel
   laravel:
     build:
-      context: ./docker/backend/laravel    
-      dockerfile: Dockerfile          
+      context: ./docker/backend/laravel
+      dockerfile: Dockerfile
     container_name: xuxemons-laravel
     restart: always
     working_dir: /var/www/html
     environment:
       APACHE_DOCUMENT_ROOT: /var/www/html/public
     volumes:
-      - ./backend/laravel:/var/www/html
+      - ./backend/laravel:/var/www/html:cached
+      - laravel_vendor:/var/www/html/vendor
     ports:
       - "8000:80"
     depends_on:
       db:
         condition: service_healthy
-    command: >  
-          sh -c "until php -r \"new PDO('mysql:host=db;port=3306;dbname=bd-xuxemons', 'xuxemons', 'xuxemons');\" 2>/dev/null; do echo 'Esperando MySQL...'; sleep 2; done && php artisan migrate:fresh --seed && apache2-foreground"
+    command: >
+      sh -c "cp .env.docker .env &&
+            composer install --no-dev --optimize-autoloader &&
+            until php -r \"new PDO('mysql:host=db;port=3306;dbname=bd-xuxemons', 'xuxemons', 'xuxemons');\" 2>/dev/null; do echo 'Esperando MySQL...'; sleep 2; done &&
+            php artisan migrate --force &&
+            apache2-foreground"
+
+
   # Frontend Angular
   angular:
     image: node:20
@@ -64,12 +70,13 @@ services:
     restart: always
     working_dir: /app
     volumes:
-      - ./frontend:/app      
+      - ./frontend:/app
     ports:
       - "4200:4200"
-    command: sh -c "npm install && npx ng serve --host 0.0.0.0 --poll 2000"
+    command: sh -c "npm install && npx ng serve --host 0.0.0.0 --poll 2000 --proxy-config proxy.conf.json"
     depends_on:
       - laravel
 
 volumes:
   db_data:
+  laravel_vendor:

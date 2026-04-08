@@ -5,57 +5,87 @@ namespace App\Http\Controllers;
 use App\Models\Mochila;
 use App\Models\Item;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class MochilaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $mochila = Mochila::with('item')
-            ->where('user_id', Auth::id())
-            ->orderBy('slot')
+        $user = $request->user();
+        $mochilaItems = Mochila::where('id_usuario', $user->id)
+            ->with('articulo')
             ->get();
 
-        return response()->json($mochila);
+        return response()->json($mochilaItems, 200);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'user_id'  => 'required|exists:users,id',
-            'item_id'  => 'required|exists:items,id',
-            'cantidad' => 'required|integer|min:1|max:5',
+        $validated = $request->validate([
+            'id_item' => 'required|exists:items,id',
+            'cantidad' => 'required|integer|min:1',
+            'id_usuario' => 'required|exists:users,id',
         ]);
 
-        $ocupados = Mochila::where('user_id', $request->user_id)->count();
-        if ($ocupados >= 20) {
+        $user = $request->user();
+        if ($user->id != $validated['id_usuario']) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
+        $item = Item::find($validated['id_item']);
+        $cantidad = $validated['cantidad'];
+
+        // Contar slots ocupados
+        $slotsOcupados = Mochila::where('id_usuario', $user->id)->count();
+        if ($slotsOcupados >= 20) {
             return response()->json(['message' => 'Mochila llena'], 400);
         }
 
-        // Buscar primer slot libre
-        $slotsOcupados = Mochila::where('user_id', $request->user_id)
-            ->pluck('slot')->toArray();
-        $slotLibre = 0;
-        while (in_array($slotLibre, $slotsOcupados)) $slotLibre++;
+        if ($item->apilable) {
+            // Xuxes: máx 5 por slot
+            $existing = Mochila::where('id_usuario', $user->id)
+                ->where('id_item', $item->id)
+                ->first();
 
-        $entrada = Mochila::create([
-            'user_id'  => $request->user_id,
-            'item_id'  => $request->item_id,
-            'cantidad' => $request->cantidad,
-            'slot'     => $slotLibre,
-        ]);
+            if ($existing && $existing->cantidad < 5) {
+                $canAdd = min(5 - $existing->cantidad, $cantidad);
+                $existing->cantidad += $canAdd;
+                $existing->save();
+                $cantidad -= $canAdd;
+            }
 
-        return response()->json($entrada->load('item'), 201);
+            while ($cantidad > 0 && $slotsOcupados < 20) {
+                $cantidadSlot = min(5, $cantidad);
+                Mochila::create([
+                    'id_usuario' => $user->id,
+                    'id_item' => $item->id,
+                    'cantidad' => $cantidadSlot,
+                ]);
+                $cantidad -= $cantidadSlot;
+                $slotsOcupados++;
+            }
+        } else {
+            // Vacunas: 1 por slot
+            for ($i = 0; $i < $cantidad && $slotsOcupados < 20; $i++) {
+                Mochila::create([
+                    'id_usuario' => $user->id,
+                    'id_item' => $item->id,
+                    'cantidad' => 1,
+                ]);
+                $slotsOcupados++;
+            }
+        }
+
+        return response()->json(['message' => 'Artículo añadido'], 201);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, Mochila $mochila)
     {
-        $entrada = Mochila::where('id', $id)
-            ->where('user_id', Auth::id())
-            ->firstOrFail();
+        if ($mochila->id_usuario != $request->user()->id) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
 
-        $entrada->delete();
-
-        return response()->json(['message' => 'Item eliminado']);
+        $mochila->delete();
+        return response()->json(['message' => 'Artículo eliminado'], 200);
     }
 }
+

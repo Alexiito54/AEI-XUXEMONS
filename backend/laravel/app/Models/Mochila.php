@@ -3,25 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Mochila extends Model
 {
     protected $table = 'mochila';
+    protected $fillable = ['id_usuario', 'id_item', 'cantidad', 'slot'];
 
-    protected $fillable = [
-        'user_id',
-        'item_id',
-        'cantidad',
-        'slot',
-    ];
-
-    public function item()
+    public function usuario(): BelongsTo
     {
-        return $this->belongsTo(Item::class, 'item_id');
+        return $this->belongsTo(User::class, 'id_usuario');
     }
 
-    public function user()
+    public function articulo(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Item::class, 'id_item');
     }
 }
+
+
