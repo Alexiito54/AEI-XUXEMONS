@@ -4,6 +4,7 @@ import { PaginaPrincipal } from './pagina-principal/pagina-principal';
 import { LoginComponent } from './login/login';
 import { PagInfoUsuario } from './pag-info-usuario/pag-info-usuario';
 import { MochilaComponent } from './mochila/mochila.component';
+import { Xuxedex } from './xuxedex/xuxedex';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/register', pathMatch: 'full' },
@@ -19,6 +20,9 @@ export const routes: Routes = [
   { path: 'info-usuario', component: PagInfoUsuario },
 
   { path: 'mochila', component: MochilaComponent },
+
+  { path: 'xuxedex', component: Xuxedex },
+
 
   // Cualquier otra → register
 

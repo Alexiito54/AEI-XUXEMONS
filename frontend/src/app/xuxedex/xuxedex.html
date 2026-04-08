@@ -1,0 +1,184 @@
+<div class="app">
+    
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo-box"><h1>XUXEMONS</h1></div>
+    <nav class="nav-box">
+      <div class="nav-item"
+           [class.active]="false"
+           (click)="navegarAlInicio()">Inicio</div>
+
+      <div class="nav-item active"
+           (click)="navegarAlXuxedex()">Xuxedex</div>
+
+      <div class="nav-item"
+           (click)="navegarAlInventario()">Mochila</div>
+
+      <div class="nav-item"
+           (click)="navegarAlAmigos()">Amigos</div>
+
+      <div class="nav-item"
+           (click)="navegarAlBatalla()">Batalla</div>
+
+      <div class="nav-item"
+           (click)="navegarAlChat()">Chat</div>
+
+      <div class="nav-item"
+           (click)="navegarAlPerfil()">Perfil</div>
+
+      <!-- Solo visible si isAdmin es true -->
+      <div class="nav-item"
+           *ngIf="isAdmin"
+           (click)="navegarAlAdmin()">Admin</div>
+    </nav>
+  </aside>
+
+  <!-- MAIN DEX -->
+  <main class="dex-shell">
+
+    <!-- Luces decorativas superiores -->
+    <div class="dex-lights">
+      <div class="light"></div>
+      <div class="light"></div>
+      <div class="light"></div>
+      <div class="light-bar"></div>
+    </div>
+
+    <!-- Pantalla resumen -->
+    <div class="dex-screen-wrap">
+      <div class="dex-screen">
+        <div class="dex-screen-text">
+          <strong>XUXEDEX</strong><br>
+          Hola, Entrenador!<br>
+          Tu registro de Xuxemons.
+        </div>
+        <div class="dex-counter">
+          ATRAPADOS<br>
+          <span id="caught-count">{{ caughtCount }}</span> /
+          <span id="total-count">{{ totalCount }}</span>
+          <br><br>
+          VISTOS<br>
+          <span id="seen-count">{{ seenCount }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barra de búsqueda y filtros -->
+    <div class="filter-bar">
+      <input
+        class="search-box"
+        type="text"
+        placeholder="BUSCAR XUXEMON..."
+        [ngModel]="currentSearch"
+        (ngModelChange)="onSearchChange($event)"
+      />
+
+      <button
+        class="filter-btn"
+        [class.active]="currentFilter === 'todos'"
+        (click)="setFilter('todos')">
+        TODOS
+      </button>
+
+      <button
+        class="filter-btn"
+        [class.active]="currentFilter === 'atrapado'"
+        (click)="setFilter('atrapado')">
+        ✔ ATRAPAD.
+      </button>
+
+      <button
+        class="filter-btn"
+        [class.active]="currentFilter === 'visto'"
+        (click)="setFilter('visto')">
+        👁 VISTOS
+      </button>
+
+      <button
+        class="filter-btn"
+        [class.active]="currentFilter === 'nuevo'"
+        (click)="setFilter('nuevo')">
+        ? NUEVOS
+      </button>
+    </div>
+
+    <div class="grid-title">XUXEDEX</div>
+
+    <!-- Grid de Xuxemons -->
+    <div class="xuxemon-grid" id="xuxemon-grid">
+      <div
+        class="xuxemon-card"
+        *ngFor="let x of listFiltrada"
+        (click)="abrirModal(x)"
+      >
+        <div class="xuxemon-card-num">
+          #{{ x.id | number:'3.0' }}
+        </div>
+
+        <div class="xuxemon-card-sprite">
+          <img [src]="x.sprite" [alt]="x.nombre">
+        </div>
+
+        <div class="xuxemon-card-name">
+          {{ x.nombre }}
+        </div>
+
+        <div class="xuxemon-card-types">
+          <span
+            class="type-pill"
+            *ngFor="let t of x.tipos">
+            {{ t }}
+          </span>
+        </div>
+
+        <div class="xuxemon-card-tags">
+          <span class="tag tag-caught" *ngIf="x.atrapado">✔</span>
+          <span class="tag tag-seen" *ngIf="x.visto">👁</span>
+          <span class="tag tag-new" *ngIf="x.nuevo">NEW</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL de detalle -->
+<div
+  class="modal-overlay"
+  [class.open]="modalAbierto"
+  (click)="cerrarModal()"
+>
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-close" (click)="cerrarModal()">✕ CERRAR</div>
+
+    <div class="modal-screen" *ngIf="selected as s">
+      <div class="modal-sprite">
+        <img [src]="s.sprite" [alt]="s.nombre">
+      </div>
+      <div class="modal-info">
+        <div class="modal-num">
+          #{{ s.id | number:'3.0' }}
+        </div>
+        <div class="modal-name">
+          {{ s.nombre }}
+        </div>
+        <div class="modal-types">
+          <span class="type-pill" *ngFor="let t of s.tipos">
+            {{ t }}
+          </span>
+        </div>
+        <div class="modal-desc">
+          {{ s.descripcion }}
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-stats">
+      <div class="stat-line" *ngFor="let st of statsEjemplo">
+        {{ st.label }}: {{ st.valor }}
+      </div>
+    </div>
+  </div>
+</div>
