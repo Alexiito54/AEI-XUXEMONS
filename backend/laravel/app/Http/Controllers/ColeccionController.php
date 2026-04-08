@@ -2,47 +2,53 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Coleccion;
+use App\Models\Xuxemon;
 use Illuminate\Http\Request;
 
 class ColeccionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $user = $request->user();
+        $coleccion = Coleccion::where('id_usuario', $user->id)
+            ->with('xuxemon')
+            ->get();
+
+        return response()->json($coleccion, 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $user = $request->user();
+
+        // Obtener un Xuxemon aleatorio
+        $xuxemon = Xuxemon::inRandomOrder()->first();
+
+        if (!$xuxemon) {
+            return response()->json(['message' => 'No hay xuxemons disponibles'], 404);
+        }
+
+        $coleccion = Coleccion::create([
+            'id_usuario' => $user->id,
+            'id_xuxemon' => $xuxemon->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Xuxemon capturado',
+            'xuxemon' => $xuxemon,
+            'coleccion' => $coleccion,
+        ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function destroy(Request $request, Coleccion $coleccion)
     {
-        //
-    }
+        if ($coleccion->id_usuario != $request->user()->id) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $coleccion->delete();
+        return response()->json(['message' => 'Xuxemon eliminado'], 200);
     }
 }
+

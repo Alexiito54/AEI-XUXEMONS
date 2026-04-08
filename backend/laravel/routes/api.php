@@ -1,52 +1,49 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ItemController;
+use App\Http\Controllers\MochilaController;
 use App\Http\Controllers\XuxemonController;
 use App\Http\Controllers\ColeccionController;
-use App\Http\Controllers\CombateController; 
-use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MochilaController;
 
-// Rutas públicas
+// Public routes (no authentication required)
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login',    [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login']);
 
-// 👇 Xuxemons públicos — sin auth
-Route::get('/xuxemons',      [XuxemonController::class, 'index']);
-Route::get('/xuxemons/{id}', [XuxemonController::class, 'show']);
+// Public API endpoints
+Route::get('/items', [ItemController::class, 'index']);
+Route::get('/items/{item}', [ItemController::class, 'show']);
+Route::get('/xuxemons', [XuxemonController::class, 'index']);
+Route::get('/xuxemons/{xuxemon}', [XuxemonController::class, 'show']);
 
-// Rutas protegidas
+// Protected routes (requires authentication)
 Route::middleware('auth:sanctum')->group(function () {
-
+    // Auth routes
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/me',      [AuthController::class, 'me']);
 
-    // Colección
-    Route::get('/coleccion',         [ColeccionController::class, 'index']);
-    Route::post('/coleccion',        [ColeccionController::class, 'store']);
-    Route::delete('/coleccion/{id}', [ColeccionController::class, 'destroy']);
+    // User routes
+    Route::get('/user', [UserController::class, 'getUser']);
+    Route::put('/user', [UserController::class, 'updateUser']);
+    Route::put('/user/password', [UserController::class, 'changePassword']);
+    Route::delete('/user', [UserController::class, 'deleteUser']);
 
-    // Combates — cualquier entrenador autenticado
-    Route::get('/combates',      [CombateController::class, 'index']);
-    Route::get('/combates/{id}', [CombateController::class, 'show']);
-    Route::post('/combates',     [CombateController::class, 'store']);
+    // Mochila routes
+    Route::get('/mochila', [MochilaController::class, 'index']);
+    Route::post('/mochila', [MochilaController::class, 'store']);
+    Route::delete('/mochila/{mochila}', [MochilaController::class, 'destroy']);
 
-    // Solo admin
-    Route::middleware('role:admin')->group(function () {
-        Route::post('/xuxemons',        [XuxemonController::class, 'store']);
-        Route::put('/xuxemons/{id}',    [XuxemonController::class, 'update']);
-        Route::delete('/xuxemons/{id}', [XuxemonController::class, 'destroy']);
+    // Coleccion routes
+    Route::get('/colecciones', [ColeccionController::class, 'index']);
+    Route::post('/colecciones', [ColeccionController::class, 'store']);
+    Route::delete('/colecciones/{coleccion}', [ColeccionController::class, 'destroy']);
 
-        Route::get('/users',         [UserController::class, 'index']);
-        Route::get('/users/{id}',    [UserController::class, 'show']);
-        Route::put('/users/{id}',    [UserController::class, 'update']);
-        Route::delete('/users/{id}', [UserController::class, 'destroy']);
+    // Admin only routes
+    Route::middleware('admin')->group(function () {
+        Route::post('/items', [ItemController::class, 'store']);
+        Route::post('/xuxemons', [XuxemonController::class, 'store']);
     });
+});
 
-    Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/mochila',        [MochilaController::class, 'index']);
-    Route::post('/mochila',       [MochilaController::class, 'store']);
-    Route::delete('/mochila/{id}',[MochilaController::class, 'destroy']);
-});
-});
