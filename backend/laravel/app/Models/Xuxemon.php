@@ -3,21 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Xuxemon extends Model
 {
-    protected $fillable = [
-        'nombre',
-        'tipo',
-        'evolucion',
-        'vida',
-        'ataque',
-        'defensa',
-        'imagen'
-    ];
+    protected $table = 'xuxemons';
+    protected $fillable = ['nombre', 'tipo', 'tamaño', 'imagen'];
 
-    public function colecciones()
+    public function colecciones(): HasMany
     {
-        return $this->hasMany(Coleccion::class);
+        return $this->hasMany(Coleccion::class, 'id_xuxemon');
     }
 }

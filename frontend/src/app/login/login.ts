@@ -3,11 +3,12 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
-  standalone: true,                               
-  imports: [CommonModule, ReactiveFormsModule],   
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
@@ -23,12 +24,12 @@ export class LoginComponent {
     private router: Router
   ) {
     this.loginForm = this.fb.group({
-      user_id:  ['', Validators.required],
+      id_usuario:  ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
-  get userIdControl() { return this.loginForm.get('user_id')!; }
+  get idUsuarioControl() { return this.loginForm.get('id_usuario')!; }
   get passwordControl() { return this.loginForm.get('password')!; }
 
   onSubmit() {
@@ -36,17 +37,25 @@ export class LoginComponent {
 
     this.loading = true;
     this.errorMsg = '';
+    console.log('Enviando login con:', this.loginForm.value);
 
     this.authService.login(this.loginForm.value).subscribe({
       next: (res: any) => {
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('role', res.user.role);
-        localStorage.setItem('user_id', res.user.user_id);
+        console.log('Login response:', res);
+        console.log('Token:', res.token);
+        console.log('User:', res.user);
+
+        sessionStorage.setItem('token', res.token);
+        sessionStorage.setItem('role', res.user.rol);
+        sessionStorage.setItem('user_id', res.user.id_usuario);
+
         this.loading = false;
+        console.log('Navegando a pagina-principal');
         this.router.navigate(['/pagina-principal']);
       },
-      error: () => {
-        this.errorMsg = 'ID o contrasenya incorrectes';
+      error: (err) => {
+        console.error('Login error:', err);
+        this.errorMsg = 'ID o contraseña incorrectos';
         this.loading = false;
       }
     });

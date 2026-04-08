@@ -3,20 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Item extends Model
 {
-    protected $table = 'items';
+    protected $fillable = ['nombre', 'tipo', 'icono', 'apilable'];
 
-    protected $fillable = [
-        'nombre',
-        'tipo',
-        'icono',
-        'apilable',
-    ];
-
-    public function mochila()
+    public function mochilas(): HasMany
     {
-        return $this->hasMany(Mochila::class, 'item_id');
+        return $this->hasMany(Mochila::class);
     }
 }
+

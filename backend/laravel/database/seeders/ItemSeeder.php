@@ -2,19 +2,44 @@
 
 namespace Database\Seeders;
 
-use App\Models\Item;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Item;
 
 class ItemSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        Item::insert([
-            ['nombre' => 'Xuxe Roja',  'tipo' => 'xuxe',  'icono' => '🍬', 'apilable' => true,  'created_at' => now(), 'updated_at' => now()],
-            ['nombre' => 'Xuxe Blava', 'tipo' => 'xuxe',  'icono' => '🍭', 'apilable' => true,  'created_at' => now(), 'updated_at' => now()],
-            ['nombre' => 'Xuxe Verda', 'tipo' => 'xuxe',  'icono' => '🍡', 'apilable' => true,  'created_at' => now(), 'updated_at' => now()],
-            ['nombre' => 'Vacuna A',   'tipo' => 'vacuna', 'icono' => '💉', 'apilable' => false, 'created_at' => now(), 'updated_at' => now()],
-            ['nombre' => 'Vacuna B',   'tipo' => 'vacuna', 'icono' => '💊', 'apilable' => false, 'created_at' => now(), 'updated_at' => now()],
+        Item::create([
+            'nombre' => 'Xuxe Roja',
+            'tipo' => 'xuxe',
+            'icono' => '🍬',
+            'apilable' => true,
+        ]);
+
+        Item::create([
+            'nombre' => 'Xuxe Blava',
+            'tipo' => 'xuxe',
+            'icono' => '🍭',
+            'apilable' => true,
+        ]);
+
+        Item::create([
+            'nombre' => 'Xuxe Verda',
+            'tipo' => 'xuxe',
+            'icono' => '🍡',
+            'apilable' => true,
+        ]);
+
+        Item::create([
+            'nombre' => 'Vacuna Especial',
+            'tipo' => 'vacuna',
+            'icono' => '💉',
+            'apilable' => false,
         ]);
     }
 }
+

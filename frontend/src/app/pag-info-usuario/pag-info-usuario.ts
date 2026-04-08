@@ -246,4 +246,19 @@ export class PagInfoUsuario implements OnInit {
   navegarAlAdmin() {
     this.router.navigate(['/admin']);
   }
+
+onLogout() {
+  this.authService.logout().subscribe({
+    next: () => {
+      this.authService.clearSession();
+      this.router.navigate(['/login']);
+    },
+    error: () => {
+      this.authService.clearSession();
+      this.router.navigate(['/login']);
+    }
+  });
+}
+
+
 }

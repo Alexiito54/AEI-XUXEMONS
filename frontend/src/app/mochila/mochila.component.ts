@@ -53,7 +53,7 @@ export class MochilaComponent implements OnInit {
     while (items.length < 20) items.push(null as any);
     return items.slice(0, 20);
   }
-
+  //función eliminar items 
   eliminarItem(id: number): void {
     this.mochilaService.eliminarItem(id).subscribe({
       next: () => this.cargarMochila(),

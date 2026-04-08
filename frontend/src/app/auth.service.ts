@@ -60,14 +60,22 @@ export class AuthService {
   }
 
   changePassword(passwordData: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/change-password`, passwordData);
+    return this.http.put(`${this.apiUrl}/user/password`, passwordData);
   }
 
   deleteUser(): Observable<any> {
     return this.http.delete(`${this.apiUrl}/user`);
   }
 
-  logout(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/logout`, {});
-  }
+ logout(): Observable<any> {
+  return this.http.post(`${this.apiUrl}/logout`, {});
+}
+
+clearSession() {
+  sessionStorage.removeItem('token');
+  sessionStorage.removeItem('user');
+}
+
+
+
 }
