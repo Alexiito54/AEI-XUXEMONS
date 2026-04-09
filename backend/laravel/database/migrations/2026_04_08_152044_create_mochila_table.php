@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('mochila', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_usuario')->constrained('users', 'id')->onDelete('cascade');
-            $table->foreignId('id_item')->constrained('items', 'id')->onDelete('cascade');
+            $table->unsignedBigInteger('id_item');
             $table->integer('cantidad')->default(1);
             $table->integer('slot')->nullable();
             $table->timestamps();
