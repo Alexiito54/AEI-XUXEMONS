@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('colecciones', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_usuario')->constrained('users', 'id')->onDelete('cascade');
-            $table->foreignId('id_xuxemon')->constrained('xuxemons', 'id')->onDelete('cascade');
+            $table->unsignedBigInteger('id_xuxemon');
             $table->timestamp('capturado_en')->useCurrent();
             $table->timestamps();
         });
