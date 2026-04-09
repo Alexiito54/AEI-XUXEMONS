@@ -41,22 +41,22 @@
 
         <!-- Campo ID -->
         <div class="form-group">
-          <label for="user_id">
-            <span class="label-icon">►</span> ID TRAINER
+          <label for="id_usuario">
+            <span class="label-icon">►</span> ID USUARIO
           </label>
           <div class="input-wrapper">
-            <input id="user_id" formControlName="user_id" placeholder="Introduce tu ID"
-                   [class.input-error]="userIdControl.invalid && userIdControl.touched"
-                   (blur)="userIdControl.markAsTouched()" />
+            <input id="id_usuario" formControlName="id_usuario" placeholder="Introduce tu ID"
+                   [class.input-error]="idUsuarioControl.invalid && idUsuarioControl.touched"
+                   (blur)="idUsuarioControl.markAsTouched()" />
             <span class="input-corner tl"></span>
             <span class="input-corner tr"></span>
             <span class="input-corner bl"></span>
             <span class="input-corner br"></span>
           </div>
-          @if (userIdControl.invalid && userIdControl.touched) {
+          @if (idUsuarioControl.invalid && idUsuarioControl.touched) {
             <div class="error-message">
-              @if (userIdControl.errors?.['required']) {
-                <small>✕ ID requerit</small>
+              @if (idUsuarioControl.errors?.['required']) {
+                <small>✕ ID requerido</small>
               }
             </div>
           }
