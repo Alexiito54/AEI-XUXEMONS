@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Coleccion extends Model
 {
     protected $table = 'colecciones';
-    protected $fillable = ['id_usuario', 'id_xuxemon'];
+    protected $fillable = ['id_usuario', 'id_xuxemon', 'tamaño_actual', 'nivel', 'alimentaciones_pendientes'];
 
     public function usuario(): BelongsTo
     {
@@ -18,6 +19,11 @@ class Coleccion extends Model
     public function xuxemon(): BelongsTo
     {
         return $this->belongsTo(Xuxemon::class, 'id_xuxemon');
+    }
+
+    public function enfermedades(): BelongsToMany
+    {
+        return $this->belongsToMany(Enfermedad::class, 'xuxemon_enfermedad', 'coleccion_id', 'enfermedad_id');
     }
 }
 
