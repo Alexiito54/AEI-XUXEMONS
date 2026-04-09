@@ -15,7 +15,7 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
-      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      # - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql  # No necesario, usamos Laravel migrations
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
@@ -60,8 +60,10 @@ services:
       sh -c "cp .env.docker .env &&
             composer install --no-dev --optimize-autoloader &&
             until php -r \"new PDO('mysql:host=db;port=3306;dbname=bd-xuxemons', 'xuxemons', 'xuxemons');\" 2>/dev/null; do echo 'Esperando MySQL...'; sleep 2; done &&
+            php artisan db:wipe --force 2>/dev/null || true &&
             php artisan migrate --force &&
-            apache2-foreground"
+            php artisan db:seed --force &&
+            php artisan serve --host=0.0.0.0 --port=80"
 
 
   # Frontend Angular
