@@ -34,10 +34,25 @@ class ItemSeeder extends Seeder
             'apilable' => true,
         ]);
 
+        // Vacunas específicas para NIVEL 3
         Item::create([
-            'nombre' => 'Vacuna Especial',
+            'nombre' => 'Xocolatina',
             'tipo' => 'vacuna',
-            'icono' => '💉',
+            'icono' => '🍫',
+            'apilable' => false,
+        ]);
+
+        Item::create([
+            'nombre' => 'Xal de fruites',
+            'tipo' => 'vacuna',
+            'icono' => '🍉',
+            'apilable' => false,
+        ]);
+
+        Item::create([
+            'nombre' => 'Inxulina',
+            'tipo' => 'vacuna',
+            'icono' => '💊',
             'apilable' => false,
         ]);
     }

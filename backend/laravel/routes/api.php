@@ -8,6 +8,10 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\MochilaController;
 use App\Http\Controllers\XuxemonController;
 use App\Http\Controllers\ColeccionController;
+use App\Http\Controllers\EnfermedadController;
+use App\Http\Controllers\VacunaController;
+use App\Http\Controllers\ConfiguracionAdminController;
+use App\Http\Controllers\DiarioController;
 
 // Public routes (no authentication required)
 Route::post('/register', [AuthController::class, 'register']);
@@ -18,6 +22,10 @@ Route::get('/items', [ItemController::class, 'index']);
 Route::get('/items/{item}', [ItemController::class, 'show']);
 Route::get('/xuxemons', [XuxemonController::class, 'index']);
 Route::get('/xuxemons/{xuxemon}', [XuxemonController::class, 'show']);
+Route::get('/enfermedades', [EnfermedadController::class, 'index']);
+Route::get('/enfermedades/{enfermedad}', [EnfermedadController::class, 'show']);
+Route::get('/vacunas', [VacunaController::class, 'index']);
+Route::get('/vacunas/{vacuna}', [VacunaController::class, 'show']);
 
 // Protected routes (requires authentication)
 Route::middleware('auth:sanctum')->group(function () {
@@ -38,12 +46,22 @@ Route::middleware('auth:sanctum')->group(function () {
     // Coleccion routes
     Route::get('/colecciones', [ColeccionController::class, 'index']);
     Route::post('/colecciones', [ColeccionController::class, 'store']);
+    Route::post('/colecciones/{coleccion}/alimentar', [ColeccionController::class, 'alimentar']);
+    Route::post('/colecciones/{coleccion}/curar', [ColeccionController::class, 'curar']);
     Route::delete('/colecciones/{coleccion}', [ColeccionController::class, 'destroy']);
+
+    // Diario routes
+    Route::post('/diario/xuxes', [DiarioController::class, 'reclamarXuxesDiarios']);
+    Route::post('/diario/xuxemon', [DiarioController::class, 'reclamarXuxemonDiario']);
 
     // Admin only routes
     Route::middleware('admin')->group(function () {
         Route::post('/items', [ItemController::class, 'store']);
         Route::post('/xuxemons', [XuxemonController::class, 'store']);
+        Route::post('/enfermedades', [EnfermedadController::class, 'store']);
+        Route::post('/vacunas', [VacunaController::class, 'store']);
+        Route::get('/configuracion', [ConfiguracionAdminController::class, 'show']);
+        Route::put('/configuracion', [ConfiguracionAdminController::class, 'update']);
     });
 });
 
