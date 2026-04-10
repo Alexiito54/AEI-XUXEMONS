@@ -17,6 +17,14 @@ export interface MochilaItem {
   };
 }
 
+export interface Item {
+  id: number;
+  nombre: string;
+  tipo: 'xuxe' | 'vacuna';
+  icono: string;
+  apilable: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -29,8 +37,12 @@ export class MochilaService {
     return this.http.get<MochilaItem[]>(`${this.apiUrl}/mochila`);
   }
 
-  añadirItem(item_id: number, cantidad: number, user_id: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/mochila`, { item_id, cantidad, user_id });
+  getItems(): Observable<Item[]> {
+    return this.http.get<Item[]>(`${this.apiUrl}/items`);
+  }
+
+  añadirItem(item_id: number, cantidad: number, id_usuario: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/mochila`, { id_item: item_id, cantidad, id_usuario });
   }
 
   eliminarItem(id: number): Observable<any> {

@@ -38,7 +38,7 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  getUserFromStorage(): any {
+  getStoredUser(): any {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
   }
@@ -48,7 +48,7 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
-    return this.getUserFromStorage()?.role === 'admin';
+    return this.getStoredUser()?.role === 'admin';
   }
 
   getUser(): Observable<any> {
@@ -71,5 +71,8 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
   }
-
 }
+
+
+
+
