@@ -27,22 +27,24 @@ class MochilaController extends Controller
         ]);
 
         $user = $request->user();
-        if ($user->id != $validated['id_usuario']) {
+        $targetUserId = $validated['id_usuario'];
+
+        if ($user->id != $targetUserId && $user->rol !== 'administrador') {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 
         $item = Item::find($validated['id_item']);
         $cantidad = $validated['cantidad'];
 
-        // Contar slots ocupados
-        $slotsOcupados = Mochila::where('id_usuario', $user->id)->count();
+        // Contar slots ocupados en la mochila del jugador objetivo
+        $slotsOcupados = Mochila::where('id_usuario', $targetUserId)->count();
         if ($slotsOcupados >= 20) {
             return response()->json(['message' => 'Mochila llena'], 400);
         }
 
         if ($item->apilable) {
             // Xuxes: máx 5 por slot
-            $existing = Mochila::where('id_usuario', $user->id)
+            $existing = Mochila::where('id_usuario', $targetUserId)
                 ->where('id_item', $item->id)
                 ->first();
 
@@ -56,7 +58,7 @@ class MochilaController extends Controller
             while ($cantidad > 0 && $slotsOcupados < 20) {
                 $cantidadSlot = min(5, $cantidad);
                 Mochila::create([
-                    'id_usuario' => $user->id,
+                    'id_usuario' => $targetUserId,
                     'id_item' => $item->id,
                     'cantidad' => $cantidadSlot,
                 ]);
@@ -67,15 +69,21 @@ class MochilaController extends Controller
             // Vacunas: 1 por slot
             for ($i = 0; $i < $cantidad && $slotsOcupados < 20; $i++) {
                 Mochila::create([
-                    'id_usuario' => $user->id,
+                    'id_usuario' => $targetUserId,
                     'id_item' => $item->id,
                     'cantidad' => 1,
                 ]);
+                $cantidad--;
                 $slotsOcupados++;
             }
         }
 
-        return response()->json(['message' => 'Artículo añadido'], 201);
+        $message = 'Artículo añadido';
+        if ($cantidad > 0) {
+            $message = 'Artículo añadido. Algunas unidades sobrantes fueron descartadas porque la mochila estaba llena.';
+        }
+
+        return response()->json(['message' => $message], 201);
     }
 
     public function destroy(Request $request, Mochila $mochila)
