@@ -38,7 +38,7 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  getUser(): any {
+  getStoredUser(): any {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
   }
@@ -48,7 +48,7 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
-    return this.getUser()?.role === 'admin';
+    return this.getStoredUser()?.role === 'admin';
   }
 
   getUser(): Observable<any> {
@@ -67,15 +67,12 @@ export class AuthService {
     return this.http.delete(`${this.apiUrl}/user`);
   }
 
- logout(): Observable<any> {
-  return this.http.post(`${this.apiUrl}/logout`, {});
-}
-
-clearSession() {
-  sessionStorage.removeItem('token');
-  sessionStorage.removeItem('user');
+  clearSession() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  }
 }
 
 
 
-}
+

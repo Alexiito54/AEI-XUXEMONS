@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* Estilos generales de la mochila */
 /* --- MOTXILLA --- */
 .mochila-page {
   max-width: 700px;
@@ -47,6 +50,7 @@
 .item-vacio { color: #bbb; font-size: 2em; }
 
 /* Panel admin */
+/* Estilo del panel de administración que solo ve el usuario administrador */
 .admin-panel {
   margin-top: 32px;
   padding: 18px 16px;
@@ -71,6 +75,81 @@
 }
 .admin-panel button:hover { background: #6d2fc7; }
 .admin-error { color: #e03030; font-size: 13px; margin-left: 10px; }
+
+.admin-panel-custom {
+  background: #1a1a2e;
+  border: 2px solid #ffd700;
+  padding: 15px;
+  margin: 15px 0;
+  color: #ffd700;
+  font-family: 'Press Start 2P', monospace;
+}
+.admin-panel-custom h3 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+}
+.admin-panel-row {
+  margin-bottom: 10px;
+}
+.admin-panel-row label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+.admin-panel-row input,
+.admin-panel-row select {
+  width: 100%;
+  padding: 5px;
+  background: #0f0f1e;
+  border: 1px solid #ffd700;
+  color: #ffd700;
+  font-family: monospace;
+}
+.admin-panel-button {
+  width: 100%;
+  padding: 8px;
+  background: #ffd700;
+  color: #1a1a2e;
+  border: none;
+  font-family: 'Press Start 2P', monospace;
+  cursor: pointer;
+  font-weight: bold;
+}
+.admin-panel-items {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #ffd700;
+  font-size: 11px;
+}
+.admin-panel-items p {
+  margin: 5px 0;
+}
+.admin-panel-items-list {
+  max-height: 80px;
+  overflow-y: auto;
+}
+.admin-panel-item {
+  padding: 3px 0;
+}
+.admin-panel-item span {
+  opacity: 0.7;
+}
+.admin-panel-message {
+  padding: 8px;
+  margin-top: 10px;
+  font-size: 11px;
+  border: 1px solid;
+}
+.admin-panel-message.error {
+  background: #3d0000;
+  color: #ff4444;
+  border-color: #ff4444;
+}
+.admin-panel-message.success {
+  background: #003d00;
+  color: #44ff44;
+  border-color: #44ff44;
+}
 /* Variables de colores y temas globales */
 :root {
   --bg: #f6f6f6;
@@ -93,6 +172,7 @@ body {
   margin: 0;
   font-family: "Press Start 2P", system-ui, "Segoe UI", Arial, sans-serif;
   background: var(--bg);
+  /* Fondo de pantalla fijo para efecto retro */
   color: var(--text);
   background-image: url("./imagen/noche.gif");
   background-repeat: no-repeat;
@@ -102,6 +182,7 @@ body {
 }
 
 /* Contenedor principal centrado con efecto retro arcade */
+/* Esta clase es el fondo de la página y el contenedor principal */
 .main-page {
   min-height: 100vh;
   display: flex;

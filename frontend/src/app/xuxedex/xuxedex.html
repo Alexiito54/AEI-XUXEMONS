@@ -1,0 +1,183 @@
+<div class="app">
+    
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo-box"><h1>XUXEMONS</h1></div>
+    <nav class="nav-box">
+      <div class="nav-item"
+           [class.active]="false"
+           (click)="navegarAlInicio()">Inicio</div>
+
+      <div class="nav-item active"
+           (click)="navegarAlXuxedex()">Xuxedex</div>
+
+      <div class="nav-item"
+           (click)="navegarAlInventario()">Mochila</div>
+
+      <div class="nav-item"
+           (click)="navegarAlAmigos()">Amigos</div>
+
+      <div class="nav-item"
+           (click)="navegarAlBatalla()">Batalla</div>
+
+      <div class="nav-item"
+           (click)="navegarAlChat()">Chat</div>
+
+      <div class="nav-item"
+           (click)="navegarAlPerfil()">Perfil</div>
+
+      <!-- Solo visible si isAdmin es true -->
+      @if (isAdmin) {
+        <div class="nav-item"
+             (click)="navegarAlAdmin()">Admin</div>
+      }
+    </nav>
+  </aside>
+
+  <!-- MAIN DEX -->
+  <main class="dex-shell">
+
+    <!-- Luces decorativas superiores -->
+    <div class="dex-lights">
+      <div class="light"></div>
+      <div class="light"></div>
+      <div class="light"></div>
+      <div class="light-bar"></div>
+    </div>
+
+    <!-- Pantalla resumen -->
+    <div class="dex-screen-wrap">
+      <div class="dex-screen">
+        <div class="dex-screen-text">
+          <strong>XUXEDEX</strong><br>
+          Hola, Entrenador!<br>
+          Tu registro de Xuxemons.
+        </div>
+        <div class="dex-counter">
+          ATRAPADOS<br>
+          <span id="caught-count">{{ caughtCount }}</span> /
+          <span id="total-count">{{ totalCount }}</span>
+          <br><br>
+          VISTOS<br>
+          <span id="seen-count">{{ seenCount }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barra de búsqueda y filtros -->
+    <div class="filter-bar">
+      <input
+        class="search-box"
+        type="text"
+        placeholder="BUSCAR XUXEMON..."
+        [ngModel]="currentSearch"
+        (ngModelChange)="onSearchChange($event)"
+      />
+
+      <button
+        class="filter-btn"
+        [class.active]="currentFilter === 'todos'"
+        (click)="setFilter('todos')">
+        TODOS
+      </button>
+
+      <button
+        class="filter-btn"
+        [class.active]="currentFilter === 'atrapado'"
+        (click)="setFilter('atrapado')">
+        ✔ ATRAPAD.
+      </button>
+
+      <button
+        class="filter-btn"
+        [class.active]="currentFilter === 'visto'"
+        (click)="setFilter('visto')">
+        👁 VISTOS
+      </button>
+
+      <button
+        class="filter-btn"
+        [class.active]="currentFilter === 'nuevo'"
+        (click)="setFilter('nuevo')">
+        ? NUEVOS
+      </button>
+    </div>
+
+    <div class="grid-title">XUXEDEX</div>
+
+    <!-- Grid de Xuxemons -->
+    <div class="xuxemon-grid" id="xuxemon-grid">
+      @for ( x of listFiltrada; track x.id) {
+        <div
+          class="xuxemon-card"
+          (click)="abrirModal(x)"
+        >
+          <div class="xuxemon-card-num">
+            #{{ x.id | number:'3.0' }}
+          </div>
+
+          <div class="xuxemon-card-sprite">
+            <img [src]="x.imagen" [alt]="x.nombre">
+          </div>
+
+          <div class="xuxemon-card-name">
+            {{ x.nombre }}
+          </div>
+
+          <div class="xuxemon-card-types">
+            <span class="type-pill">{{ x.tipo }}</span>
+          </div>
+
+          <div class="xuxemon-card-tags">
+            @if (x.atrapado) {
+              <span class="tag tag-caught">✔</span>
+            }
+            @if (x.visto) {
+              <span class="tag tag-seen">👁</span>
+            }
+            @if (x.nuevo) {
+              <span class="tag tag-new">NEW</span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL de detalle -->
+<div
+  class="modal-overlay"
+  [class.open]="modalAbierto"
+  (click)="cerrarModal()"
+>
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-close" (click)="cerrarModal()">✕ CERRAR</div>
+
+    @if (selected) {
+      <div class="modal-screen">
+        <div class="modal-sprite">
+          <img [src]="selected.imagen" [alt]="selected.nombre">
+        </div>
+        <div class="modal-info">
+          <div class="modal-num">
+            #{{ selected.id | number:'3.0' }}
+          </div>
+          <div class="modal-name">
+            {{ selected.nombre }}
+          </div>
+          <div class="modal-types">
+            <span class="type-pill">{{ selected.tipo }}</span>
+            <span class="type-pill">{{ selected.tamano }}</span>
+          </div>
+          <div class="modal-desc">
+            Estado: {{ selected.atrapado ? 'ATRAPADO ✔' : 'NO ATRAPADO' }}
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>
