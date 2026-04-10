@@ -29,9 +29,10 @@
            (click)="navegarAlPerfil()">Perfil</div>
 
       <!-- Solo visible si isAdmin es true -->
-      <div class="nav-item"
-           *ngIf="isAdmin"
-           (click)="navegarAlAdmin()">Admin</div>
+      @if (isAdmin) {
+        <div class="nav-item"
+             (click)="navegarAlAdmin()">Admin</div>
+      }
     </nav>
   </aside>
 
@@ -108,37 +109,40 @@
 
     <!-- Grid de Xuxemons -->
     <div class="xuxemon-grid" id="xuxemon-grid">
-      <div
-        class="xuxemon-card"
-        *ngFor="let x of listFiltrada"
-        (click)="abrirModal(x)"
-      >
-        <div class="xuxemon-card-num">
-          #{{ x.id | number:'3.0' }}
-        </div>
+      @for ( x of listFiltrada; track x.id) {
+        <div
+          class="xuxemon-card"
+          (click)="abrirModal(x)"
+        >
+          <div class="xuxemon-card-num">
+            #{{ x.id | number:'3.0' }}
+          </div>
 
-        <div class="xuxemon-card-sprite">
-          <img [src]="x.sprite" [alt]="x.nombre">
-        </div>
+          <div class="xuxemon-card-sprite">
+            <img [src]="x.imagen" [alt]="x.nombre">
+          </div>
 
-        <div class="xuxemon-card-name">
-          {{ x.nombre }}
-        </div>
+          <div class="xuxemon-card-name">
+            {{ x.nombre }}
+          </div>
 
-        <div class="xuxemon-card-types">
-          <span
-            class="type-pill"
-            *ngFor="let t of x.tipos">
-            {{ t }}
-          </span>
-        </div>
+          <div class="xuxemon-card-types">
+            <span class="type-pill">{{ x.tipo }}</span>
+          </div>
 
-        <div class="xuxemon-card-tags">
-          <span class="tag tag-caught" *ngIf="x.atrapado">✔</span>
-          <span class="tag tag-seen" *ngIf="x.visto">👁</span>
-          <span class="tag tag-new" *ngIf="x.nuevo">NEW</span>
+          <div class="xuxemon-card-tags">
+            @if (x.atrapado) {
+              <span class="tag tag-caught">✔</span>
+            }
+            @if (x.visto) {
+              <span class="tag tag-seen">👁</span>
+            }
+            @if (x.nuevo) {
+              <span class="tag tag-new">NEW</span>
+            }
+          </div>
         </div>
-      </div>
+      }
     </div>
 
   </main>
@@ -153,32 +157,27 @@
   <div class="modal-box" (click)="$event.stopPropagation()">
     <div class="modal-close" (click)="cerrarModal()">✕ CERRAR</div>
 
-    <div class="modal-screen" *ngIf="selected as s">
-      <div class="modal-sprite">
-        <img [src]="s.sprite" [alt]="s.nombre">
+    @if (selected) {
+      <div class="modal-screen">
+        <div class="modal-sprite">
+          <img [src]="selected.imagen" [alt]="selected.nombre">
+        </div>
+        <div class="modal-info">
+          <div class="modal-num">
+            #{{ selected.id | number:'3.0' }}
+          </div>
+          <div class="modal-name">
+            {{ selected.nombre }}
+          </div>
+          <div class="modal-types">
+            <span class="type-pill">{{ selected.tipo }}</span>
+            <span class="type-pill">{{ selected.tamano }}</span>
+          </div>
+          <div class="modal-desc">
+            Estado: {{ selected.atrapado ? 'ATRAPADO ✔' : 'NO ATRAPADO' }}
+          </div>
+        </div>
       </div>
-      <div class="modal-info">
-        <div class="modal-num">
-          #{{ s.id | number:'3.0' }}
-        </div>
-        <div class="modal-name">
-          {{ s.nombre }}
-        </div>
-        <div class="modal-types">
-          <span class="type-pill" *ngFor="let t of s.tipos">
-            {{ t }}
-          </span>
-        </div>
-        <div class="modal-desc">
-          {{ s.descripcion }}
-        </div>
-      </div>
-    </div>
-
-    <div class="modal-stats">
-      <div class="stat-line" *ngFor="let st of statsEjemplo">
-        {{ st.label }}: {{ st.valor }}
-      </div>
-    </div>
+    }
   </div>
 </div>
