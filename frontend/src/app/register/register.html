@@ -17,30 +17,32 @@
         <p class="subtitle">— PRESS START —</p>
       </div>
 
- <div *ngIf="registeredUserId" class="success-gameboy">
-  <div class="gameboy-screen">
-    <div class="success-header">
-      <h2>REGISTRO EXITOSO</h2>
+ @if (registeredUserId) {
+  <div class="success-gameboy">
+    <div class="gameboy-screen">
+      <div class="success-header">
+        <h2>REGISTRO EXITOSO</h2>
+      </div>
+      
+      <div class="success-id-box">
+        <span class="label">ID DE USUARIO:</span>
+        <div class="id-display">{{ registeredUserId }}</div>
+      </div>
+      
+      <div class="success-instructions">
+        <p>ANÓTALO PARA LOGIN</p>
+      </div>
+      
+      <a routerLink="/login" class="btn-gameboy">
+        ▶ IR AL LOGIN
+      </a>
     </div>
-    
-    <div class="success-id-box">
-      <span class="label">ID DE USUARIO:</span>
-      <div class="id-display">{{ registeredUserId }}</div>
-    </div>
-    
-    <div class="success-instructions">
-      <p>ANÓTALO PARA LOGIN</p>
-    </div>
-    
-    <a routerLink="/login" class="btn-gameboy">
-      ▶ IR AL LOGIN
-    </a>
   </div>
-</div>
+ }
 
 
-
-  <form *ngIf="!registeredUserId" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+  @if (!registeredUserId) {
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <!-- Campo nombre -->
         <div class="form-group">
           <label for="name">Nombre</label>
@@ -48,10 +50,16 @@
                  [class.input-error]="nameControl.invalid && nameControl.touched"
                  (blur)="nameControl.markAsTouched()" />
           <!-- Mensajes de error del nombre -->
-          <div class="error-message" *ngIf="nameControl.invalid && nameControl.touched">
-            <small *ngIf="nameControl.errors?.['required']">Nombre requerido</small>
-            <small *ngIf="nameControl.errors?.['maxlength']">Máx. 50 caracteres</small>
-          </div>
+          @if (nameControl.invalid && nameControl.touched) {
+            <div class="error-message">
+              @if (nameControl.errors?.['required']) {
+                <small>Nombre requerido</small>
+              }
+              @if (nameControl.errors?.['maxlength']) {
+                <small>Máx. 50 caracteres</small>
+              }
+            </div>
+          }
         </div>
 
         <!-- Campo apellidos -->
@@ -60,10 +68,16 @@
           <input id="apellidos" formControlName="apellidos" placeholder="Introduce tus apellidos"
                  [class.input-error]="apellidosControl.invalid && apellidosControl.touched"
                  (blur)="apellidosControl.markAsTouched()" />
-          <div class="error-message" *ngIf="apellidosControl.invalid && apellidosControl.touched">
-            <small *ngIf="apellidosControl.errors?.['required']">Apellidos requeridos</small>
-            <small *ngIf="apellidosControl.errors?.['maxlength']">Máx. 100 caracteres</small>
-          </div>
+          @if (apellidosControl.invalid && apellidosControl.touched) {
+            <div class="error-message">
+              @if (apellidosControl.errors?.['required']) {
+                <small>Apellidos requeridos</small>
+              }
+              @if (apellidosControl.errors?.['maxlength']) {
+                <small>Máx. 100 caracteres</small>
+              }
+            </div>
+          }
         </div>
 
         <!-- Campo email -->
@@ -72,10 +86,16 @@
           <input id="email" formControlName="email" type="email" placeholder="email@ejemplo.com" 
                  [class.input-error]="emailControl.invalid && emailControl.touched"
                  (blur)="emailControl.markAsTouched()" />
-          <div class="error-message" *ngIf="emailControl.invalid && emailControl.touched">
-            <small *ngIf="emailControl.errors?.['required']">Email requerido</small>
-            <small *ngIf="emailControl.errors?.['email']">Formato email inválido</small>
-          </div>
+          @if (emailControl.invalid && emailControl.touched) {
+            <div class="error-message">
+              @if (emailControl.errors?.['required']) {
+                <small>Email requerido</small>
+              }
+              @if (emailControl.errors?.['email']) {
+                <small>Formato email inválido</small>
+              }
+            </div>
+          }
         </div>
 
         <!-- Campo contraseña -->
@@ -84,10 +104,16 @@
           <input id="password" formControlName="password" type="password" placeholder="Mín. 6 caracteres" 
                  [class.input-error]="passwordControl.invalid && passwordControl.touched"
                  (blur)="passwordControl.markAsTouched()" />
-          <div class="error-message" *ngIf="passwordControl.invalid && passwordControl.touched">
-            <small *ngIf="passwordControl.errors?.['required']">Contrasenya requerida</small>
-            <small *ngIf="passwordControl.errors?.['minlength']">Mínimo 6 caracteres</small>
-          </div>
+          @if (passwordControl.invalid && passwordControl.touched) {
+            <div class="error-message">
+              @if (passwordControl.errors?.['required']) {
+                <small>Contrasenya requerida</small>
+              }
+              @if (passwordControl.errors?.['minlength']) {
+                <small>Mínimo 6 caracteres</small>
+              }
+            </div>
+          }
         </div>
 
         <!-- Repetir contraseña, uso un validator personalizado en el .ts para comprobar que coinciden -->
@@ -97,18 +123,24 @@
                  placeholder="Repite la contrasenya" 
                  [class.input-error]="passwordMismatch"
                  (blur)="onPasswordConfirmTouched()" />
-          <div class="error-message" *ngIf="passwordMismatch">
-            <small>Les contrasenyes no coincideixen</small>
-          </div>
+          @if (passwordMismatch) {
+            <div class="error-message">
+              <small>Les contrasenyes no coincideixen</small>
+            </div>
+          }
         </div>
 
         <!-- Botón enviar, deshabilitado si el form no es válido o está cargando -->
         <button type="submit" class="btn-register" [disabled]="loading || registerForm.invalid">
-          <span *ngIf="loading; else registerText">Registrant...</span>
-          <ng-template #registerText>REGISTRAR</ng-template>
+          @if (loading) {
+            <span>Registrant...</span>
+          } @else {
+            <span>REGISTRAR</span>
+          }
         </button>
 
       </form>
-    </div>
+    }
   </div>
+</div>
 </section>
