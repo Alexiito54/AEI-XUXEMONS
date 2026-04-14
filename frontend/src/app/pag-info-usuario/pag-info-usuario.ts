@@ -62,12 +62,12 @@ export class PagInfoUsuario implements OnInit {
     this.isLoading = true;
     this.errorMsg = '';
     this.authService.getUser().subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.currentUser = response.data || response;
         this.userData = { ...this.currentUser };
         this.isLoading = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         this.errorMsg = error.error?.message || 'Error al cargar los datos del usuario';
         this.isLoading = false;
         console.error('Error loading user:', error);

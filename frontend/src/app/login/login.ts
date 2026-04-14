@@ -48,6 +48,7 @@ export class LoginComponent {
         sessionStorage.setItem('token', res.token);
         sessionStorage.setItem('role', res.user.rol);
         sessionStorage.setItem('user_id', res.user.id_usuario);
+        sessionStorage.setItem('user_internal_id', res.user.id.toString());
 
         this.loading = false;
         console.log('Navegando a pagina-principal');
