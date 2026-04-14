@@ -29,7 +29,7 @@ export class Xuxedex implements OnInit {
 
   // Datos desde la API
   xuxemons: Xuxemon[] = [];
-  xuxemonCapturados: Set<number> = new Set();
+  xuxemonCapturados: number[] = [];
   isLoading = true;
   errorMsg = '';
 
@@ -75,15 +75,16 @@ export class Xuxedex implements OnInit {
   cargarColeccion(): void {
     this.xuxemonsService.getColeccion().subscribe({
       next: (coleccion: any[]) => {
-        this.xuxemonCapturados.clear();
+        // CORRECCIÓN: Usar push() en lugar de add() para permitir duplicados
+        this.xuxemonCapturados = [];
         coleccion.forEach(item => {
-          this.xuxemonCapturados.add(item.xuxemon_id);
+          this.xuxemonCapturados.push(item.xuxemon_id);
         });
         // Marcar como atrapados en la lista
         this.xuxemons = this.xuxemons.map(x => ({
           ...x,
-          atrapado: this.xuxemonCapturados.has(x.id),
-          visto: this.xuxemonCapturados.has(x.id),
+          atrapado: this.xuxemonCapturados.includes(x.id), // includes() en lugar de has()
+          visto: this.xuxemonCapturados.includes(x.id),
           nuevo: false
         }));
         this.isLoading = false;
