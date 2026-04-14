@@ -29,6 +29,25 @@ class XuxemonController extends Controller
     {
         return response()->json($xuxemon, 200);
     }
+
+    public function update(Request $request, Xuxemon $xuxemon)
+    {
+        $validated = $request->validate([
+            'nombre' => 'sometimes|string|max:255',
+            'tipo' => 'sometimes|in:Agua,Tierra,Aire',
+            'tamaño' => 'sometimes|in:Pequeño,Mediano,Grande',
+            'imagen' => 'nullable|string',
+        ]);
+
+        $xuxemon->update($validated);
+        return response()->json($xuxemon, 200);
+    }
+
+    public function destroy(Xuxemon $xuxemon)
+    {
+        $xuxemon->delete();
+        return response()->json(null, 204);
+    }
 }
 
 
