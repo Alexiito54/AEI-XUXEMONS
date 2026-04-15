@@ -35,7 +35,7 @@ class TestUserSeeder extends Seeder
                     'email' => $usuario['email'],
                     'password' => Hash::make('password123'),
                     'id_usuario' => $usuario['id_usuario'],
-                    'rol' => 'user',
+                    'rol' => 'jugador',
                 ]);
 
                 echo "Usuario '{$usuario['name']}' creado correctamente\n";
