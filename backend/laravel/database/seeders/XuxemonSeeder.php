@@ -120,6 +120,27 @@ class XuxemonSeeder extends Seeder
             'tamaño' => 'Grande',
             'imagen' => 'Cabra aire - 3.png',
         ]);
+
+                Xuxemon::create([
+            'nombre' => 'Dragofluff',
+            'tipo' => 'Aire',
+            'tamaño' => 'Pequeño',
+            'imagen' => 'Dragon aire - 1.png',
+        ]);
+
+        Xuxemon::create([
+            'nombre' => 'Kingfluff',
+            'tipo' => 'Aire',
+            'tamaño' => 'Mediano',
+            'imagen' => 'Dragon aire - 2.png',
+        ]);
+
+        Xuxemon::create([
+            'nombre' => 'Ancientus',
+            'tipo' => 'Aire',
+            'tamaño' => 'Grande',
+            'imagen' => 'Dragon aire - 3.png',
+        ]);
     }
 }
 
