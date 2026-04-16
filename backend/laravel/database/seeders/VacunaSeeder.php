@@ -27,7 +27,7 @@ class VacunaSeeder extends Seeder
             ],
             [
                 'nombre' => 'Inxulina',
-                'cura_enfermedad_id' => null, // null = cura todas
+                'cura_enfermedad_id' => null, 
             ],
         ];
 
