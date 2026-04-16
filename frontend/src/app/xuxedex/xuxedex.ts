@@ -73,7 +73,7 @@ export class Xuxedex implements OnInit {
           nombre: x.nombre,
           tipo: x.tipo,
           tamano: x.tamaño || x.tamano || 'Normal',
-          imagen: x.imagen,
+          imagen: this.obtenerImagenXuxemon(x),
           atrapado: false,
           visto: false,
           nuevo: false
@@ -107,19 +107,61 @@ export class Xuxedex implements OnInit {
     });
   }
 
+  private obtenerImagenXuxemon(x: any): string {
+    const imagen = x.imagen?.toString().trim();
+    if (imagen) {
+      if (/^https?:\/\//.test(imagen) || imagen.startsWith('/')) {
+        return encodeURI(imagen);
+      }
+      return encodeURI(`/images/xuxemons/${imagen}`);
+    }
+
+    return this.obtenerImagenPorTipoTamaño(x.tipo, x.tamaño || x.tamano);
+  }
+
+  private obtenerImagenPorTipoTamaño(tipo: string, tamaño: string): string {
+    const size = (tamaño || '').toLowerCase();
+    switch (tipo) {
+      case 'Agua':
+        if (size.includes('peque')) return '/images/xuxemons/Slime agua - 1.png';
+        if (size.includes('med')) return '/images/xuxemons/Dragon agua - 2.png';
+        if (size.includes('gran')) return '/images/xuxemons/Dragon agua - 3.png';
+        return '/images/xuxemons/Slime agua - 1.png';
+      case 'Tierra':
+        if (size.includes('peque')) return '/images/xuxemons/Roca - 1.png';
+        if (size.includes('med')) return '/images/xuxemons/Golem roca - 2.png';
+        if (size.includes('gran')) return '/images/xuxemons/Golem roca - 3.png';
+        return '/images/xuxemons/Roca - 1.png';
+      case 'Aire':
+        if (size.includes('peque')) return '/images/xuxemons/Cabra aire - 1.png';
+        if (size.includes('med')) return '/images/xuxemons/Cabra aire - 2.png';
+        if (size.includes('gran')) return '/images/xuxemons/Cabra fuego - 3.png';
+        return '/images/xuxemons/Ave fuego - 1.png';
+      default:
+        return '/images/xuxemons/Dragon agua - 1.png';
+    }
+  }
+
   cargarColeccion(): void {
     this.xuxemonsService.getColeccion().subscribe({
       next: (coleccion: any[]) => {
+<<<<<<< HEAD
         this.coleccionCompleta = coleccion;
         this.xuxemonCapturados.clear();
         coleccion.forEach(item => {
           this.xuxemonCapturados.set(item.xuxemon_id, item);
+=======
+        // CORRECCIÓN: Usar push() en lugar de add() para permitir duplicados
+        this.xuxemonCapturados = [];
+        coleccion.forEach(item => {
+          this.xuxemonCapturados.push(item.xuxemon_id);
+>>>>>>> 23ace1817eac1b8badfad1d4fc07de826f6a73fc
         });
         // Marcar como atrapados en la lista
         this.xuxemons = this.xuxemons.map(x => ({
           ...x,
-          atrapado: this.xuxemonCapturados.has(x.id),
-          visto: this.xuxemonCapturados.has(x.id),
+          atrapado: this.xuxemonCapturados.includes(x.id), // includes() en lugar de has()
+          visto: this.xuxemonCapturados.includes(x.id),
           nuevo: false
         }));
         this.isLoading = false;

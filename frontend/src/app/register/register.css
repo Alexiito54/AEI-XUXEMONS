@@ -232,6 +232,17 @@ html, body {
   animation: pixelBlink 2s infinite alternate;
 }
 
+.login-link-box {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.btn-login {
+  max-width: 220px;
+  text-align: center;
+}
+
 /* Formulario — NO usa flex dinámico, usa gap fijo */
 form {
   width: 100%;
