@@ -3,11 +3,8 @@
 <section class="main-page">
   <div class="main-content">
     <div class="welcome-section">
-      <h2 class="welcome-title">Explora tu mochila</h2>
-      <br>
-      <br>
-      <p class="welcome-description">- Resumen de tu aventura -</p>
-      <br>
+      <h2 class="welcome-title">📦 Tu Mochila</h2>
+      <p class="welcome-description">Espacios ocupados: {{ mochila.length }}/20</p>
     </div>
 
     <div class="menu-section">
@@ -27,31 +24,27 @@
       </div>
     </div>
 
-    <div class="mochila-header">
-      <h2>🎒 Mochila</h2>
-      <p>Espacios ocupados: {{ mochila.length }}/20</p>
-    </div>
-
     <!-- Mensaje de carga y errores -->
     @if (cargando) {
-      <div>Carregant...</div>
+      <div class="loading-message">⏳ Cargando mochila...</div>
     }
     @if (error) {
-      <div class="admin-error">{{ error }}</div>
+      <div class="error-message">❌ {{ error }}</div>
     }
 
-    <!-- Solo los administradores ven este panel -->
+    <!-- Panel Admin -->
     @if (isAdmin) {
       <div class="admin-panel-custom">
-        <h3>⚙️ PANEL ADMIN</h3>
+        <h3>⚙️ PANEL ADMINISTRADOR</h3>
+        <p style="font-size: 11px; color: #666;">Gestiona items para jugadores</p>
 
         <div class="admin-panel-row">
-          <label>Jugador (ID interno):</label>
-          <input type="number" [(ngModel)]="adminTargetUserId" min="1">
+          <label>Jugador (ID):</label>
+          <input type="number" [(ngModel)]="adminTargetUserId" min="1" placeholder="Ingresa ID del jugador">
         </div>
 
         <div class="admin-panel-row">
-          <label>Item Xuxe:</label>
+          <label>Item a añadir:</label>
           <select [(ngModel)]="adminItemId">
             @for (item of availableItems; track item.id) {
               <option [value]="item.id">{{ item.icono }} {{ item.nombre }}</option>
@@ -61,11 +54,11 @@
 
         <div class="admin-panel-row">
           <label>Cantidad:</label>
-          <input type="number" [(ngModel)]="adminCantidad" min="1">
+          <input type="number" [(ngModel)]="adminCantidad" min="1" value="1">
         </div>
 
         <button class="admin-panel-button" (click)="adminAddXuxes()">
-          AÑADIR XUXES
+          ✅ AÑADIR XUXES
         </button>
 
         @if (adminError) {
@@ -81,10 +74,13 @@
 
         @if (availableItems.length > 0) {
           <div class="admin-panel-items">
-            <p>Items disponibles:</p>
+            <p><strong>📋 Items Xuxe disponibles:</strong></p>
             <div class="admin-panel-items-list">
               @for (item of availableItems; track item.id) {
-                <div class="admin-panel-item">{{ item.icono }} {{ item.nombre }}<span> - {{ item.apilable ? 'Apilable(5)' : 'No apilable' }}</span></div>
+                <div class="admin-panel-item">
+                  {{ item.icono }} <strong>{{ item.nombre }}</strong>
+                  <span style="color: #999;"> ({{ item.apilable ? 'Apilable ×5' : 'No apilable' }})</span>
+                </div>
               }
             </div>
           </div>
@@ -92,37 +88,63 @@
       </div>
     }
 
-    <div class="card card--team">
-      <div class="card-xuxemon-image-placeholder"></div>
-      <div class="card-xuxemon-content">
-        <div class="card-xuxemon-header">
-          <h3 class="card-xuxemon-name">Rocky</h3>
-          <span class="card-xuxemon-level">Lvl 21</span>
+    <!-- Contenedor principal de mochila -->
+    <div class="mochila-container">
+      <div class="mochila-header-bar">
+        <h2>🎒 MOCHILA - {{ mochila.length }}/20 espacios</h2>
+      </div>
+
+      <!-- Resumen de items -->
+      <div class="mochila-summary">
+        <div class="summary-item">
+          <span class="summary-label">Xuxes:</span>
+          <span class="summary-value">{{ (mochila | slice:0 | reduce: (acc, item) => item.item.tipo === 'xuxe' ? acc + item.cantidad : acc; init: 0) }}</span>
         </div>
-        <div class="card-xuxemon-type">
-          <span class="type-badge type-roca">ROCA</span>
+        <div class="summary-item">
+          <span class="summary-label">Vacunas:</span>
+          <span class="summary-value">{{ (mochila | slice:0 | reduce: (acc, item) => item.item.tipo === 'vacuna' ? acc + item.cantidad : acc; init: 0) }}</span>
         </div>
-        <p class="card-xuxemon-stats">HP: 52 | ATK: 68 | DEF: 55</p>
-        <div class="mochila-grid">
-          @for (slot of slots; track slot?.id) {
-            <div class="mochila-slot" [ngClass]="{
-                        'apilable': slot && slot.item && slot.item.apilable,
-                        'no-apilable': slot && slot.item && !slot.item.apilable,
-                        'vacio': !slot
-                    }">
-              @if (slot) {
+      </div>
+
+      <!-- Grilla de slots -->
+      <div class="mochila-grid">
+        @for (slot of slots; track $index) {
+          <div class="mochila-slot" [ngClass]="{
+            'apilable': slot && slot.item && slot.item.apilable,
+            'no-apilable': slot && slot.item && !slot.item.apilable,
+            'vacio': !slot
+          }">
+            @if (slot) {
+              <div class="slot-content">
                 <div class="item-icon">{{ slot.item.icono }}</div>
-                <div class="item-nombre">{{ slot.item.nombre }}</div>
-                @if (slot.item.apilable) {
-                  <div class="item-cantidad">x{{ slot.cantidad }}</div>
-                }
-                <button class="item-eliminar" (click)="eliminarItem(slot.id)">🗑️</button>
-              } @else {
-                <div class="item-vacio">—</div>
-              }
-            </div>
-          }
-        </div>
+                <div class="item-info">
+                  <div class="item-nombre">{{ slot.item.nombre }}</div>
+                  @if (slot.item.apilable) {
+                    <div class="item-cantidad">×{{ slot.cantidad }}</div>
+                  }
+                </div>
+                <button 
+                  class="item-eliminar" 
+                  (click)="eliminarItem(slot.id)"
+                  title="Eliminar este item"
+                >
+                  🗑️
+                </button>
+              </div>
+            } @else {
+              <div class="slot-vacio">
+                <span class="slot-numero">{{ $index + 1 }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Botón de enlace a Xuxedex -->
+      <div class="mochila-footer">
+        <button class="btn-ir-xuxedex" (click)="navegarAlXuxedex()">
+          👾 IR A XUXEDEX (capturar pokémons)
+        </button>
       </div>
     </div>
   </div>

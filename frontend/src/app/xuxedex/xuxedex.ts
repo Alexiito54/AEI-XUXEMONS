@@ -2,7 +2,8 @@ import { Component, ViewEncapsulation, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { XuxemonsService } from '../services/xuxemons.service';
+import { XuxemonsService, ColeccionXuxemon, Vacuna, Enfermedad } from '../services/xuxemons.service';
+import { MochilaService, MochilaItem } from '../services/mochila.service';
 
 interface Xuxemon {
   id: number;
@@ -29,7 +30,11 @@ export class Xuxedex implements OnInit {
 
   // Datos desde la API
   xuxemons: Xuxemon[] = [];
-  xuxemonCapturados: Set<number> = new Set();
+  xuxemonCapturados: Map<number, ColeccionXuxemon> = new Map();
+  coleccionCompleta: ColeccionXuxemon[] = [];
+  vacunas: Vacuna[] = [];
+  mochilaItems: MochilaItem[] = [];
+  
   isLoading = true;
   errorMsg = '';
 
@@ -38,17 +43,29 @@ export class Xuxedex implements OnInit {
   currentSearch = '';
 
   selected?: Xuxemon;
+  selectedColeccion?: ColeccionXuxemon;
   modalAbierto = false;
+  
+  // Estado de acciones
+  alimentando = false;
+  curando = false;
+  alimentarMsg = '';
+  curarMsg = '';
+  vacunaSeleccionada = 0;
 
-  constructor(private router: Router, private xuxemonsService: XuxemonsService) {}
+  constructor(
+    private router: Router, 
+    private xuxemonsService: XuxemonsService,
+    private mochilaService: MochilaService
+  ) {}
 
   ngOnInit(): void {
-    this.cargarXuxemons();
+    this.cargarDatos();
   }
 
-  cargarXuxemons(): void {
+  cargarDatos(): void {
     this.isLoading = true;
-    // Cargar todos los Xuxemons disponibles
+    // Cargar en paralelo todos los Xuxemons y la colección del usuario
     this.xuxemonsService.getTodosXuxemons().subscribe({
       next: (xuxemons: any[]) => {
         this.xuxemons = xuxemons.map(x => ({
@@ -61,7 +78,6 @@ export class Xuxedex implements OnInit {
           visto: false,
           nuevo: false
         }));
-        // Cargar colección del usuario para saber cuáles están atrapados
         this.cargarColeccion();
       },
       error: (error: any) => {
@@ -70,14 +86,34 @@ export class Xuxedex implements OnInit {
         this.isLoading = false;
       }
     });
+
+    // Cargar vacunas y mochila en paralelo
+    this.xuxemonsService.getVacunas().subscribe({
+      next: (vacunas) => {
+        this.vacunas = vacunas;
+      },
+      error: (error) => {
+        console.error('Error cargando vacunas:', error);
+      }
+    });
+
+    this.mochilaService.getMochila().subscribe({
+      next: (mochila) => {
+        this.mochilaItems = mochila;
+      },
+      error: (error) => {
+        console.error('Error cargando mochila:', error);
+      }
+    });
   }
 
   cargarColeccion(): void {
     this.xuxemonsService.getColeccion().subscribe({
       next: (coleccion: any[]) => {
+        this.coleccionCompleta = coleccion;
         this.xuxemonCapturados.clear();
         coleccion.forEach(item => {
-          this.xuxemonCapturados.add(item.xuxemon_id);
+          this.xuxemonCapturados.set(item.xuxemon_id, item);
         });
         // Marcar como atrapados en la lista
         this.xuxemons = this.xuxemons.map(x => ({
@@ -94,6 +130,22 @@ export class Xuxedex implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  // Obtener item de la mochila del tipo que necesita el xuxemon
+  get tieneXuxeParaAlimental(): boolean {
+    return this.mochilaItems.some(m => m.item.tipo === 'xuxe' && m.cantidad > 0);
+  }
+
+  // Obtener vacunas disponibles en la mochila
+  get vacunasDisponibles(): MochilaItem[] {
+    return this.mochilaItems.filter(m => m.item.tipo === 'vacuna' && m.cantidad > 0);
+  }
+
+  // Obtener ID de mochila del primer xuxe disponible
+  get idXuxeParaAlimental(): number {
+    const xuxe = this.mochilaItems.find(m => m.item.tipo === 'xuxe' && m.cantidad > 0);
+    return xuxe?.id || 0;
   }
 
   // Navegación
@@ -159,12 +211,63 @@ export class Xuxedex implements OnInit {
     });
   }
 
+  alimentarXuxemon(): void {
+    if (!this.selectedColeccion) return;
+
+    this.alimentando = true;
+    this.alimentarMsg = '';
+
+    this.xuxemonsService.alimentarXuxemon(this.selectedColeccion.id).subscribe({
+      next: (result: any) => {
+        this.alimentarMsg = '✅ ' + (result.message || 'Xuxemon alimentado con éxito');
+        this.cargarColeccion();
+        this.cargarDatos(); // Recargar mochila también
+        this.alimentando = false;
+        setTimeout(() => {
+          this.alimentarMsg = '';
+        }, 3000);
+      },
+      error: (error: any) => {
+        this.alimentarMsg = '❌ ' + (error.error?.message || 'Error al alimentar');
+        this.alimentando = false;
+      }
+    });
+  }
+
+  curarXuxemon(): void {
+    if (!this.selectedColeccion || !this.vacunaSeleccionada) {
+      this.curarMsg = '❌ Selecciona una vacuna';
+      return;
+    }
+
+    this.curando = true;
+    this.curarMsg = '';
+
+    this.xuxemonsService.curarXuxemon(this.selectedColeccion.id, this.vacunaSeleccionada).subscribe({
+      next: (result: any) => {
+        this.curarMsg = '✅ ' + (result.message || 'Xuxemon curado con éxito');
+        this.cargarColeccion();
+        this.cargarDatos(); // Recargar mochila también
+        this.curando = false;
+        this.vacunaSeleccionada = 0;
+        setTimeout(() => {
+          this.curarMsg = '';
+        }, 3000);
+      },
+      error: (error: any) => {
+        this.curarMsg = '❌ ' + (error.error?.message || 'Error al curar');
+        this.curando = false;
+      }
+    });
+  }
+
   liberarXuxemon(id: number): void {
     if (confirm('¿Estás seguro de que quieres liberar este Xuxemon?')) {
       this.xuxemonsService.liberarXuxemon(id).subscribe({
         next: () => {
           console.log('Xuxemon liberado');
           this.cargarColeccion();
+          this.cerrarModal();
         },
         error: (error: any) => {
           console.error('Error liberando Xuxemon:', error);
@@ -176,11 +279,16 @@ export class Xuxedex implements OnInit {
   // Modal
   abrirModal(x: Xuxemon): void {
     this.selected = x;
+    this.selectedColeccion = this.xuxemonCapturados.get(x.id);
     this.modalAbierto = true;
+    this.alimentarMsg = '';
+    this.curarMsg = '';
+    this.vacunaSeleccionada = 0;
   }
 
   cerrarModal(): void {
     this.modalAbierto = false;
     this.selected = undefined;
+    this.selectedColeccion = undefined;
   }
 }

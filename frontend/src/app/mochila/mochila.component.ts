@@ -149,5 +149,6 @@ export class MochilaComponent implements OnInit {
   navegarAlChat()       { this.router.navigate(['/chat']); }
   navegarAlPerfil()     { this.router.navigate(['/info-usuario']); }
   navegarAlAdmin()      { this.router.navigate(['/admin']); }
+  navegarAlAdmin()      { this.router.navigate(['/admin']); }
 }
 
