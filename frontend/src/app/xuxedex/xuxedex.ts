@@ -93,10 +93,10 @@ export class Xuxedex implements OnInit {
         if (size.includes('gran')) return '/images/xuxemons/Dragon agua - 3.png';
         return '/images/xuxemons/Slime agua - 1.png';
       case 'Tierra':
-        if (size.includes('peque')) return '/images/xuxemons/Roca - 1.png';
+        if (size.includes('peque')) return '/images/xuxemons/Golem roca - 1.png';
         if (size.includes('med')) return '/images/xuxemons/Golem roca - 2.png';
         if (size.includes('gran')) return '/images/xuxemons/Golem roca - 3.png';
-        return '/images/xuxemons/Roca - 1.png';
+        return '/images/xuxemons/Golem roca - 1.png';
       case 'Aire':
         if (size.includes('peque')) return '/images/xuxemons/Cabra aire - 1.png';
         if (size.includes('med')) return '/images/xuxemons/Cabra aire - 2.png';

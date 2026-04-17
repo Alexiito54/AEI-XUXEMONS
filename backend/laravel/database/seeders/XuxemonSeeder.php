@@ -61,7 +61,7 @@ class XuxemonSeeder extends Seeder
             'nombre' => 'Titagranito',
             'tipo' => 'Tierra',
             'tamaño' => 'Pequeño',
-            'imagen' => 'Golem Roca - 1.png',
+            'imagen' => 'Golem roca - 1.png',
         ]);
 
         Xuxemon::create([
