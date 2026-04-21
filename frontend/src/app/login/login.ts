@@ -37,26 +37,21 @@ export class LoginComponent {
 
     this.loading = true;
     this.errorMsg = '';
-    console.log('Enviando login con:', this.loginForm.value);
-
     this.authService.login(this.loginForm.value).subscribe({
       next: (res: any) => {
-        console.log('Login response:', res);
-        console.log('Token:', res.token);
-        console.log('User:', res.user);
 
-        sessionStorage.setItem('token', res.token);
+        localStorage.setItem('token', res.token);
+        localStorage.setItem('user', JSON.stringify(res.user));
         sessionStorage.setItem('role', res.user.rol);
         sessionStorage.setItem('user_id', res.user.id_usuario);
         sessionStorage.setItem('user_internal_id', res.user.id.toString());
 
         this.loading = false;
-        console.log('Navegando a pagina-principal');
         this.router.navigate(['/pagina-principal']);
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Login error:', err);
-        this.errorMsg = 'ID o contraseña incorrectos';
+        this.errorMsg = err.error?.message || 'ID o contraseña incorrectos';
         this.loading = false;
       }
     });

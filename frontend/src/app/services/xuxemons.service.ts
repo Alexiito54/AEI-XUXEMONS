@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Xuxemon {
   id: number;
   nombre: string;
   tipo: string;
-  tamaño: string;
+  tamano: string;
   imagen: string;
   atrapado?: boolean;
 }
@@ -30,7 +30,7 @@ export interface ColeccionXuxemon {
   id: number;
   user_id: number;
   xuxemon_id: number;
-  tamaño_actual: string;
+  tamano_actual: string;
   nivel: number;
   alimentaciones_pendientes: number;
   capturado_en?: string;
@@ -46,6 +46,19 @@ export class XuxemonsService {
 
   constructor(private http: HttpClient) {}
 
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+    
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    
+    return headers;
+  }
+
   // Obtener todos los Xuxemons disponibles (público)
   getTodosXuxemons(): Observable<Xuxemon[]> {
     return this.http.get<Xuxemon[]>(`${this.apiUrl}/xuxemons`);
@@ -53,34 +66,46 @@ export class XuxemonsService {
 
   // Obtener Xuxemons capturados por el usuario (protegido)
   getColeccion(): Observable<ColeccionXuxemon[]> {
-    return this.http.get<ColeccionXuxemon[]>(`${this.apiUrl}/colecciones`);
+    return this.http.get<ColeccionXuxemon[]>(`${this.apiUrl}/colecciones`, {
+      headers: this.getHeaders()
+    });
   }
 
   // Obtener un Xuxemon capturado específico
   getColeccionPorId(id: number): Observable<ColeccionXuxemon> {
-    return this.http.get<ColeccionXuxemon>(`${this.apiUrl}/colecciones/${id}`);
+    return this.http.get<ColeccionXuxemon>(`${this.apiUrl}/colecciones/${id}`, {
+      headers: this.getHeaders()
+    });
   }
 
   // Capturar un Xuxemon aleatorio (protegido)
   capturarXuxemon(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/colecciones`, {});
+    return this.http.post(`${this.apiUrl}/colecciones`, {}, {
+      headers: this.getHeaders()
+    });
   }
 
   // Alimentar un Xuxemon (protegido)
   alimentarXuxemon(id: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/colecciones/${id}/alimentar`, {});
+    return this.http.post(`${this.apiUrl}/colecciones/${id}/alimentar`, {}, {
+      headers: this.getHeaders()
+    });
   }
 
   // Curar un Xuxemon con vacuna (protegido)
   curarXuxemon(id: number, vacunaId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/colecciones/${id}/curar`, {
       id_vacuna: vacunaId
+    }, {
+      headers: this.getHeaders()
     });
   }
 
   // Liberar un Xuxemon (protegido)
   liberarXuxemon(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/colecciones/${id}`);
+    return this.http.delete(`${this.apiUrl}/colecciones/${id}`, {
+      headers: this.getHeaders()
+    });
   }
 
   // Obtener todas las vacunas disponibles

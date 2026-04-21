@@ -72,7 +72,7 @@ export class Xuxedex implements OnInit {
           id: x.id,
           nombre: x.nombre,
           tipo: x.tipo,
-          tamano: x.tamaño || x.tamano || 'Normal',
+          tamano: x.tamano || x.tamaño || 'Normal',
           imagen: this.obtenerImagenXuxemon(x),
           atrapado: false,
           visto: false,
@@ -108,19 +108,33 @@ export class Xuxedex implements OnInit {
   }
 
   private obtenerImagenXuxemon(x: any): string {
-    const imagen = x.imagen?.toString().trim();
+    let imagen = x.imagen?.toString().trim();
     if (imagen) {
+      // Limpiar sufijos numéricos como -201, -1, etc
+      imagen = imagen.replace(/-\d+(\.\w+)$/, '$1');
+      
+      // Normalizar nombres para coincidir con archivos exactamente
+      imagen = imagen
+        .replace(/Golem\s+Roca/gi, 'Golem roca')
+        .replace(/Cabra\s+Aire/gi, 'Cabra aire')
+        .replace(/Cabra\s+Fuego/gi, 'Cabra fuego')
+        .replace(/Dragon\s+Agua/gi, 'Dragon agua')
+        .replace(/Dragon\s+Aire/gi, 'Dragon aire')
+        .replace(/Dragon\s+Planta/gi, 'Dragon planta')
+        .replace(/Ave\s+Fuego/gi, 'Ave fuego')
+        .replace(/Slime\s+Agua/gi, 'Slime agua');
+      
       if (/^https?:\/\//.test(imagen) || imagen.startsWith('/')) {
         return encodeURI(imagen);
       }
       return encodeURI(`/images/xuxemons/${imagen}`);
     }
 
-    return this.obtenerImagenPorTipoTamaño(x.tipo, x.tamaño || x.tamano);
+    return this.obtenerImagenPorTipoTamano(x.tipo, x.tamano || x.tamaño);
   }
 
-  private obtenerImagenPorTipoTamaño(tipo: string, tamaño: string): string {
-    const size = (tamaño || '').toLowerCase();
+  private obtenerImagenPorTipoTamano(tipo: string, tamano: string): string {
+    const size = (tamano || '').toLowerCase();
     switch (tipo) {
       case 'Agua':
         if (size.includes('peque')) return '/images/xuxemons/Slime agua - 1.png';
@@ -135,7 +149,7 @@ export class Xuxedex implements OnInit {
       case 'Aire':
         if (size.includes('peque')) return '/images/xuxemons/Cabra aire - 1.png';
         if (size.includes('med')) return '/images/xuxemons/Cabra aire - 2.png';
-        if (size.includes('gran')) return '/images/xuxemons/Cabra fuego - 3.png';
+        if (size.includes('gran')) return '/images/xuxemons/Cabra aire - 3.png';
         return '/images/xuxemons/Ave fuego - 1.png';
       default:
         return '/images/xuxemons/Dragon agua - 1.png';
@@ -145,23 +159,15 @@ export class Xuxedex implements OnInit {
   cargarColeccion(): void {
     this.xuxemonsService.getColeccion().subscribe({
       next: (coleccion: any[]) => {
-<<<<<<< HEAD
-        this.coleccionCompleta = coleccion;
-        this.xuxemonCapturados.clear();
+        this.xuxemonCapturados = new Map();
         coleccion.forEach(item => {
           this.xuxemonCapturados.set(item.xuxemon_id, item);
-=======
-        // CORRECCIÓN: Usar push() en lugar de add() para permitir duplicados
-        this.xuxemonCapturados = [];
-        coleccion.forEach(item => {
-          this.xuxemonCapturados.push(item.xuxemon_id);
->>>>>>> 23ace1817eac1b8badfad1d4fc07de826f6a73fc
         });
         // Marcar como atrapados en la lista
         this.xuxemons = this.xuxemons.map(x => ({
           ...x,
-          atrapado: this.xuxemonCapturados.includes(x.id), // includes() en lugar de has()
-          visto: this.xuxemonCapturados.includes(x.id),
+          atrapado: this.xuxemonCapturados.has(x.id),
+          visto: this.xuxemonCapturados.has(x.id),
           nuevo: false
         }));
         this.isLoading = false;
@@ -244,7 +250,6 @@ export class Xuxedex implements OnInit {
   capturarXuxemon(): void {
     this.xuxemonsService.capturarXuxemon().subscribe({
       next: (result: any) => {
-        console.log('Xuxemon capturado:', result);
         this.cargarColeccion();
       },
       error: (error: any) => {
@@ -307,7 +312,6 @@ export class Xuxedex implements OnInit {
     if (confirm('¿Estás seguro de que quieres liberar este Xuxemon?')) {
       this.xuxemonsService.liberarXuxemon(id).subscribe({
         next: () => {
-          console.log('Xuxemon liberado');
           this.cargarColeccion();
           this.cerrarModal();
         },

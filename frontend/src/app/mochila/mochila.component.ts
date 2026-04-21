@@ -140,6 +140,15 @@ export class MochilaComponent implements OnInit {
     });
   }
 
+  // Getters para calcular totales
+  get totalXuxes(): number {
+    return this.mochila.reduce((acc, item) => item.item.tipo === 'xuxe' ? acc + item.cantidad : acc, 0);
+  }
+
+  get totalVacunas(): number {
+    return this.mochila.reduce((acc, item) => item.item.tipo === 'vacuna' ? acc + item.cantidad : acc, 0);
+  }
+
   // Funciones para navegar a otras páginas de la aplicación
   navegarAlInicio()     { this.router.navigate(['/pagina-principal']); }
   navegarAlXuxedex()    { this.router.navigate(['/xuxedex']); }
@@ -148,7 +157,6 @@ export class MochilaComponent implements OnInit {
   navegarAlBatalla()    { this.router.navigate(['/batalla']); }
   navegarAlChat()       { this.router.navigate(['/chat']); }
   navegarAlPerfil()     { this.router.navigate(['/info-usuario']); }
-  navegarAlAdmin()      { this.router.navigate(['/admin']); }
   navegarAlAdmin()      { this.router.navigate(['/admin']); }
 }
 

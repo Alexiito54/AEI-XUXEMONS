@@ -98,11 +98,11 @@
       <div class="mochila-summary">
         <div class="summary-item">
           <span class="summary-label">Xuxes:</span>
-          <span class="summary-value">{{ (mochila | slice:0 | reduce: (acc, item) => item.item.tipo === 'xuxe' ? acc + item.cantidad : acc; init: 0) }}</span>
+          <span class="summary-value">{{ totalXuxes }}</span>
         </div>
         <div class="summary-item">
           <span class="summary-label">Vacunas:</span>
-          <span class="summary-value">{{ (mochila | slice:0 | reduce: (acc, item) => item.item.tipo === 'vacuna' ? acc + item.cantidad : acc; init: 0) }}</span>
+          <span class="summary-value">{{ totalVacunas }}</span>
         </div>
       </div>
 
