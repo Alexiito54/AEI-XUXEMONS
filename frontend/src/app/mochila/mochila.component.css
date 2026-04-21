@@ -1,81 +1,243 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-/* Estilos generales de la mochila */
-/* --- MOTXILLA --- */
-.mochila-page {
-  max-width: 700px;
-  margin: 40px auto;
-  background: #fff;
-  border: 4px solid #111;
-  box-shadow: 0 0 0 4px #e0e0e0, 0 0 0 8px #111;
-  padding: 32px 32px 24px;
-  border-radius: 12px;
+/* Contenedor principal de la mochila */
+.mochila-container {
+  margin: 20px 0;
+  background: #fdfdfd;
+  border: 3px solid #111;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
 }
 
-.mochila-header {
+.mochila-header-bar {
+  background: linear-gradient(135deg, #8a49f0 0%, #6d2fc7 100%);
+  color: white;
+  padding: 12px 14px;
+  border-radius: 6px;
+  margin-bottom: 14px;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
+}
+
+.mochila-header-bar h2 {
+  margin: 0;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Resumen de items */
+.mochila-summary {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 24px;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
 }
 
+.summary-item {
+  flex: 1;
+  min-width: 120px;
+  background: #f0f0f0;
+  border: 2px solid #111;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.summary-label {
+  font-weight: bold;
+  color: #555;
+}
+
+.summary-value {
+  background: #8a49f0;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+/* Grilla de mochila moderna */
 .mochila-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(4, 1fr);
-  gap: 18px;
-  margin-bottom: 32px;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 10px;
+  margin: 16px 0;
 }
 
 .mochila-slot {
   background: #f6f6f6;
-  border: 2.5px solid #bbb;
-  border-radius: 8px;
-  min-height: 90px;
+  border: 2px solid #bbb;
+  border-radius: 6px;
+  min-height: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  padding: 8px;
   position: relative;
-  transition: border 0.2s;
+  transition: all 0.2s ease;
+  cursor: default;
 }
-.mochila-slot.apilable { border-color: #8a49f0; }
-.mochila-slot.no-apilable { border-color: #e03030; }
-.mochila-slot.vacio { border-style: dashed; color: #bbb; }
 
-.item-icon { font-size: 2.2em; margin-bottom: 4px; }
-.item-nombre { font-size: 11px; text-align: center; margin-bottom: 2px; }
-.item-cantidad { font-size: 13px; color: #8a49f0; font-weight: bold; }
-.item-vacio { color: #bbb; font-size: 2em; }
+.mochila-slot:hover {
+  border-color: #888;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
 
-/* Panel admin */
-/* Estilo del panel de administración que solo ve el usuario administrador */
-.admin-panel {
-  margin-top: 32px;
-  padding: 18px 16px;
-  border: 2px solid #8a49f0;
-  background: #faf7ff;
-  border-radius: 8px;
+.mochila-slot.apilable {
+  border-color: #8a49f0;
+  background: #f8f0ff;
+}
+
+.mochila-slot.apilable:hover {
+  border-color: #6d2fc7;
+  background: #f0e0ff;
+}
+
+.mochila-slot.no-apilable {
+  border-color: #ff6b6b;
+  background: #fff0f0;
+}
+
+.mochila-slot.no-apilable:hover {
+  border-color: #ee5a52;
+  background: #ffe0e0;
+}
+
+.mochila-slot.vacio {
+  border: 2px dashed #ddd;
+  background: #fafafa;
+  color: #bbb;
+  font-size: 24px;
+}
+
+.slot-content {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 4px;
+  width: 100%;
 }
-.admin-panel label { font-size: 13px; }
-.admin-panel input, .admin-panel select { font-size: 13px; margin-left: 6px; }
-.admin-panel button {
-  background: #8a49f0;
-  color: #fff;
-  border: none;
-  padding: 6px 16px;
-  border-radius: 4px;
-  font-size: 13px;
-  cursor: pointer;
-  margin-left: 8px;
-}
-.admin-panel button:hover { background: #6d2fc7; }
-.admin-error { color: #e03030; font-size: 13px; margin-left: 10px; }
 
+.item-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.item-info {
+  text-align: center;
+  width: 100%;
+}
+
+.item-nombre {
+  font-size: 10px;
+  font-weight: bold;
+  color: #333;
+  word-break: break-word;
+  margin-bottom: 2px;
+}
+
+.item-cantidad {
+  font-size: 9px;
+  color: #8a49f0;
+  font-weight: bold;
+  background: rgba(138, 73, 240, 0.1);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.item-eliminar {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: #ff6b6b;
+  border: 1px solid #ee5a52;
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 10px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.mochila-slot:hover .item-eliminar {
+  opacity: 1;
+}
+
+.item-eliminar:hover {
+  background: #ee5a52;
+  transform: scale(1.1);
+}
+
+.slot-numero {
+  font-size: 10px;
+  color: #ccc;
+  opacity: 0.6;
+}
+
+/* Footer de mochila */
+.mochila-footer {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 2px solid #e0e0e0;
+  text-align: center;
+}
+
+.btn-ir-xuxedex {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  color: #1a1a2e;
+  border: 2px solid #111;
+  padding: 10px 20px;
+  font-size: 12px;
+  font-family: 'Press Start 2P', monospace;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-ir-xuxedex:hover {
+  background: linear-gradient(135deg, #ffed4e 0%, #ffd700 100%);
+  transform: translate(0, -2px);
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.3);
+}
+
+.btn-ir-xuxedex:active {
+  transform: translate(0, 0);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Estilos de carga y error */
+.loading-message {
+  background: #fff3cd;
+  border: 2px solid #ffc107;
+  color: #856404;
+  padding: 12px;
+  border-radius: 6px;
+  margin: 12px 0;
+  font-size: 12px;
+  text-align: center;
+}
+
+.error-message {
+  background: #f8d7da;
+  border: 2px solid #f5c6cb;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 6px;
+  margin: 12px 0;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Panel admin mejorado */
 .admin-panel-custom {
   background: #1a1a2e;
   border: 2px solid #ffd700;
@@ -83,72 +245,150 @@
   margin: 15px 0;
   color: #ffd700;
   font-family: 'Press Start 2P', monospace;
+  border-radius: 6px;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
 }
+
 .admin-panel-custom h3 {
   margin: 0 0 10px 0;
   font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
+
+.admin-panel-custom p {
+  margin: 5px 0;
+}
+
 .admin-panel-row {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
+
 .admin-panel-row label {
   display: block;
-  margin-bottom: 5px;
-  font-size: 12px;
+  margin-bottom: 6px;
+  font-size: 11px;
+  text-transform: uppercase;
 }
+
 .admin-panel-row input,
 .admin-panel-row select {
   width: 100%;
-  padding: 5px;
+  padding: 8px;
   background: #0f0f1e;
-  border: 1px solid #ffd700;
+  border: 2px solid #ffd700;
   color: #ffd700;
-  font-family: monospace;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  border-radius: 4px;
 }
+
+.admin-panel-row input:focus,
+.admin-panel-row select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3);
+}
+
 .admin-panel-button {
   width: 100%;
-  padding: 8px;
+  padding: 10px;
   background: #ffd700;
   color: #1a1a2e;
-  border: none;
+  border: 2px solid #1a1a2e;
   font-family: 'Press Start 2P', monospace;
-  cursor: pointer;
+  font-size: 11px;
   font-weight: bold;
+  cursor: pointer;
+  border-radius: 4px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
 }
+
+.admin-panel-button:hover {
+  background: #ffed4e;
+  transform: translate(0, -2px);
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.3);
+}
+
+.admin-panel-button:active {
+  transform: translate(0, 0);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+}
+
 .admin-panel-items {
   margin-top: 15px;
   padding-top: 10px;
   border-top: 1px solid #ffd700;
-  font-size: 11px;
+  font-size: 10px;
 }
+
 .admin-panel-items p {
-  margin: 5px 0;
+  margin: 8px 0 6px 0;
+  text-transform: uppercase;
 }
+
 .admin-panel-items-list {
-  max-height: 80px;
+  max-height: 100px;
   overflow-y: auto;
+  background: #0f0f1e;
+  border: 1px solid #ffd700;
+  padding: 8px;
+  border-radius: 4px;
 }
+
 .admin-panel-item {
-  padding: 3px 0;
+  padding: 4px 0;
+  border-bottom: 1px dotted rgba(255, 215, 0, 0.3);
 }
+
+.admin-panel-item:last-child {
+  border-bottom: none;
+}
+
 .admin-panel-item span {
   opacity: 0.7;
+  display: block;
+  font-size: 9px;
 }
+
 .admin-panel-message {
-  padding: 8px;
+  padding: 10px;
   margin-top: 10px;
   font-size: 11px;
-  border: 1px solid;
+  border: 2px solid;
+  border-radius: 4px;
+  text-transform: uppercase;
 }
+
 .admin-panel-message.error {
   background: #3d0000;
   color: #ff4444;
   border-color: #ff4444;
 }
+
 .admin-panel-message.success {
   background: #003d00;
   color: #44ff44;
   border-color: #44ff44;
+}
+
+/* Página principal */
+.main-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+}
+
+.main-content {
+  width: 100%;
+  max-width: 1100px;
+  background: var(--panel);
+  border-radius: 0;
+  border: 4px solid var(--border-dark);
+  box-shadow: 0 0 0 4px #e0e0e0, 0 0 0 8px var(--border-dark);
+  padding: 24px 28px 28px;
 }
 /* Variables de colores y temas globales */
 :root {

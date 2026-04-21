@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface MochilaItem {
@@ -33,19 +33,41 @@ export class MochilaService {
 
   constructor(private http: HttpClient) {}
 
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+    
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    
+    return headers;
+  }
+
   getMochila(): Observable<MochilaItem[]> {
-    return this.http.get<MochilaItem[]>(`${this.apiUrl}/mochila`);
+    return this.http.get<MochilaItem[]>(`${this.apiUrl}/mochila`, {
+      headers: this.getHeaders()
+    });
   }
 
   getItems(): Observable<Item[]> {
-    return this.http.get<Item[]>(`${this.apiUrl}/items`);
+    return this.http.get<Item[]>(`${this.apiUrl}/items`, {
+      headers: this.getHeaders()
+    });
   }
 
   añadirItem(item_id: number, cantidad: number, id_usuario: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/mochila`, { id_item: item_id, cantidad, id_usuario });
+    return this.http.post(`${this.apiUrl}/mochila`, { id_item: item_id, cantidad, id_usuario }, {
+      headers: this.getHeaders()
+    });
   }
 
   eliminarItem(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/mochila/${id}`);
+    return this.http.delete(`${this.apiUrl}/mochila/${id}`, {
+      headers: this.getHeaders()
+    });
   }
 }

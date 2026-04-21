@@ -29,6 +29,10 @@ export class AuthService {
       tap(() => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('role');
+        sessionStorage.removeItem('user_id');
+        sessionStorage.removeItem('user_internal_id');
         this.router.navigate(['/login']);
       })
     );
