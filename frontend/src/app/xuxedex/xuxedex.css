@@ -275,17 +275,7 @@ body {
 }
 
 .placeholder-black {
-  width: 72px;
-  height: 72px;
-  background-color: black;
-  border: 2px solid #333;
-}
-
-.placeholder-black-modal {
-  width: 112px;
-  height: 112px;
-  background-color: black;
-  border: 2px solid #333;
+  filter: brightness(0);
 }
 
 .xuxemon-card-name {

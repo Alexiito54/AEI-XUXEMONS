@@ -58,7 +58,7 @@ export class Xuxedex implements OnInit {
           tipo: x.oculto ? '???' : x.tipo,
           tamano: x.tamaño,
           imagen: this.obtenerImagenXuxemon(x),
-          imagenMostrada: x.oculto ? '' : this.obtenerImagenXuxemon(x), // Imagen vacía para ocultos
+          imagenMostrada: this.obtenerImagenXuxemon(x), // Imagen vacía para ocultos
           atrapado: x.atrapado,
           visto: x.visto,
           oculto: x.oculto,
