@@ -24,6 +24,7 @@ export interface Vacuna {
   id: number;
   nombre: string;
   cura_enfermedad_id: number | null;
+}
   
 export interface XuxedexEntry {
   id: number;
@@ -50,12 +51,8 @@ export interface ColeccionXuxemon {
   id: number;
   user_id: number;
   xuxemon_id: number;
-  tamano_actual: string;
-  nivel: number;
-  alimentaciones_pendientes: number;
-  capturado_en?: string;
+  capturado_en: string;
   xuxemon: Xuxemon;
-  enfermedades?: Enfermedad[];
 }
 
 @Injectable({
@@ -91,9 +88,7 @@ export class XuxemonsService {
 
   // Obtener Xuxemons capturados por el usuario (protegido)
   getColeccion(): Observable<ColeccionXuxemon[]> {
-    return this.http.get<ColeccionXuxemon[]>(`${this.apiUrl}/colecciones`, {
-      headers: this.getHeaders()
-    });
+    return this.http.get<ColeccionXuxemon[]>(`${this.apiUrl}/colecciones`);
   }
 
   // Obtener un Xuxemon capturado específico
@@ -103,11 +98,10 @@ export class XuxemonsService {
     });
   }
 
+
   // Capturar un Xuxemon aleatorio (protegido)
   capturarXuxemon(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/colecciones`, {}, {
-      headers: this.getHeaders()
-    });
+    return this.http.post(`${this.apiUrl}/colecciones`, {});
   }
 
   // Alimentar un Xuxemon (protegido)
