@@ -54,11 +54,11 @@ export class Xuxedex implements OnInit {
       next: (response: XuxedexResponse) => {
         this.xuxemons = response.xuxemons.map(x => ({
           id: x.id,
-          nombre: x.nombre,
-          tipo: x.tipo,
+          nombre: x.oculto ? '???' : x.nombre,
+          tipo: x.oculto ? '???' : x.tipo,
           tamano: x.tamaño,
           imagen: this.obtenerImagenXuxemon(x),
-          imagenMostrada: x.oculto ? '/images/xuxemons/oculto.svg' : this.obtenerImagenXuxemon(x), // Imagen oculta si no está visto
+          imagenMostrada: x.oculto ? '' : this.obtenerImagenXuxemon(x), // Imagen vacía para ocultos
           atrapado: x.atrapado,
           visto: x.visto,
           oculto: x.oculto,

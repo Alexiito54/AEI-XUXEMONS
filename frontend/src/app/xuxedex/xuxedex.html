@@ -119,7 +119,11 @@
           </div>
 
           <div class="xuxemon-card-sprite">
-            <img [src]="x.imagenMostrada" [alt]="x.nombre">
+            @if (x.imagenMostrada) {
+              <img [src]="x.imagenMostrada" [alt]="x.nombre">
+            } @else {
+              <div class="placeholder-black"></div>
+            }
           </div>
 
           <div class="xuxemon-card-name">
@@ -158,7 +162,11 @@
     @if (selected) {
       <div class="modal-screen">
         <div class="modal-sprite">
-          <img [src]="selected.imagenMostrada" [alt]="selected.nombre">
+          @if (selected.imagenMostrada) {
+            <img [src]="selected.imagenMostrada" [alt]="selected.nombre">
+          } @else {
+            <div class="placeholder-black-modal"></div>
+          }
         </div>
         <div class="modal-info">
           <div class="modal-num">
