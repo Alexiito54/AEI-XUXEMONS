@@ -1,7 +1,7 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = sessionStorage.getItem('token');
+  const token = localStorage.getItem('token');
   console.log('INTERCEPTOR ejecutado, token:', token);
   
   const publicEndpoints = ['/api/register', '/api/login'];

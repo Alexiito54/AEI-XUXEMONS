@@ -24,6 +24,80 @@ class ColeccionController extends Controller
         return response()->json($coleccion, 200);
     }
 
+    /**
+     * Obtener datos de la Xuxedex según el rol del usuario
+     * Admin: Ve todos los Xuxemons como atrapados
+     * Usuario normal: Ve algunos como atrapados, otros ocultos
+     */
+    public function xuxedex(Request $request)
+    {
+        $user = $request->user();
+        $isAdmin = $user->esAdmin();
+
+        // Obtener todos los Xuxemons disponibles
+        $todosXuxemons = Xuxemon::all();
+
+        // Obtener los Xuxemons que el usuario tiene capturados
+        $xuxemonsCapturados = Coleccion::where('id_usuario', $user->id)
+            ->pluck('id_xuxemon')
+            ->toArray();
+
+        $resultado = [];
+
+        if ($isAdmin) {
+            // ADMIN: Todos los Xuxemons aparecen como atrapados y vistos
+            foreach ($todosXuxemons as $xuxemon) {
+                $resultado[] = [
+                    'id' => $xuxemon->id,
+                    'nombre' => $xuxemon->nombre,
+                    'tipo' => $xuxemon->tipo,
+                    'tamaño' => $xuxemon->tamaño,
+                    'imagen' => $xuxemon->imagen,
+                    'atrapado' => true,  // Todos atrapados para admin
+                    'visto' => true,     // Todos vistos para admin
+                    'oculto' => false,   // Ninguno oculto para admin
+                ];
+            }
+        } else {
+            // USUARIO NORMAL: Solo algunos aparecen como atrapados
+            $totalXuxemons = $todosXuxemons->count();
+            $mitad = (int) ceil($totalXuxemons / 2); // La mitad, redondeado hacia arriba
+
+            // Seleccionar aleatoriamente cuáles mostrar como atrapados
+            // Para consistencia, usar el ID del usuario como semilla
+            $xuxemonsDisponibles = $todosXuxemons->pluck('id')->toArray();
+            mt_srand($user->id); // Semilla consistente por usuario
+            shuffle($xuxemonsDisponibles);
+            $xuxemonsVisibles = array_slice($xuxemonsDisponibles, 0, $mitad);
+
+            foreach ($todosXuxemons as $xuxemon) {
+                $estaAtrapado = in_array($xuxemon->id, $xuxemonsCapturados);
+                $estaVisible = in_array($xuxemon->id, $xuxemonsVisibles);
+
+                $resultado[] = [
+                    'id' => $xuxemon->id,
+                    'nombre' => $xuxemon->nombre,
+                    'tipo' => $xuxemon->tipo,
+                    'tamaño' => $xuxemon->tamaño,
+                    'imagen' => $xuxemon->imagen,
+                    'atrapado' => $estaAtrapado,
+                    'visto' => $estaVisible,  // Solo los visibles están "vistos"
+                    'oculto' => !$estaVisible, // Los no visibles están ocultos
+                ];
+            }
+        }
+
+        return response()->json([
+            'xuxemons' => $resultado,
+            'estadisticas' => [
+                'total' => $todosXuxemons->count(),
+                'atrapados' => $isAdmin ? $todosXuxemons->count() : count(array_filter($resultado, fn($x) => $x['atrapado'])),
+                'vistos' => $isAdmin ? $todosXuxemons->count() : count(array_filter($resultado, fn($x) => $x['visto'])),
+                'is_admin' => $isAdmin,
+            ]
+        ], 200);
+    }
+
     public function store(Request $request)
     {
         $user = $request->user();

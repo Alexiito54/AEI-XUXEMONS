@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ItemSeeder::class,
             EnfermedadSeeder::class,
             VacunaSeeder::class,
+            ColeccionSeeder::class,
         ]);
     }
 }

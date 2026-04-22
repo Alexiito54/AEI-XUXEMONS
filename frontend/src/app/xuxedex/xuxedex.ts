@@ -2,7 +2,7 @@ import { Component, ViewEncapsulation, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { XuxemonsService } from '../services/xuxemons.service';
+import { XuxemonsService, XuxedexEntry, XuxedexResponse } from '../services/xuxemons.service';
 
 interface Xuxemon {
   id: number;
@@ -11,8 +11,9 @@ interface Xuxemon {
   tamano: string;
   imagen: string;
   atrapado: boolean;
-  visto?: boolean;
-  nuevo?: boolean;
+  visto: boolean;
+  oculto: boolean;
+  imagenMostrada: string; // Para mostrar imagen normal u oculta
 }
 
 @Component({
@@ -34,7 +35,7 @@ export class Xuxedex implements OnInit {
   errorMsg = '';
 
   // Estado UI
-  currentFilter: 'todos' | 'atrapado' | 'visto' | 'nuevo' = 'todos';
+  currentFilter: 'todos' | 'atrapado' | 'visto' | 'oculto' = 'todos';
   currentSearch = '';
 
   selected?: Xuxemon;
@@ -48,25 +49,28 @@ export class Xuxedex implements OnInit {
 
   cargarXuxemons(): void {
     this.isLoading = true;
-    // Cargar todos los Xuxemons disponibles
-    this.xuxemonsService.getTodosXuxemons().subscribe({
-      next: (xuxemons: any[]) => {
-        this.xuxemons = xuxemons.map(x => ({
+    // Cargar datos de la Xuxedex (incluye estado de cada Xuxemon)
+    this.xuxemonsService.getXuxedex().subscribe({
+      next: (response: XuxedexResponse) => {
+        this.xuxemons = response.xuxemons.map(x => ({
           id: x.id,
           nombre: x.nombre,
           tipo: x.tipo,
-          tamano: x.tamaño || x.tamano || 'Normal',
+          tamano: x.tamaño,
           imagen: this.obtenerImagenXuxemon(x),
-          atrapado: false,
-          visto: false,
-          nuevo: false
+          imagenMostrada: x.oculto ? '/images/xuxemons/oculto.svg' : this.obtenerImagenXuxemon(x), // Imagen oculta si no está visto
+          atrapado: x.atrapado,
+          visto: x.visto,
+          oculto: x.oculto,
         }));
-        // Cargar colección del usuario para saber cuáles están atrapados
-        this.cargarColeccion();
+
+        // Actualizar estadísticas
+        this.isAdmin = response.estadisticas.is_admin;
+        this.isLoading = false;
       },
       error: (error: any) => {
-        this.errorMsg = 'Error al cargar los Xuxemons';
-        console.error('Error cargando Xuxemons:', error);
+        this.errorMsg = 'Error al cargar la Xuxedex';
+        console.error('Error cargando Xuxedex:', error);
         this.isLoading = false;
       }
     });
@@ -107,31 +111,6 @@ export class Xuxedex implements OnInit {
     }
   }
 
-  cargarColeccion(): void {
-    this.xuxemonsService.getColeccion().subscribe({
-      next: (coleccion: any[]) => {
-        // CORRECCIÓN: Usar push() en lugar de add() para permitir duplicados
-        this.xuxemonCapturados = [];
-        coleccion.forEach(item => {
-          this.xuxemonCapturados.push(item.xuxemon_id);
-        });
-        // Marcar como atrapados en la lista
-        this.xuxemons = this.xuxemons.map(x => ({
-          ...x,
-          atrapado: this.xuxemonCapturados.includes(x.id), // includes() en lugar de has()
-          visto: this.xuxemonCapturados.includes(x.id),
-          nuevo: false
-        }));
-        this.isLoading = false;
-      },
-      error: (error: any) => {
-        // Si no está autenticado, mostrar todos como no atrapados
-        console.warn('No autenticado o error cargando colección:', error);
-        this.isLoading = false;
-      }
-    });
-  }
-
   // Navegación
   navegarAlInicio() { this.router.navigate(['/pagina-principal']); }
   navegarAlXuxedex() { this.router.navigate(['/xuxedex']); }
@@ -156,7 +135,7 @@ export class Xuxedex implements OnInit {
   }
 
   // Filtro + búsqueda
-  setFilter(filter: 'todos' | 'atrapado' | 'visto' | 'nuevo'): void {
+  setFilter(filter: 'todos' | 'atrapado' | 'visto' | 'oculto'): void {
     this.currentFilter = filter;
   }
 
@@ -176,8 +155,8 @@ export class Xuxedex implements OnInit {
 
       switch (this.currentFilter) {
         case 'atrapado': return x.atrapado === true;
-        case 'visto':    return x.visto === true;
-        case 'nuevo':    return x.nuevo === true;
+        case 'visto':    return x.visto === true && !x.atrapado;
+        case 'oculto':   return x.oculto === true;
         default:         return true;
       }
     });
@@ -187,7 +166,7 @@ export class Xuxedex implements OnInit {
     this.xuxemonsService.capturarXuxemon().subscribe({
       next: (result: any) => {
         console.log('Xuxemon capturado:', result);
-        this.cargarColeccion();
+        this.cargarXuxemons(); // Cambiar a cargarXuxemons()
       },
       error: (error: any) => {
         console.error('Error capturando Xuxemon:', error);
@@ -200,7 +179,7 @@ export class Xuxedex implements OnInit {
       this.xuxemonsService.liberarXuxemon(id).subscribe({
         next: () => {
           console.log('Xuxemon liberado');
-          this.cargarColeccion();
+          this.cargarXuxemons(); // Cambiar a cargarXuxemons()
         },
         error: (error: any) => {
           console.error('Error liberando Xuxemon:', error);

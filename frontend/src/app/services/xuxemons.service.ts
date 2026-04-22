@@ -11,6 +11,27 @@ export interface Xuxemon {
   atrapado?: boolean;
 }
 
+export interface XuxedexEntry {
+  id: number;
+  nombre: string;
+  tipo: string;
+  tamaño: string;
+  imagen: string;
+  atrapado: boolean;
+  visto: boolean;
+  oculto: boolean;
+}
+
+export interface XuxedexResponse {
+  xuxemons: XuxedexEntry[];
+  estadisticas: {
+    total: number;
+    atrapados: number;
+    vistos: number;
+    is_admin: boolean;
+  };
+}
+
 export interface ColeccionXuxemon {
   id: number;
   user_id: number;
@@ -30,6 +51,11 @@ export class XuxemonsService {
   // Obtener todos los Xuxemons disponibles (público)
   getTodosXuxemons(): Observable<Xuxemon[]> {
     return this.http.get<Xuxemon[]>(`${this.apiUrl}/xuxemons`);
+  }
+
+  // Obtener datos de la Xuxedex (protegido)
+  getXuxedex(): Observable<XuxedexResponse> {
+    return this.http.get<XuxedexResponse>(`${this.apiUrl}/xuxedex`);
   }
 
   // Obtener Xuxemons capturados por el usuario (protegido)
