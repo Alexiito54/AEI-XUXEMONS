@@ -99,9 +99,9 @@
 
       <button
         class="filter-btn"
-        [class.active]="currentFilter === 'nuevo'"
-        (click)="setFilter('nuevo')">
-        ? NUEVOS
+        [class.active]="currentFilter === 'oculto'"
+        (click)="setFilter('oculto')">
+        ? DESCONOCIDOS
       </button>
     </div>
 
@@ -119,7 +119,11 @@
           </div>
 
           <div class="xuxemon-card-sprite">
-            <img [src]="x.imagen" [alt]="x.nombre">
+            @if (x.imagenMostrada) {
+              <img [src]="x.imagenMostrada" [alt]="x.nombre">
+            } @else {
+              <div class="placeholder-black"></div>
+            }
           </div>
 
           <div class="xuxemon-card-name">
@@ -132,13 +136,11 @@
 
           <div class="xuxemon-card-tags">
             @if (x.atrapado) {
-              <span class="tag tag-caught">✔</span>
-            }
-            @if (x.visto) {
-              <span class="tag tag-seen">👁</span>
-            }
-            @if (x.nuevo) {
-              <span class="tag tag-new">NEW</span>
+              <span class="tag tag-caught">✔ ATRAPADO</span>
+            } @else if (x.oculto) {
+              <span class="tag tag-unknown">?</span>
+            } @else {
+              <span class="tag tag-seen">👁 VISTO</span>
             }
           </div>
         </div>
@@ -160,7 +162,11 @@
     @if (selected) {
       <div class="modal-screen">
         <div class="modal-sprite">
-          <img [src]="selected.imagen" [alt]="selected.nombre">
+          @if (selected.imagenMostrada) {
+            <img [src]="selected.imagenMostrada" [alt]="selected.nombre">
+          } @else {
+            <div class="placeholder-black-modal"></div>
+          }
         </div>
         <div class="modal-info">
           <div class="modal-num">
@@ -259,6 +265,15 @@
               Estado: NO ATRAPADO
             </div>
           }
+          <div class="modal-desc">
+            @if (selected.oculto) {
+              Estado: DESCONOCIDO
+            } @else if (selected.atrapado) {
+              Estado: ATRAPADO ✔
+            } @else {
+              Estado: VISTO 👁
+            }
+          </div>
         </div>
       </div>
     }

@@ -37,14 +37,19 @@ export class LoginComponent {
 
     this.loading = true;
     this.errorMsg = '';
+    console.log('Enviando login con:', this.loginForm.value);
+
+    // Clear any old tokens
+    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
+
     this.authService.login(this.loginForm.value).subscribe({
       next: (res: any) => {
 
         localStorage.setItem('token', res.token);
-        localStorage.setItem('user', JSON.stringify(res.user));
-        sessionStorage.setItem('role', res.user.rol);
-        sessionStorage.setItem('user_id', res.user.id_usuario);
-        sessionStorage.setItem('user_internal_id', res.user.id.toString());
+        localStorage.setItem('role', res.user.rol);
+        localStorage.setItem('user_id', res.user.id_usuario);
+        localStorage.setItem('user_internal_id', res.user.id.toString());
 
         this.loading = false;
         this.router.navigate(['/pagina-principal']);

@@ -45,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Coleccion routes
     Route::get('/colecciones', [ColeccionController::class, 'index']);
+    Route::get('/xuxedex', [ColeccionController::class, 'xuxedex']);
     Route::post('/colecciones', [ColeccionController::class, 'store']);
     Route::post('/colecciones/{coleccion}/alimentar', [ColeccionController::class, 'alimentar']);
     Route::post('/colecciones/{coleccion}/curar', [ColeccionController::class, 'curar']);
