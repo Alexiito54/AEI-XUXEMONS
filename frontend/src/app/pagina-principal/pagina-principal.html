@@ -57,7 +57,9 @@
         <div class="xuxemons-summary" *ngIf="!cargando && coleccion.length > 0; else sinXuxemons">
             <!-- Xuxemon 1: Agua -->
             <div class="card card--team" *ngFor="let xuxemon of getEquipo()">
-                <div class="card-xuxemon-image-placeholder"></div>
+                <div class="card-xuxemon-image">
+                    <img [src]="obtenerImagenXuxemon(xuxemon)" [alt]="xuxemon.xuxemon.nombre">
+                </div>
                 <div class="card-xuxemon-content">
                     <div class="card-xuxemon-header">
                         <h3 class="card-xuxemon-name">{{ xuxemon.xuxemon.nombre }}</h3>
@@ -73,7 +75,9 @@
         <ng-template #sinXuxemons>
             <div class="xuxemons-summary">
                 <div class="card card--team" *ngIf="!cargando">
-                    <div class="card-xuxemon-image-placeholder"></div>
+                    <div class="card-xuxemon-image">
+                        <img src="/images/xuxemons/Dragon agua - 1.png" alt="Sin Xuxemon">
+                    </div>
                     <div class="card-xuxemon-content">
                         <div class="card-xuxemon-header">
                             <h3 class="card-xuxemon-name">Sin Xuxemons</h3>

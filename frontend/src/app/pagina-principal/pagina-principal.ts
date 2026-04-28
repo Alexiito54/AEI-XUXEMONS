@@ -87,6 +87,42 @@ export class PaginaPrincipal implements OnInit {
     return this.coleccion.slice(0, 4);
   }
 
+  obtenerImagenXuxemon(xuxemon: any): string {
+    const imagen = xuxemon.xuxemon?.imagen?.toString().trim();
+    if (imagen) {
+      if (/^https?:\/\//.test(imagen) || imagen.startsWith('/')) {
+        return encodeURI(imagen);
+      }
+      return encodeURI(`/images/xuxemons/${imagen}`);
+    }
+
+    // Si no hay imagen, usar una por defecto según el tipo
+    return this.obtenerImagenPorTipoTamaño(xuxemon.xuxemon?.tipo, xuxemon.tamano);
+  }
+
+  private obtenerImagenPorTipoTamaño(tipo: string, tamaño: string): string {
+    const size = (tamaño || '').toLowerCase();
+    switch (tipo) {
+      case 'Agua':
+        if (size.includes('peque')) return '/images/xuxemons/Slime agua - 1.png';
+        if (size.includes('med')) return '/images/xuxemons/Dragon agua - 2.png';
+        if (size.includes('gran')) return '/images/xuxemons/Dragon agua - 3.png';
+        return '/images/xuxemons/Slime agua - 1.png';
+      case 'Tierra':
+        if (size.includes('peque')) return '/images/xuxemons/Golem roca - 1.png';
+        if (size.includes('med')) return '/images/xuxemons/Golem roca - 2.png';
+        if (size.includes('gran')) return '/images/xuxemons/Golem roca - 3.png';
+        return '/images/xuxemons/Golem roca - 1.png';
+      case 'Aire':
+        if (size.includes('peque')) return '/images/xuxemons/Cabra aire - 1.png';
+        if (size.includes('med')) return '/images/xuxemons/Cabra aire - 2.png';
+        if (size.includes('gran')) return '/images/xuxemons/Cabra fuego - 3.png';
+        return '/images/xuxemons/Ave fuego - 1.png';
+      default:
+        return '/images/xuxemons/Dragon agua - 1.png';
+    }
+  }
+
   // Navegación
   navegarAlInicio() {
     this.router.navigate(['/pagina-principal']);
