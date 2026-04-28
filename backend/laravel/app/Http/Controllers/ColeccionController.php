@@ -74,6 +74,10 @@ class ColeccionController extends Controller
                 $estaAtrapado = in_array($xuxemon->id, $xuxemonsCapturados);
                 $estaVisible = in_array($xuxemon->id, $xuxemonsVisibles);
 
+                // Si está atrapado, siempre debe mostrarse como visto y no oculto
+                $esVisto = $estaVisible || $estaAtrapado;
+                $esOculto = !$esVisto;
+
                 $resultado[] = [
                     'id' => $xuxemon->id,
                     'nombre' => $xuxemon->nombre,
@@ -81,8 +85,8 @@ class ColeccionController extends Controller
                     'tamaño' => $xuxemon->tamaño,
                     'imagen' => $xuxemon->imagen,
                     'atrapado' => $estaAtrapado,
-                    'visto' => $estaVisible,  // Solo los visibles están "vistos"
-                    'oculto' => !$estaVisible, // Los no visibles están ocultos
+                    'visto' => $esVisto,
+                    'oculto' => $esOculto,
                 ];
             }
         }
