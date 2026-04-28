@@ -52,6 +52,9 @@ export interface ColeccionXuxemon {
   user_id: number;
   xuxemon_id: number;
   capturado_en: string;
+  tamano: string;
+  nivel: number;
+  alimentaciones_pendientes: number;
   xuxemon: Xuxemon;
 }
 
