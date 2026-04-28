@@ -1,45 +1,30 @@
 <div class="app">
-    
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="logo-box"><h1>XUXEMONS</h1></div>
     <nav class="nav-box">
-      <div class="nav-item"
-           [class.active]="false"
-           (click)="navegarAlInicio()">Inicio</div>
+      <div class="nav-item" [class.active]="false" (click)="navegarAlInicio()">Inicio</div>
 
-      <div class="nav-item active"
-           (click)="navegarAlXuxedex()">Xuxedex</div>
+      <div class="nav-item active" (click)="navegarAlXuxedex()">Xuxedex</div>
 
-      <div class="nav-item"
-           (click)="navegarAlInventario()">Mochila</div>
+      <div class="nav-item" (click)="navegarAlInventario()">Mochila</div>
 
-      <div class="nav-item"
-           (click)="navegarAlAmigos()">Amigos</div>
+      <div class="nav-item" (click)="navegarAlAmigos()">Amigos</div>
 
-      <div class="nav-item"
-           (click)="navegarAlBatalla()">Batalla</div>
+      <div class="nav-item" (click)="navegarAlBatalla()">Batalla</div>
 
-      <div class="nav-item"
-           (click)="navegarAlChat()">Chat</div>
+      <div class="nav-item" (click)="navegarAlChat()">Chat</div>
 
-      <div class="nav-item"
-           (click)="navegarAlPerfil()">Perfil</div>
+      <div class="nav-item" (click)="navegarAlPerfil()">Perfil</div>
 
-      <!-- Solo visible si isAdmin es true -->
       @if (isAdmin) {
-        <div class="nav-item"
-             (click)="navegarAlAdmin()">Admin</div>
+        <div class="nav-item" (click)="navegarAlAdmin()">Admin</div>
       }
     </nav>
   </aside>
 
-  <!-- MAIN DEX -->
   <main class="dex-shell">
-
-    <!-- Luces decorativas superiores -->
     <div class="dex-lights">
       <div class="light"></div>
       <div class="light"></div>
@@ -47,7 +32,6 @@
       <div class="light-bar"></div>
     </div>
 
-    <!-- Pantalla resumen -->
     <div class="dex-screen-wrap">
       <div class="dex-screen">
         <div class="dex-screen-text">
@@ -66,7 +50,56 @@
       </div>
     </div>
 
-    <!-- Barra de búsqueda y filtros -->
+    @if (isAdmin) {
+      <section class="admin-panel">
+        <div class="admin-panel-header">
+          <div>
+            <div class="admin-panel-title">CENTRO ADMIN</div>
+            <div class="admin-panel-subtitle">Gestion de jugadores registrados</div>
+          </div>
+          <div class="admin-panel-count">JUGADORES: {{ adminJugadores.length }}</div>
+        </div>
+
+        @if (adminFeedbackMsg) {
+          <div class="admin-feedback" [class.error]="adminFeedbackType === 'error'">
+            {{ adminFeedbackMsg }}
+          </div>
+        }
+
+        @if (adminLoading) {
+          <div class="admin-empty-state">CARGANDO JUGADORES...</div>
+        } @else if (adminErrorMsg) {
+          <div class="admin-empty-state admin-empty-state--error">{{ adminErrorMsg }}</div>
+        } @else if (adminJugadores.length === 0) {
+          <div class="admin-empty-state">NO HAY JUGADORES REGISTRADOS</div>
+        } @else {
+          <div class="admin-player-grid">
+            @for (jugador of adminJugadores; track jugador.id) {
+              <div class="admin-player-card">
+                <div class="admin-player-main">
+                  <div class="admin-player-name">{{ jugador.name }} {{ jugador.apellidos }}</div>
+                  <div class="admin-player-id">{{ jugador.id_usuario }}</div>
+                  <div class="admin-player-email">{{ jugador.email }}</div>
+                </div>
+
+                <div class="admin-player-side">
+                  <div class="admin-player-total">XUXEMONS: {{ jugador.total_xuxemons }}</div>
+                  <button
+                    class="admin-assign-btn"
+                    type="button"
+                    [disabled]="asignandoJugadorId === jugador.id"
+                    (click)="asignarXuxemonAleatorio(jugador)"
+                  >
+                    {{ asignandoJugadorId === jugador.id ? 'ASIGNANDO...' : 'DAR ALEATORIO' }}
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+    }
+
     <div class="filter-bar">
       <input
         class="search-box"
@@ -79,41 +112,41 @@
       <button
         class="filter-btn"
         [class.active]="currentFilter === 'todos'"
-        (click)="setFilter('todos')">
+        (click)="setFilter('todos')"
+      >
         TODOS
       </button>
 
       <button
         class="filter-btn"
         [class.active]="currentFilter === 'atrapado'"
-        (click)="setFilter('atrapado')">
-        ✔ ATRAPAD.
+        (click)="setFilter('atrapado')"
+      >
+        ATRAPADOS
       </button>
 
       <button
         class="filter-btn"
         [class.active]="currentFilter === 'visto'"
-        (click)="setFilter('visto')">
-        👁 VISTOS
+        (click)="setFilter('visto')"
+      >
+        VISTOS
       </button>
 
       <button
         class="filter-btn"
         [class.active]="currentFilter === 'oculto'"
-        (click)="setFilter('oculto')">
-        ? DESCONOCIDOS
+        (click)="setFilter('oculto')"
+      >
+        DESCONOCIDOS
       </button>
     </div>
 
     <div class="grid-title">XUXEDEX</div>
 
-    <!-- Grid de Xuxemons -->
     <div class="xuxemon-grid" id="xuxemon-grid">
-      @for ( x of listFiltrada; track x.id) {
-        <div
-          class="xuxemon-card"
-          (click)="abrirModal(x)"
-        >
+      @for (x of listFiltrada; track x.id) {
+        <div class="xuxemon-card" (click)="abrirModal(x)">
           <div class="xuxemon-card-num">
             #{{ x.id | number:'3.0' }}
           </div>
@@ -121,7 +154,7 @@
           <div class="xuxemon-card-sprite">
             @if (x.imagenMostrada && x.nombre !== '???') {
               <img [src]="x.imagenMostrada" [alt]="x.nombre">
-            } @else{
+            } @else {
               <img [src]="x.imagenMostrada" alt="desconocido" class="placeholder-black">
             }
           </div>
@@ -136,28 +169,22 @@
 
           <div class="xuxemon-card-tags">
             @if (x.atrapado) {
-              <span class="tag tag-caught">✔ ATRAPADO</span>
+              <span class="tag tag-caught">ATRAPADO</span>
             } @else if (x.oculto) {
               <span class="tag tag-unknown">?</span>
             } @else {
-              <span class="tag tag-seen">👁 VISTO</span>
+              <span class="tag tag-seen">VISTO</span>
             }
           </div>
         </div>
       }
     </div>
-
   </main>
 </div>
 
-<!-- MODAL de detalle -->
-<div
-  class="modal-overlay"
-  [class.open]="modalAbierto"
-  (click)="cerrarModal()"
->
+<div class="modal-overlay" [class.open]="modalAbierto" (click)="cerrarModal()">
   <div class="modal-box" (click)="$event.stopPropagation()">
-    <div class="modal-close" (click)="cerrarModal()">✕ CERRAR</div>
+    <div class="modal-close" (click)="cerrarModal()">X CERRAR</div>
 
     @if (selected) {
       <div class="modal-screen">

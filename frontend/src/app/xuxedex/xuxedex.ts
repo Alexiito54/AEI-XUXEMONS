@@ -2,7 +2,11 @@ import { Component, ViewEncapsulation, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { XuxemonsService, XuxedexEntry, XuxedexResponse } from '../services/xuxemons.service';
+import {
+  AdminJugador,
+  XuxemonsService,
+  XuxedexResponse
+} from '../services/xuxemons.service';
 
 interface Xuxemon {
   id: number;
@@ -33,6 +37,12 @@ export class Xuxedex implements OnInit {
   xuxemonCapturados: number[] = [];
   isLoading = true;
   errorMsg = '';
+  adminJugadores: AdminJugador[] = [];
+  adminLoading = false;
+  adminErrorMsg = '';
+  adminFeedbackMsg = '';
+  adminFeedbackType: 'success' | 'error' | '' = '';
+  asignandoJugadorId: number | null = null;
 
   // Estado UI
   currentFilter: 'todos' | 'atrapado' | 'visto' | 'oculto' = 'todos';
@@ -66,12 +76,57 @@ export class Xuxedex implements OnInit {
 
         // Actualizar estadísticas
         this.isAdmin = response.estadisticas.is_admin;
+        if (this.isAdmin) {
+          this.cargarJugadoresAdmin();
+        } else {
+          this.adminJugadores = [];
+        }
         this.isLoading = false;
       },
       error: (error: any) => {
         this.errorMsg = 'Error al cargar la Xuxedex';
         console.error('Error cargando Xuxedex:', error);
         this.isLoading = false;
+      }
+    });
+  }
+
+  cargarJugadoresAdmin(): void {
+    this.adminLoading = true;
+    this.adminErrorMsg = '';
+
+    this.xuxemonsService.getAdminJugadores().subscribe({
+      next: (response) => {
+        this.adminJugadores = response.jugadores;
+        this.adminLoading = false;
+      },
+      error: (error: any) => {
+        this.adminErrorMsg = 'No se pudo cargar la lista de jugadores';
+        console.error('Error cargando jugadores admin:', error);
+        this.adminLoading = false;
+      }
+    });
+  }
+
+  asignarXuxemonAleatorio(jugador: AdminJugador): void {
+    this.adminFeedbackMsg = '';
+    this.adminFeedbackType = '';
+    this.asignandoJugadorId = jugador.id;
+
+    this.xuxemonsService.asignarXuxemonAleatorioAJugador(jugador.id).subscribe({
+      next: (response) => {
+        this.adminJugadores = this.adminJugadores.map((item) =>
+          item.id === jugador.id ? response.jugador : item
+        );
+        this.adminFeedbackMsg = `${response.xuxemon.nombre} ha sido asignado a ${response.jugador.name}.`;
+        this.adminFeedbackType = 'success';
+        this.asignandoJugadorId = null;
+      },
+      error: (error: any) => {
+        this.adminFeedbackMsg =
+          error?.error?.message || 'No se pudo asignar el Xuxemon aleatorio';
+        this.adminFeedbackType = 'error';
+        this.asignandoJugadorId = null;
       }
     });
   }
