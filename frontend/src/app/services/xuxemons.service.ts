@@ -58,6 +58,27 @@ export interface ColeccionXuxemon {
   xuxemon: Xuxemon;
 }
 
+export interface AdminJugador {
+  id: number;
+  name: string;
+  apellidos: string;
+  email: string;
+  id_usuario: string;
+  rol: string;
+  total_xuxemons: number;
+}
+
+export interface AdminJugadoresResponse {
+  jugadores: AdminJugador[];
+}
+
+export interface AdminAsignarXuxemonResponse {
+  message: string;
+  xuxemon: Xuxemon;
+  coleccion: ColeccionXuxemon;
+  jugador: AdminJugador;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -99,6 +120,22 @@ export class XuxemonsService {
     return this.http.get<ColeccionXuxemon>(`${this.apiUrl}/colecciones/${id}`, {
       headers: this.getHeaders()
     });
+  }
+
+  getAdminJugadores(): Observable<AdminJugadoresResponse> {
+    return this.http.get<AdminJugadoresResponse>(`${this.apiUrl}/admin/jugadores`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  asignarXuxemonAleatorioAJugador(userId: number): Observable<AdminAsignarXuxemonResponse> {
+    return this.http.post<AdminAsignarXuxemonResponse>(
+      `${this.apiUrl}/admin/jugadores/${userId}/xuxemon-aleatorio`,
+      {},
+      {
+        headers: this.getHeaders()
+      }
+    );
   }
 
 

@@ -177,6 +177,130 @@ body {
 }
 
 /* ==============================
+   PANEL ADMIN
+   ============================== */
+
+.admin-panel {
+  border: 3px solid var(--border-dark);
+  background: #fdfdfd;
+  padding: 12px 14px;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.4);
+  margin-bottom: 16px;
+}
+
+.admin-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.admin-panel-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.admin-panel-subtitle,
+.admin-panel-count {
+  font-size: 8px;
+  color: var(--muted);
+}
+
+.admin-feedback,
+.admin-empty-state {
+  border: 2px solid var(--border-dark);
+  background: #f6f6f6;
+  padding: 8px 10px;
+  font-size: 8px;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.admin-feedback {
+  background: #e8f9ec;
+}
+
+.admin-feedback.error,
+.admin-empty-state--error {
+  background: #ffe0e0;
+}
+
+.admin-player-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-player-card {
+  border: 3px solid var(--border-dark);
+  background: #f6f6f6;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 130px;
+}
+
+.admin-player-main,
+.admin-player-side {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-player-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.admin-player-name {
+  font-size: 10px;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.admin-player-id,
+.admin-player-email,
+.admin-player-total {
+  font-size: 8px;
+  line-height: 1.5;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.admin-player-side {
+  align-items: flex-end;
+  justify-content: space-between;
+  flex: 0 0 146px;
+}
+
+.admin-assign-btn {
+  border: 2px solid var(--border-dark);
+  background: #fdfdfd;
+  padding: 8px 10px;
+  font-size: 8px;
+  font-family: inherit;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.4);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
+  min-width: 136px;
+}
+
+.admin-assign-btn:hover:not(:disabled) {
+  background: #e5dbff;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.7);
+}
+
+.admin-assign-btn:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* ==============================
    BUSCADOR Y FILTROS
    ============================== */
 
@@ -300,7 +424,8 @@ body {
 }
 
 /* Tags (atrapado, visto, nuevo) */
-.poke-card-tags {
+.poke-card-tags,
+.xuxemon-card-tags {
   position: absolute;
   inset-inline-end: 4px;
   inset-block-start: 4px;
@@ -561,6 +686,20 @@ body {
     margin-left: 0;
     margin-top: 0;
     box-shadow: 0 0 0 4px #e0e0e0, 0 0 0 8px var(--border-dark);
+  }
+
+  .admin-panel-header,
+  .admin-player-card {
+    flex-direction: column;
+  }
+
+  .admin-player-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-player-side {
+    flex: 1 1 auto;
+    align-items: flex-start;
   }
 
   .poke-grid {

@@ -9,6 +9,7 @@ use App\Models\Item;
 use App\Models\Enfermedad;
 use App\Models\Vacuna;
 use App\Models\ConfiguracionAdmin;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -105,23 +106,49 @@ class ColeccionController extends Controller
     public function store(Request $request)
     {
         $user = $request->user();
+        $resultado = $this->crearXuxemonAleatorioParaUsuario($user);
 
-        // Obtener un Xuxemon aleatorio
-        $xuxemon = Xuxemon::inRandomOrder()->first();
-
-        if (!$xuxemon) {
+        if (!$resultado) {
             return response()->json(['message' => 'No hay xuxemons disponibles'], 404);
         }
 
-        $coleccion = Coleccion::create([
-            'id_usuario' => $user->id,
-            'id_xuxemon' => $xuxemon->id,
-        ]);
+        [$xuxemon, $coleccion] = $resultado;
 
         return response()->json([
             'message' => 'Xuxemon capturado',
             'xuxemon' => $xuxemon,
             'coleccion' => $coleccion,
+        ], 201);
+    }
+
+    public function storeForUser(Request $request, User $user)
+    {
+        if (!$user->esJugador()) {
+            return response()->json([
+                'message' => 'Solo se pueden asignar Xuxemons a jugadores',
+            ], 422);
+        }
+
+        $resultado = $this->crearXuxemonAleatorioParaUsuario($user);
+
+        if (!$resultado) {
+            return response()->json(['message' => 'No hay xuxemons disponibles'], 404);
+        }
+
+        [$xuxemon, $coleccion] = $resultado;
+
+        return response()->json([
+            'message' => 'Xuxemon aleatorio asignado correctamente',
+            'xuxemon' => $xuxemon,
+            'coleccion' => $coleccion,
+            'jugador' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'apellidos' => $user->apellidos,
+                'email' => $user->email,
+                'id_usuario' => $user->id_usuario,
+                'total_xuxemons' => $user->colecciones()->count(),
+            ],
         ], 201);
     }
 
@@ -296,5 +323,20 @@ class ColeccionController extends Controller
             'enfermedades_restantes' => $enfermedadesRestantes,
         ], 200);
     }
-}
 
+    private function crearXuxemonAleatorioParaUsuario(User $user): ?array
+    {
+        $xuxemon = Xuxemon::inRandomOrder()->first();
+
+        if (!$xuxemon) {
+            return null;
+        }
+
+        $coleccion = Coleccion::create([
+            'id_usuario' => $user->id,
+            'id_xuxemon' => $xuxemon->id,
+        ]);
+
+        return [$xuxemon, $coleccion];
+    }
+}
