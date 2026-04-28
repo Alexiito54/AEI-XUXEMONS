@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Coleccion;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -18,7 +19,11 @@ class UserController extends Controller
     {
         $jugadores = User::query()
             ->where('rol', 'jugador')
-            ->withCount(['colecciones as total_xuxemons'])
+            ->addSelect([
+                'total_xuxemons' => Coleccion::query()
+                    ->selectRaw('COUNT(DISTINCT id_xuxemon)')
+                    ->whereColumn('id_usuario', 'users.id'),
+            ])
             ->orderBy('name')
             ->orderBy('apellidos')
             ->get([

@@ -24,6 +24,7 @@ export class PaginaPrincipal implements OnInit {
   coleccion: ColeccionXuxemon[] = [];
   xuxemonsTotales: number = 0;
   xuxemonsAtrapados: number = 0;
+  capturasTotales: number = 0;
   batallas: number = 0;
   amigos: number = 0;
   nivel: number = 1;
@@ -49,7 +50,8 @@ export class PaginaPrincipal implements OnInit {
     this.xuxemonsService.getColeccion().subscribe({
       next: (data) => {
         this.coleccion = data;
-        this.xuxemonsAtrapados = data.length;
+        this.capturasTotales = data.length;
+        this.xuxemonsAtrapados = this.contarXuxemonsUnicos(data);
         this.calcularNivel();
         this.cargando = false;
       },
@@ -79,7 +81,15 @@ export class PaginaPrincipal implements OnInit {
   calcularNivel() {
     // El nivel se calcula basado en los Xuxemons atrapados
     // Cada 5 Xuxemons = 1 nivel, máximo nivel 50
-    this.nivel = Math.min(50, Math.floor(this.xuxemonsAtrapados / 5) + 1);
+    this.nivel = Math.min(50, Math.floor(this.capturasTotales / 5) + 1);
+  }
+
+  private contarXuxemonsUnicos(coleccion: ColeccionXuxemon[]): number {
+    return new Set(
+      coleccion
+        .map((item) => item.xuxemon?.id ?? item.xuxemon_id ?? item.id_xuxemon)
+        .filter((id): id is number => typeof id === 'number')
+    ).size;
   }
 
   getEquipo(): ColeccionXuxemon[] {

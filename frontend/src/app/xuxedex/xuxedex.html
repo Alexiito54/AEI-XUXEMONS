@@ -215,6 +215,11 @@
               Estado: VISTO
             }
           </div>
+          @if (selected.cantidadCapturada > 1) {
+            <div class="modal-desc">
+              Capturas registradas: {{ selected.cantidadCapturada }}
+            </div>
+          }
         </div>
       </div>
     }
