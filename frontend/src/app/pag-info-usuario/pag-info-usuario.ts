@@ -48,6 +48,7 @@ export class PagInfoUsuario implements OnInit {
   // Confirmación de eliminación
   showDeleteConfirm = false;
   deleteConfirmText = '';
+  deletePassword = '';
 
   constructor(
     private authService: AuthService,
@@ -175,12 +176,14 @@ export class PagInfoUsuario implements OnInit {
   startDeleteAccount() {
     this.showDeleteConfirm = true;
     this.deleteConfirmText = '';
+    this.deletePassword = '';
     this.errorMsg = '';
   }
 
   cancelDelete() {
     this.showDeleteConfirm = false;
     this.deleteConfirmText = '';
+    this.deletePassword = '';
   }
 
   confirmDeleteAccount() {
@@ -189,12 +192,19 @@ export class PagInfoUsuario implements OnInit {
       return;
     }
 
-    this.authService.deleteUser().subscribe({
+    if (!this.deletePassword || this.deletePassword.trim() === '') {
+      this.errorMsg = '✕ Debes ingresar tu contraseña para eliminar la cuenta';
+      return;
+    }
+
+    this.authService.deleteUser(this.deletePassword).subscribe({
       next: (response) => {
         this.successMsg = 'Cuenta eliminada correctamente. Redirigiendo...';
+        // Limpiar sesión en cliente y redirigir al login
+        this.authService.clearSession();
         setTimeout(() => {
           this.router.navigate(['/login']);
-        }, 2000);
+        }, 1200);
       },
       error: (error) => {
         this.errorMsg = error.error?.message || 'Error al eliminar la cuenta';
