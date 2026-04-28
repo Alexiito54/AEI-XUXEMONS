@@ -26,10 +26,24 @@ class AdminXuxedexManagementTest extends TestCase
             'tamaño' => 'Pequeño',
             'imagen' => 'slime.png',
         ]);
+        $segundoXuxemon = Xuxemon::create([
+            'nombre' => 'Golem',
+            'tipo' => 'Tierra',
+            'tamaño' => 'Mediano',
+            'imagen' => 'golem.png',
+        ]);
 
         Coleccion::create([
             'id_usuario' => $jugador->id,
             'id_xuxemon' => $xuxemon->id,
+        ]);
+        Coleccion::create([
+            'id_usuario' => $jugador->id,
+            'id_xuxemon' => $xuxemon->id,
+        ]);
+        Coleccion::create([
+            'id_usuario' => $jugador->id,
+            'id_xuxemon' => $segundoXuxemon->id,
         ]);
 
         Sanctum::actingAs($admin);
@@ -42,7 +56,7 @@ class AdminXuxedexManagementTest extends TestCase
             ->assertJsonFragment([
                 'id' => $jugador->id,
                 'id_usuario' => $jugador->id_usuario,
-                'total_xuxemons' => 1,
+                'total_xuxemons' => 2,
             ])
             ->assertJsonFragment([
                 'id' => $otroJugador->id,

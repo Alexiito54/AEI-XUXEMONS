@@ -14,6 +14,7 @@ interface Xuxemon {
   tipo: string;
   tamano: string;
   imagen: string;
+  cantidadCapturada: number;
   atrapado: boolean;
   visto: boolean;
   oculto: boolean;
@@ -68,6 +69,7 @@ export class Xuxedex implements OnInit {
           tipo: x.oculto ? '???' : x.tipo,
           tamano: x.tamaño,
           imagen: this.obtenerImagenXuxemon(x),
+          cantidadCapturada: x.cantidad_capturada || 0,
           imagenMostrada: this.obtenerImagenXuxemon(x), // Imagen vacía para ocultos
           atrapado: x.atrapado,
           visto: x.visto,

@@ -145,4 +145,14 @@ class User extends Authenticatable
     {
         return $this->colecciones()->count();
     }
+
+    /**
+     * Obtener el numero de Xuxemons unicos en la coleccion.
+     */
+    public function totalXuxemonsUnicosColeccion(): int
+    {
+        return $this->colecciones()
+            ->distinct('id_xuxemon')
+            ->count('id_xuxemon');
+    }
 }

@@ -32,6 +32,7 @@ export interface XuxedexEntry {
   tipo: string;
   tamaño: string;
   imagen: string;
+  cantidad_capturada: number;
   atrapado: boolean;
   visto: boolean;
   oculto: boolean;
@@ -49,8 +50,10 @@ export interface XuxedexResponse {
 
 export interface ColeccionXuxemon {
   id: number;
-  user_id: number;
-  xuxemon_id: number;
+  user_id?: number;
+  id_usuario?: number;
+  xuxemon_id?: number;
+  id_xuxemon?: number;
   capturado_en: string;
   tamano: string;
   nivel: number;

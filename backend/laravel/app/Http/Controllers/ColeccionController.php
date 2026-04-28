@@ -38,10 +38,12 @@ class ColeccionController extends Controller
         // Obtener todos los Xuxemons disponibles
         $todosXuxemons = Xuxemon::all();
 
-        // Obtener los Xuxemons que el usuario tiene capturados
-        $xuxemonsCapturados = Coleccion::where('id_usuario', $user->id)
-            ->pluck('id_xuxemon')
-            ->toArray();
+        // Obtener los Xuxemons capturados y cuantas copias tiene de cada uno
+        $capturasPorXuxemon = Coleccion::where('id_usuario', $user->id)
+            ->select('id_xuxemon', DB::raw('COUNT(*) as total'))
+            ->groupBy('id_xuxemon')
+            ->pluck('total', 'id_xuxemon');
+        $xuxemonsCapturados = $capturasPorXuxemon->keys()->map(fn ($id) => (int) $id)->all();
 
         $resultado = [];
 
@@ -54,6 +56,7 @@ class ColeccionController extends Controller
                     'tipo' => $xuxemon->tipo,
                     'tamaño' => $xuxemon->tamaño,
                     'imagen' => $xuxemon->imagen,
+                    'cantidad_capturada' => (int) ($capturasPorXuxemon->get($xuxemon->id, 0)),
                     'atrapado' => true,  // Todos atrapados para admin
                     'visto' => true,     // Todos vistos para admin
                     'oculto' => false,   // Ninguno oculto para admin
@@ -85,6 +88,7 @@ class ColeccionController extends Controller
                     'tipo' => $xuxemon->tipo,
                     'tamaño' => $xuxemon->tamaño,
                     'imagen' => $xuxemon->imagen,
+                    'cantidad_capturada' => (int) ($capturasPorXuxemon->get($xuxemon->id, 0)),
                     'atrapado' => $estaAtrapado,
                     'visto' => $esVisto,
                     'oculto' => $esOculto,
@@ -147,7 +151,7 @@ class ColeccionController extends Controller
                 'apellidos' => $user->apellidos,
                 'email' => $user->email,
                 'id_usuario' => $user->id_usuario,
-                'total_xuxemons' => $user->colecciones()->count(),
+                'total_xuxemons' => $user->totalXuxemonsUnicosColeccion(),
             ],
         ], 201);
     }
