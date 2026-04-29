@@ -209,5 +209,4 @@ export class MochilaComponent implements OnInit {
   navegarAlXuxedex()    { this.router.navigate(['/xuxedex']); }
   navegarAlInventario() { this.router.navigate(['/mochila']); }
   navegarAlPerfil()     { this.router.navigate(['/info-usuario']); }
-  navegarAlAdmin()      { this.router.navigate(['/admin']); }
 }
