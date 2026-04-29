@@ -52,7 +52,9 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
-    return this.getStoredUser()?.role === 'admin';
+    const user = this.getStoredUser();
+    const role = localStorage.getItem('role') || sessionStorage.getItem('role');
+    return user?.role === 'admin' || user?.rol === 'admin' || role === 'admin' || role === 'administrador';
   }
 
   getUser(): Observable<any> {

@@ -29,6 +29,7 @@ export class PaginaPrincipal implements OnInit {
   amigos: number = 0;
   nivel: number = 1;
   cargando: boolean = true;
+  isAdmin: boolean = false;
 
   constructor(
     private router: Router,
@@ -45,13 +46,22 @@ export class PaginaPrincipal implements OnInit {
     
     // Obtener datos del usuario
     this.usuario = this.authService.getStoredUser();
+    this.isAdmin = this.authService.isAdmin();
     
     // Cargar colección de Xuxemons
     this.xuxemonsService.getColeccion().subscribe({
       next: (data) => {
         this.coleccion = data;
         this.capturasTotales = data.length;
-        this.xuxemonsAtrapados = this.contarXuxemonsUnicos(data);
+        
+        // Si es admin, mostrar todos los xuxemons como atrapados
+        if (this.isAdmin) {
+          // El total de atrapados será igual al total de xuxemons disponibles
+          // Se actualizará cuando cargue el xuxedex
+        } else {
+          this.xuxemonsAtrapados = this.contarXuxemonsUnicos(data);
+        }
+        
         this.calcularNivel();
         this.cargando = false;
       },
@@ -65,6 +75,11 @@ export class PaginaPrincipal implements OnInit {
     this.xuxemonsService.getXuxedex().subscribe({
       next: (data) => {
         this.xuxemonsTotales = data.estadisticas.total;
+        
+        // Si es admin, los atrapados son iguales al total
+        if (this.isAdmin) {
+          this.xuxemonsAtrapados = this.xuxemonsTotales;
+        }
       },
       error: (err) => {
         console.error('Error al cargar Xuxedex:', err);
@@ -72,6 +87,10 @@ export class PaginaPrincipal implements OnInit {
         this.xuxemonsService.getTodosXuxemons().subscribe({
           next: (xuxemons) => {
             this.xuxemonsTotales = xuxemons.length;
+            // Si es admin, los atrapados son iguales al total
+            if (this.isAdmin) {
+              this.xuxemonsAtrapados = this.xuxemonsTotales;
+            }
           }
         });
       }
