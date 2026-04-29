@@ -60,7 +60,7 @@
         <div class="trainer-block">
           <div class="section-label">- TARJETA DE ENTRENADOR -</div>
           <div class="trainer-avatar-row">
-            <div class="avatar-box">🧢</div>
+            <div class="avatar-box"></div>
             <div class="trainer-info">
               <span class="trainer-name">ENTRENADOR</span>
               <span class="trainer-badge">★ RANGO PRO</span>
@@ -76,9 +76,12 @@
           <button class="btn-edit" (click)="toggleEditMode()">▶ EDITAR PERFIL</button>
         </div>
         <!-- FORMULARIO DE EDICIÓN -->
-        @if (isEditing) {
-          <div class="edit-form-container">
-            <div class="section-label">- EDITAR INFORMACIÓN -</div>
+        <div *ngIf="isEditing" class="edit-form-container">
+          <div class="section-label">- EDITAR INFORMACIÓN -</div>
+
+          <div *ngIf="errorMsg" class="alert alert-error">{{ errorMsg }}</div>
+          <div *ngIf="successMsg" class="alert alert-success">{{ successMsg }}</div>
+
           <div class="form-group">
             <label>► NOMBRE:</label>
             <input type="text" [(ngModel)]="userData.name" placeholder="Tu nombre" class="form-input">
@@ -100,11 +103,26 @@
             <input type="text" [(ngModel)]="userData.ciudad" placeholder="Tu ciudad" class="form-input">
           </div>
           <div class="button-group">
-            <button class="btn-primary" (click)="saveUserData()">✓ GUARDAR CAMBIOS</button>
-            <button class="btn-secondary" (click)="cancelEdit()">✗ CANCELAR</button>
+            <button class="btn-primary" (click)="saveUserData()">GUARDAR CAMBIOS</button>
+            <button class="btn-secondary" (click)="cancelEdit()">CANCELAR</button>
+            <button class="btn-danger" (click)="startDeleteAccount()">ELIMINAR PERFIL</button>
           </div>
+
+          <div *ngIf="showDeleteConfirm" class="delete-confirm">
+            <div class="section-label">- CONFIRMAR ELIMINACIÓN -</div>
+            <p>Para confirmar, escribe <strong>ELIMINAR MI CUENTA</strong> en el campo y pulsa Confirmar.</p>
+            <input type="text" [(ngModel)]="deleteConfirmText" placeholder="ELIMINAR MI CUENTA" class="form-input">
+            <div class="form-group">
+              <label>► CONTRASEÑA:</label>
+              <input type="password" [(ngModel)]="deletePassword" placeholder="Tu contraseña" class="form-input">
+            </div>
+            <div class="button-group">
+              <button class="btn-danger" (click)="confirmDeleteAccount()">Confirmar eliminación</button>
+              <button class="btn-secondary" (click)="cancelDelete()">Cancelar</button>
+            </div>
+          </div>
+
         </div>
-        }
         <div class="badges-block">
           <div class="section-label">- INSIGNIAS Y LOGROS -</div>
           <div class="badges-grid">
