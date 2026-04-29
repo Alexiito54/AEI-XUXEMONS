@@ -19,7 +19,7 @@ class ColeccionController extends Controller
     {
         $user = $request->user();
         $coleccion = Coleccion::where('id_usuario', $user->id)
-            ->with('xuxemon')
+            ->with(['xuxemon', 'enfermedades'])
             ->get();
 
         return response()->json($coleccion, 200);
@@ -211,7 +211,19 @@ class ColeccionController extends Controller
 
         // Obtener configuración
         $config = ConfiguracionAdmin::obtener();
-        $xuxesNecesarios = ($coleccion->tamaño_actual == 'Pequeño') ? $config->xuxes_pequeno_mediano : $config->xuxes_mediano_grande;
+       $xuxesNecesarios = ($coleccion->tamaño_actual == 'Pequeño') 
+            ? $config->xuxes_pequeno_mediano 
+            : $config->xuxes_mediano_grande;
+
+        $tesBajonAzucar = DB::table('xuxemon_enfermedad')
+            ->where('coleccion_id', $coleccion->id)
+            ->join('enfermedades', 'xuxemon_enfermedad.enfermedad_id', '=', 'enfermedades.id')
+            ->where('enfermedades.nombre', 'Bajón de azúcar')
+            ->exists();
+
+        if ($tesBajonAzucar) {
+            $xuxesNecesarios += 2;
+        }
 
         // Calcular enfermedades existentes
         $enfermedades = DB::table('xuxemon_enfermedad')
@@ -275,18 +287,16 @@ class ColeccionController extends Controller
         }
 
         $validated = $request->validate([
-            'id_vacuna' => 'required|exists:vacunas,id',
+            'id_item' => 'required|exists:items,id', 
         ]);
 
         $vacuna = Vacuna::find($validated['id_vacuna']);
 
-        // Verificar si tiene vacuna en mochila
-        $itemVacuna = Item::where('tipo', 'vacuna')
-            ->where('nombre', $vacuna->nombre)
-            ->first();
+        $itemVacuna = Item::find($validated['id_item']);  
+        $vacuna = Vacuna::where('nombre', $itemVacuna->nombre)->first();
 
-        if (!$itemVacuna) {
-            return response()->json(['message' => 'Vacuna no existe como item'], 500);
+        if (!$vacuna) {
+            return response()->json(['message' => 'Vacuna no trobada al sistema'], 404);
         }
 
         $mochilaVacuna = Mochila::where('id_usuario', $request->user()->id)

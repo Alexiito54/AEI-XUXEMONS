@@ -12,7 +12,7 @@ class MochilaController extends Controller
     {
         $user = $request->user();
         $mochilaItems = Mochila::where('id_usuario', $user->id)
-            ->with('articulo')
+            ->with('item')
             ->get();
 
         return response()->json($mochilaItems, 200);
