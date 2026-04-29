@@ -161,7 +161,8 @@ export class Xuxedex implements OnInit {
       next: (coleccion: any[]) => {
         this.xuxemonCapturados = new Map();
         coleccion.forEach(item => {
-          this.xuxemonCapturados.set(item.xuxemon_id, item);
+          const xuxemonId = item.xuxemon_id || (item as any).id_xuxemon;
+          this.xuxemonCapturados.set(xuxemonId, item);
         });
         // Marcar como atrapados en la lista
         this.xuxemons = this.xuxemons.map(x => ({

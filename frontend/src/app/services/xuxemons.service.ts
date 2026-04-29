@@ -92,14 +92,13 @@ export class XuxemonsService {
     });
   }
 
-  // Curar un Xuxemon con vacuna (protegido)
-  curarXuxemon(id: number, vacunaId: number): Observable<any> {
+  curarXuxemon(id: number, itemId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/colecciones/${id}/curar`, {
-      id_vacuna: vacunaId
+        id_item: itemId  
     }, {
-      headers: this.getHeaders()
+        headers: this.getHeaders()
     });
-  }
+}
 
   // Liberar un Xuxemon (protegido)
   liberarXuxemon(id: number): Observable<any> {

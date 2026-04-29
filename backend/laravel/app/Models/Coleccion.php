@@ -20,10 +20,14 @@ class Coleccion extends Model
     {
         return $this->belongsTo(Xuxemon::class, 'id_xuxemon');
     }
-
-    public function enfermedades(): BelongsToMany
+    public function enfermedades()
     {
-        return $this->belongsToMany(Enfermedad::class, 'xuxemon_enfermedad', 'coleccion_id', 'enfermedad_id');
+        return $this->belongsToMany(
+            Enfermedad::class,
+            'xuxemon_enfermedad',
+            'coleccion_id',
+            'enfermedad_id'
+        );
     }
 }
 

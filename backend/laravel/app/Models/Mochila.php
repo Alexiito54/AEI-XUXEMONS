@@ -15,10 +15,10 @@ class Mochila extends Model
         return $this->belongsTo(User::class, 'id_usuario');
     }
 
-    public function articulo(): BelongsTo
-    {
-        return $this->belongsTo(Item::class, 'id_item');
-    }
+   public function item(): BelongsTo
+{
+    return $this->belongsTo(Item::class, 'id_item');
+}
 }
 
 
