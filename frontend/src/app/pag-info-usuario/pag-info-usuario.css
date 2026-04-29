@@ -106,6 +106,8 @@
     padding: 24px 28px;
     box-sizing: border-box;
     box-shadow: 0 0 0 4px #e0e0e0, 0 0 0 8px var(--border-dark, #111);
+    overflow: auto; /* allow internal scrolling so long forms are visible */
+    -webkit-overflow-scrolling: touch;
   }
 
   /* Welcome */
@@ -279,6 +281,10 @@
     flex-direction: column;
     gap: 14px;
     background: #f9f9f9;
+    max-height: calc(100vh - 240px); /* keep form inside viewport */
+    overflow: auto;
+    padding-right: 12px;
+    z-index: 30;
   }
   .form-group {
     display: flex;
@@ -431,10 +437,82 @@
     letter-spacing: 0.5px;
   }
 
-  /* RESPONSIVE */
+  /* RESPONSIVE: breakpoints for desktop/tablet/mobile and tiny devices */
+
+  /* Large screens (<= 1024px) */
+  @media (max-width: 1024px) {
+    .main-content { max-width: 920px; margin-left: 220px; }
+    .menu-section { width: 200px; }
+    .main { width: 760px; max-width: calc(100% - 48px); }
+    .avatar-box { width: 64px; height: 64px; }
+    .trainer-name { font-size: 10px; }
+  }
+
+  /* Tablets and small desktops (<= 768px) */
   @media (max-width: 768px) {
+    /* Move sidebar to top as a horizontal bar (in-flow to avoid overlaps) */
+    .menu-section {
+      position: static !important;
+      inset: auto;
+      width: 100% !important;
+      height: auto !important;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+      padding: 10px;
+      box-shadow: none;
+      border-right: none;
+      background: #8a49f0;
+      flex-wrap: wrap;
+    }
+    .logo-section .logo-title { display: none; }
+    .menu-title { flex-direction: row; gap: 6px; overflow-x: auto; }
+    .menu-title h3 { white-space: nowrap; padding: 6px 10px; font-size: 9px; }
+
+    /* content full width under menu */
+    .main-content { margin-left: 0 !important; padding: 0 12px; margin-top: 0; }
+    .main { width: 95%; max-width: 720px; margin: 12px auto; padding: 16px; }
+
     .two-col { grid-template-columns: 1fr; }
-    .sidebar { width: 140px; }
-    .sidebar-logo { font-size: 11px; }
-    .sidebar-nav a { font-size: 7px; }
+    .badges-grid { grid-template-columns: 1fr; }
+    .equipo-grid { grid-template-columns: repeat(2,1fr); }
+    .cards-row { flex-direction: column; }
+    .avatar-box { width: 56px; height: 56px; }
+  }
+
+  /* Small phones (<= 480px) */
+  @media (max-width: 480px) {
+    .menu-title h3 { font-size: 8px; padding: 6px 8px; }
+    .main { width: 96%; padding: 12px; margin: 8px auto; }
+    .welcome-box h1 { font-size: 12px; }
+    .stat-card .card-value { font-size: 16px; }
+    .avatar-box { width: 48px; height: 48px; }
+    .form-input { font-size: 12px; padding: 8px; }
+    .button-group { flex-direction: column; }
+    .btn-primary, .btn-secondary, .btn-danger { min-width: 100%; }
+    .badges-grid, .mochila-grid { grid-template-columns: 1fr; }
+    .equipo-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* Extra small devices: ensure no overlap even on very tiny viewports */
+  @media (max-width: 360px) {
+    .menu-section {
+      position: static !important;
+      width: 100% !important;
+      height: auto !important;
+      padding: 8px 6px !important;
+      gap: 6px !important;
+    }
+    .menu-title h3 { padding: 6px 6px; font-size: 7.5px; }
+    .main-content { margin-left: 0 !important; padding: 6px !important; }
+    .main { margin: 8px auto; width: 98%; max-width: 96%; }
+  }
+
+  /* Very tiny screens (<= 320px) enforce stacking and avoid any fixed elements */
+  @media (max-width: 320px) {
+    .menu-section { position: static !important; box-shadow: none !important; }
+    .logo-section .logo-title { display: none; }
+    .menu-title { gap: 4px; }
+    .main { padding: 10px; }
   }
