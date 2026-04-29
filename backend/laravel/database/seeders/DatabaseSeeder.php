@@ -19,10 +19,10 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             TestUserSeeder::class,
             XuxemonSeeder::class,
-            ItemSeeder::class,
+            ItemSeeder::class,       
             EnfermedadSeeder::class,
             VacunaSeeder::class,
-            ColeccionSeeder::class,
+            MochilaInicialSeeder::class, 
         ]);
     }
 }

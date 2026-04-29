@@ -8,6 +8,7 @@ import {
   XuxedexResponse
 } from '../services/xuxemons.service';
 
+
 interface Xuxemon {
   id: number;
   nombre: string;
@@ -18,8 +19,9 @@ interface Xuxemon {
   atrapado: boolean;
   visto: boolean;
   oculto: boolean;
-  imagenMostrada: string; // Para mostrar imagen normal u oculta
+  imagenMostrada: string;
 }
+
 
 @Component({
   selector: 'xuxedex',
@@ -30,10 +32,8 @@ interface Xuxemon {
   encapsulation: ViewEncapsulation.None
 })
 export class Xuxedex implements OnInit {
-  // Simulación de usuario actual y rol
-  isAdmin = false; // Cambia a true para probar modo admin
+  isAdmin = false;
 
-  // Datos desde la API
   xuxemons: Xuxemon[] = [];
   xuxemonCapturados: number[] = [];
   isLoading = true;
@@ -45,7 +45,6 @@ export class Xuxedex implements OnInit {
   adminFeedbackType: 'success' | 'error' | '' = '';
   asignandoJugadorId: number | null = null;
 
-  // Estado UI
   currentFilter: 'todos' | 'atrapado' | 'visto' | 'oculto' = 'todos';
   currentSearch = '';
 
@@ -60,7 +59,6 @@ export class Xuxedex implements OnInit {
 
   cargarXuxemons(): void {
     this.isLoading = true;
-    // Cargar datos de la Xuxedex (incluye estado de cada Xuxemon)
     this.xuxemonsService.getXuxedex().subscribe({
       next: (response: XuxedexResponse) => {
         this.xuxemons = response.xuxemons.map(x => ({
@@ -70,13 +68,12 @@ export class Xuxedex implements OnInit {
           tamano: x.tamaño,
           imagen: this.obtenerImagenXuxemon(x),
           cantidadCapturada: x.cantidad_capturada || 0,
-          imagenMostrada: this.obtenerImagenXuxemon(x), // Imagen vacía para ocultos
+          imagenMostrada: this.obtenerImagenXuxemon(x),
           atrapado: x.atrapado,
           visto: x.visto,
           oculto: x.oculto,
         }));
 
-        // Actualizar estadísticas
         this.isAdmin = response.estadisticas.is_admin;
         if (this.isAdmin) {
           this.cargarJugadoresAdmin();
@@ -141,7 +138,6 @@ export class Xuxedex implements OnInit {
       }
       return encodeURI(`/images/xuxemons/${imagen}`);
     }
-
     return this.obtenerImagenPorTipoTamaño(x.tipo, x.tamaño || x.tamano);
   }
 
@@ -150,42 +146,56 @@ export class Xuxedex implements OnInit {
     switch (tipo) {
       case 'Agua':
         if (size.includes('peque')) return '/images/xuxemons/Slime agua - 1.png';
-        if (size.includes('med')) return '/images/xuxemons/Dragon agua - 2.png';
-        if (size.includes('gran')) return '/images/xuxemons/Dragon agua - 3.png';
+        if (size.includes('med'))   return '/images/xuxemons/Dragon agua - 2.png';
+        if (size.includes('gran'))  return '/images/xuxemons/Dragon agua - 3.png';
         return '/images/xuxemons/Slime agua - 1.png';
       case 'Tierra':
         if (size.includes('peque')) return '/images/xuxemons/Golem roca - 1.png';
-        if (size.includes('med')) return '/images/xuxemons/Golem roca - 2.png';
-        if (size.includes('gran')) return '/images/xuxemons/Golem roca - 3.png';
+        if (size.includes('med'))   return '/images/xuxemons/Golem roca - 2.png';
+        if (size.includes('gran'))  return '/images/xuxemons/Golem roca - 3.png';
         return '/images/xuxemons/Golem roca - 1.png';
       case 'Aire':
         if (size.includes('peque')) return '/images/xuxemons/Cabra aire - 1.png';
-        if (size.includes('med')) return '/images/xuxemons/Cabra aire - 2.png';
-        if (size.includes('gran')) return '/images/xuxemons/Cabra fuego - 3.png';
+        if (size.includes('med'))   return '/images/xuxemons/Cabra aire - 2.png';
+        if (size.includes('gran'))  return '/images/xuxemons/Cabra fuego - 3.png';
         return '/images/xuxemons/Ave fuego - 1.png';
       default:
         return '/images/xuxemons/Dragon agua - 1.png';
     }
   }
 
+  cargarColeccion(): void {
+    this.xuxemonsService.getColeccion().subscribe({
+      next: (coleccion: any[]) => {
+        const mapa = new Map<number, any>();
+        coleccion.forEach(item => {
+          const xuxemonId = item.xuxemon_id || item.id_xuxemon;
+          mapa.set(xuxemonId, item);
+        });
+        this.xuxemons = this.xuxemons.map(x => ({
+          ...x,
+          atrapado: mapa.has(x.id),
+          visto: mapa.has(x.id),
+        }));
+        this.isLoading = false;
+      },
+      error: (error: any) => {
+        console.warn('No autenticado o error cargando colección:', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
   // Navegación
-  navegarAlInicio() { this.router.navigate(['/pagina-principal']); }
-  navegarAlXuxedex() { this.router.navigate(['/xuxedex']); }
-  navegarAlInventario() { this.router.navigate(['/mochila']); }
-  navegarAlPerfil() { this.router.navigate(['/info-usuario']); }
+  navegarAlInicio()      { this.router.navigate(['/pagina-principal']); }
+  navegarAlXuxedex()     { this.router.navigate(['/xuxedex']); }
+  navegarAlInventario()  { this.router.navigate(['/mochila']); }
+  navegarAlPerfil()      { this.router.navigate(['/info-usuario']); }
 
-  // Getters para contadores
-  get totalCount(): number {
-    return this.xuxemons.length;
-  }
-
-  get caughtCount(): number {
-    return this.xuxemons.filter(x => x.atrapado).length;
-  }
-
-  get seenCount(): number {
-    return this.xuxemons.filter(x => x.visto).length;
-  }
+  // Getters contadores
+  get totalCount(): number { return this.xuxemons.length; }
+  get caughtCount(): number { return this.xuxemons.filter(x => x.atrapado).length; }
+  get seenCount(): number   { return this.xuxemons.filter(x => x.visto).length; }
 
   // Filtro + búsqueda
   setFilter(filter: 'todos' | 'atrapado' | 'visto' | 'oculto'): void {
@@ -219,7 +229,7 @@ export class Xuxedex implements OnInit {
     this.xuxemonsService.capturarXuxemon().subscribe({
       next: (result: any) => {
         console.log('Xuxemon capturado:', result);
-        this.cargarXuxemons(); // Cambiar a cargarXuxemons()
+        this.cargarXuxemons();
       },
       error: (error: any) => {
         console.error('Error capturando Xuxemon:', error);
@@ -232,7 +242,7 @@ export class Xuxedex implements OnInit {
       this.xuxemonsService.liberarXuxemon(id).subscribe({
         next: () => {
           console.log('Xuxemon liberado');
-          this.cargarXuxemons(); // Cambiar a cargarXuxemons()
+          this.cargarXuxemons();
         },
         error: (error: any) => {
           console.error('Error liberando Xuxemon:', error);
