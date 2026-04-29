@@ -165,23 +165,8 @@ export class PaginaPrincipal implements OnInit {
     this.router.navigate(['/mochila']);
   }
 
-  navegarAlAmigos() {
-    this.router.navigate(['/amigos']);
-  }
-
-  navegarAlBatalla() {
-    this.router.navigate(['/batalla']);
-  }
-
-  navegarAlChat() {
-    this.router.navigate(['/chat']);
-  }
-
   navegarAlPerfil() {
     this.router.navigate(['/info-usuario']);
   }
   
-  navegarAlAdmin() {
-    this.router.navigate(['/admin']);
-  }
 }

@@ -5,22 +5,9 @@
     <div class="logo-box"><h1>XUXEMONS</h1></div>
     <nav class="nav-box">
       <div class="nav-item" [class.active]="false" (click)="navegarAlInicio()">Inicio</div>
-
       <div class="nav-item active" (click)="navegarAlXuxedex()">Xuxedex</div>
-
       <div class="nav-item" (click)="navegarAlInventario()">Mochila</div>
-
-      <div class="nav-item" (click)="navegarAlAmigos()">Amigos</div>
-
-      <div class="nav-item" (click)="navegarAlBatalla()">Batalla</div>
-
-      <div class="nav-item" (click)="navegarAlChat()">Chat</div>
-
       <div class="nav-item" (click)="navegarAlPerfil()">Perfil</div>
-
-      @if (isAdmin) {
-        <div class="nav-item" (click)="navegarAlAdmin()">Admin</div>
-      }
     </nav>
   </aside>
 
