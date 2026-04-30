@@ -13,6 +13,10 @@ use App\Http\Controllers\VacunaController;
 use App\Http\Controllers\ConfiguracionAdminController;
 use App\Http\Controllers\DiarioController;
 
+Route::options('/{any}', function () {
+    return response('', 200);
+})->where('any', '.*');
+
 // Public routes (no authentication required)
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
