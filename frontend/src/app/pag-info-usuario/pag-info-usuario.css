@@ -390,6 +390,18 @@
     box-shadow: 0 0 0 3px #e03030 !important;
   }
 
+  /* Espaciado específico para el formulario de confirmación de eliminación */
+  .delete-confirm {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .delete-confirm .form-input {
+    max-width: 420px;
+    width: 100%;
+  }
+
   /* ESTILOS ADICIONALES PARA DATOS DEL USUARIO */
   .trainer-phone,
   .trainer-location {

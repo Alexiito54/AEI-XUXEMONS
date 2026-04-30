@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Events\Creating;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -87,13 +88,71 @@ class User extends Authenticatable
         return '#' . $nombreLimpio . $codigoAleatorio;
     }
 
+    /**
+     * Obtener todos los slots de la mochila del usuario.
+     * 1 Usuario -> N Slots de Mochila (20 espacios)
+     */
     public function mochilas(): HasMany
     {
-        return $this->hasMany(Mochila::class);
+        return $this->hasMany(Mochila::class, 'id_usuario');
     }
 
+    /**
+     * Obtener todos los Xuxemons en la colección del usuario.
+     * 1 Usuario -> N Xuxemons en su Xuxedex
+     */
     public function colecciones(): HasMany
     {
-        return $this->hasMany(Coleccion::class);
+        return $this->hasMany(Coleccion::class, 'id_usuario');
+    }
+
+    /**
+     * Verificar si el usuario es administrador.
+     */
+    public function esAdmin(): bool
+    {
+        return $this->rol === 'administrador';
+    }
+
+    /**
+     * Verificar si el usuario es jugador.
+     */
+    public function esJugador(): bool
+    {
+        return $this->rol === 'jugador';
+    }
+
+    /**
+     * Obtener el número de espacios usados en la mochila.
+     */
+    public function espaciosMocuilaUsados(): int
+    {
+        return $this->mochilas()->count();
+    }
+
+    /**
+     * Obtener el número de espacios disponibles en la mochila.
+     */
+    public function espaciosMocuilaDisponibles(): int
+    {
+        return 20 - $this->espaciosMocuilaUsados();
+    }
+
+    /**
+     * Obtener el número de Xuxemons en la colección.
+     */
+    public function totalXuxemonsColeccion(): int
+    {
+        return $this->colecciones()->count();
+    }
+
+    /**
+     * Obtener el numero de Xuxemons unicos en la coleccion.
+     */
+    public function totalXuxemonsUnicosColeccion(): int
+    {
+        return $this->colecciones()
+            ->distinct('id_xuxemon')
+            ->count('id_xuxemon');
     }
 }

@@ -1,30 +1,23 @@
-<!-- Página principal del entrenador -->
-<!-- Aquí se muestra la pantalla de la mochila del jugador -->
 <section class="main-page">
   <div class="main-content">
+
     <div class="welcome-section">
       <h2 class="welcome-title">📦 Tu Mochila</h2>
-      <p class="welcome-description">Espacios ocupados: {{ mochila.length }}/20</p>
+      <p class="welcome-description">Espacios ocupados: {{ slotsUsados }}/20</p>
     </div>
 
     <div class="menu-section">
       <div class="logo-section">
         <h1 class="logo-title">XUXEMONS</h1>
       </div>
-      <!-- Menú lateral de navegación -->
       <div class="menu-title">
         <h3 (click)="navegarAlInicio()" style="cursor: pointer;">Inicio</h3>
         <h3 (click)="navegarAlXuxedex()" style="cursor: pointer;">Xuxedex</h3>
         <h3 (click)="navegarAlInventario()" style="cursor: pointer;">Mochila</h3>
-        <h3 (click)="navegarAlAmigos()" style="cursor: pointer;">Amigos</h3>
-        <h3 (click)="navegarAlBatalla()" style="cursor: pointer;">Batalla</h3>
-        <h3 (click)="navegarAlChat()" style="cursor: pointer;">Chat</h3>
         <h3 (click)="navegarAlPerfil()" style="cursor: pointer;">Perfil</h3>
-        <h3 (click)="navegarAlAdmin()" style="cursor: pointer;">Admin</h3>
       </div>
     </div>
 
-    <!-- Mensaje de carga y errores -->
     @if (cargando) {
       <div class="loading-message">⏳ Cargando mochila...</div>
     }
@@ -43,8 +36,9 @@
           <input type="number" [(ngModel)]="adminTargetUserId" min="1" placeholder="Ingresa ID del jugador">
         </div>
 
+        <!-- XUXES -->
         <div class="admin-panel-row">
-          <label>Item a añadir:</label>
+          <label>Xuxa a añadir:</label>
           <select [(ngModel)]="adminItemId">
             @for (item of availableItems; track item.id) {
               <option [value]="item.id">{{ item.icono }} {{ item.nombre }}</option>
@@ -54,32 +48,53 @@
 
         <div class="admin-panel-row">
           <label>Cantidad:</label>
-          <input type="number" [(ngModel)]="adminCantidad" min="1" value="1">
+          <input type="number" [(ngModel)]="adminCantidad" min="1">
         </div>
 
         <button class="admin-panel-button" (click)="adminAddXuxes()">
           ✅ AÑADIR XUXES
         </button>
 
+        <hr style="border-color: #444; margin: 12px 0;">
+
+        <!-- VACUNES -->
+        <p style="font-size: 11px; color: #aaa;">Añadir vacuna (1 unidad por slot)</p>
+
+        <div class="admin-panel-row">
+          <label>Vacuna a añadir:</label>
+          <select [(ngModel)]="adminVacunaId">
+            @for (vac of availableVacunas; track vac.id) {
+              <option [value]="vac.id">{{ vac.icono }} {{ vac.nombre }}</option>
+            }
+          </select>
+        </div>
+
+        <button class="admin-panel-button" (click)="adminAddVacuna()"
+                style="background: #5b21b6;">
+          💉 AÑADIR VACUNA
+        </button>
+
         @if (adminError) {
-          <div class="admin-panel-message error">
-            ❌ {{ adminError }}
-          </div>
+          <div class="admin-panel-message error">❌ {{ adminError }}</div>
         }
         @if (adminSuccess) {
-          <div class="admin-panel-message success">
-            ✅ {{ adminSuccess }}
-          </div>
+          <div class="admin-panel-message success">✅ {{ adminSuccess }}</div>
         }
 
         @if (availableItems.length > 0) {
           <div class="admin-panel-items">
-            <p><strong>📋 Items Xuxe disponibles:</strong></p>
+            <p><strong>📋 Items disponibles:</strong></p>
             <div class="admin-panel-items-list">
               @for (item of availableItems; track item.id) {
                 <div class="admin-panel-item">
                   {{ item.icono }} <strong>{{ item.nombre }}</strong>
-                  <span style="color: #999;"> ({{ item.apilable ? 'Apilable ×5' : 'No apilable' }})</span>
+                  <span style="color: #999;"> (Apilable ×5)</span>
+                </div>
+              }
+              @for (vac of availableVacunas; track vac.id) {
+                <div class="admin-panel-item">
+                  {{ vac.icono }} <strong>{{ vac.nombre }}</strong>
+                  <span style="color: #999;"> (No apilable)</span>
                 </div>
               }
             </div>
@@ -88,13 +103,12 @@
       </div>
     }
 
-    <!-- Contenedor principal de mochila -->
+    <!-- Mochila principal -->
     <div class="mochila-container">
       <div class="mochila-header-bar">
-        <h2>🎒 MOCHILA - {{ mochila.length }}/20 espacios</h2>
+        <h2>🎒 MOCHILA - {{ slotsUsados }}/20 espacios</h2>
       </div>
 
-      <!-- Resumen de items -->
       <div class="mochila-summary">
         <div class="summary-item">
           <span class="summary-label">Xuxes:</span>
@@ -106,26 +120,31 @@
         </div>
       </div>
 
-      <!-- Grilla de slots -->
+      @if (isFull) {
+        <div class="error-message">
+          🚫 La mochila está llena (20/20). Las Xuxes sobrantes se descartan.
+        </div>
+      }
+
       <div class="mochila-grid">
         @for (slot of slots; track $index) {
           <div class="mochila-slot" [ngClass]="{
-            'apilable': slot && slot.item && slot.item.apilable,
-            'no-apilable': slot && slot.item && !slot.item.apilable,
-            'vacio': !slot
+            'apilable': slot != null && slot.item.apilable,
+            'no-apilable': slot != null && !slot.item.apilable,
+            'vacio': slot == null
           }">
             @if (slot) {
               <div class="slot-content">
-                <div class="item-icon">{{ slot.item.icono }}</div>
+                <div class="item-icon">{{ asSlot(slot).item.icono }}</div>
                 <div class="item-info">
-                  <div class="item-nombre">{{ slot.item.nombre }}</div>
-                  @if (slot.item.apilable) {
-                    <div class="item-cantidad">×{{ slot.cantidad }}</div>
+                  <div class="item-nombre">{{ asSlot(slot).item.nombre }}</div>
+                  @if (asSlot(slot).item.apilable) {
+                    <div class="item-cantidad">×{{ asSlot(slot).cantidad }}</div>
                   }
                 </div>
-                <button 
-                  class="item-eliminar" 
-                  (click)="eliminarItem(slot.id)"
+                <button
+                  class="item-eliminar"
+                  (click)="eliminarItem(asSlot(slot).id)"
                   title="Eliminar este item"
                 >
                   🗑️
@@ -140,12 +159,12 @@
         }
       </div>
 
-      <!-- Botón de enlace a Xuxedex -->
       <div class="mochila-footer">
         <button class="btn-ir-xuxedex" (click)="navegarAlXuxedex()">
           👾 IR A XUXEDEX (capturar pokémons)
         </button>
       </div>
     </div>
+
   </div>
 </section>

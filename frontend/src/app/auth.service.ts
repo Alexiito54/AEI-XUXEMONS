@@ -52,7 +52,9 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
-    return this.getStoredUser()?.role === 'admin';
+    const user = this.getStoredUser();
+    const role = localStorage.getItem('role') || sessionStorage.getItem('role');
+    return user?.role === 'admin' || user?.rol === 'admin' || role === 'admin' || role === 'administrador';
   }
 
   getUser(): Observable<any> {
@@ -67,8 +69,13 @@ export class AuthService {
     return this.http.put(`${this.apiUrl}/user/password`, passwordData);
   }
 
-  deleteUser(): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/user`);
+  deleteUser(password?: string): Observable<any> {
+    const url = `${this.apiUrl}/user`;
+    // HttpClient.delete does not accept a body in older Angular versions; use request to include body
+    if (password !== undefined) {
+      return this.http.request('delete', url, { body: { password } });
+    }
+    return this.http.delete(url);
   }
 
   clearSession() {

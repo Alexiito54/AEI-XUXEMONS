@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Coleccion;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -9,6 +10,36 @@ use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
+    /**
+     * Get all registered players for the admin panel.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function indexJugadores()
+    {
+        $jugadores = User::query()
+            ->where('rol', 'jugador')
+            ->addSelect([
+                'total_xuxemons' => Coleccion::query()
+                    ->selectRaw('COUNT(DISTINCT id_xuxemon)')
+                    ->whereColumn('id_usuario', 'users.id'),
+            ])
+            ->orderBy('name')
+            ->orderBy('apellidos')
+            ->get([
+                'id',
+                'name',
+                'apellidos',
+                'email',
+                'id_usuario',
+                'rol',
+            ]);
+
+        return response()->json([
+            'jugadores' => $jugadores,
+        ], 200);
+    }
+
     /**
      * Get the authenticated user's profile.
      *

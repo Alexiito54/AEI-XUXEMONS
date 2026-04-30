@@ -7,7 +7,7 @@
     <div class="main-content">
         <!-- Sección de bienvenida al entrenador -->
         <div class="welcome-section">
-            <h2 class="welcome-title">¡Bienvenido, Entrenador!</h2>
+            <h2 class="welcome-title">¡Bienvenido, {{ usuario?.name || 'Entrenador' }}!</h2>
             <br>
             <br>
             <p class="welcome-description">- Resumen de tu aventura -</p>
@@ -22,30 +22,26 @@
                 <h3 (click)="navegarAlInicio()" style="cursor: pointer;">Inicio</h3>
                 <h3 (click)="navegarAlXuxedex()" style="cursor: pointer;">Xuxedex</h3>
                 <h3 (click)="navegarAlInventario()" style="cursor: pointer;">Mochila</h3>
-                <h3 (click)="navegarAlAmigos()" style="cursor: pointer;">Amigos</h3>
-                <h3 (click)="navegarAlBatalla()" style="cursor: pointer;">Batalla</h3>
-                <h3 (click)="navegarAlChat()" style="cursor: pointer;">Chat</h3>
                 <h3 (click)="navegarAlPerfil()" style="cursor: pointer;">Perfil</h3>
-                <h3 (click)="navegarAlAdmin()" style="cursor: pointer;">Admin</h3>
             </div>
         </div>
         <!-- Grid de estadísticas principales del entrenador -->
         <div class="stats-grid">
             <div class="card card--xuxemons">
                 <h2 class="card-title">Xuxemons totales</h2>
-                <p class="card-value">25</p>
+                <p class="card-value">{{ xuxemonsAtrapados }} / {{ xuxemonsTotales }}</p>
             </div>
             <div class="card card--fights">
                 <h2 class="card-title">Batallas disputadas</h2>
-                <p class="card-value">12</p>
+                <p class="card-value">{{ batallas }}</p>
             </div>
             <div class="card card--friends">
                 <h2 class="card-title">Amigos totales</h2>
-                <p class="card-value">8</p>
+                <p class="card-value">{{ amigos }}</p>
             </div>
             <div class="card card--level">
                 <h2 class="card-title">Nivel del entrenador</h2>
-                <p class="card-value">15</p>
+                <p class="card-value">{{ nivel }}</p>
             </div>
         </div>
         <!-- Separador visual -->
@@ -54,63 +50,42 @@
             <h2 class="team-title"> - Tu equipo -</h2>
         </div>
         <!-- Resumen del equipo de Xuxemons para batalla -->
-        <div class="xuxemons-summary">
+        <div class="xuxemons-summary" *ngIf="!cargando && coleccion.length > 0; else sinXuxemons">
             <!-- Xuxemon 1: Agua -->
-            <div class="card card--team">
-                <div class="card-xuxemon-image-placeholder"></div>
-                <div class="card-xuxemon-content">
-                    <div class="card-xuxemon-header">
-                        <h3 class="card-xuxemon-name">Aquader</h3>
-                        <span class="card-xuxemon-level">Lvl 18</span>
-                    </div>
-                    <div class="card-xuxemon-type">
-                        <span class="type-badge type-agua">AGUA</span>
-                    </div>
-                    <p class="card-xuxemon-stats">HP: 65 | ATK: 52 | DEF: 48</p>
+            <div class="card card--team" *ngFor="let xuxemon of getEquipo()">
+                <div class="card-xuxemon-image">
+                    <img [src]="obtenerImagenXuxemon(xuxemon)" [alt]="xuxemon.xuxemon.nombre">
                 </div>
-            </div>
-            <!-- Xuxemon 2: Fuego -->
-            <div class="card card--team">
-                <div class="card-xuxemon-image-placeholder"></div>
                 <div class="card-xuxemon-content">
                     <div class="card-xuxemon-header">
-                        <h3 class="card-xuxemon-name">Flamix</h3>
-                        <span class="card-xuxemon-level">Lvl 20</span>
+                        <h3 class="card-xuxemon-name">{{ xuxemon.xuxemon.nombre }}</h3>
+                        <span class="card-xuxemon-level">Lvl {{ xuxemon.nivel || 1 }}</span>
                     </div>
                     <div class="card-xuxemon-type">
-                        <span class="type-badge type-fuego">FUEGO</span>
+                        <span class="type-badge" [ngClass]="'type-' + xuxemon.xuxemon.tipo.toLowerCase()">{{ xuxemon.xuxemon.tipo }}</span>
                     </div>
-                    <p class="card-xuxemon-stats">HP: 58 | ATK: 62 | DEF: 40</p>
-                </div>
-            </div>
-            <!-- Xuxemon 3: Planta -->
-            <div class="card card--team">
-                <div class="card-xuxemon-image-placeholder"></div>
-                <div class="card-xuxemon-content">
-                    <div class="card-xuxemon-header">
-                        <h3 class="card-xuxemon-name">Verdenta</h3>
-                        <span class="card-xuxemon-level">Lvl 19</span>
-                    </div>
-                    <div class="card-xuxemon-type">
-                        <span class="type-badge type-planta">PLANTA</span>
-                    </div>
-                    <p class="card-xuxemon-stats">HP: 60 | ATK: 55 | DEF: 58</p>
-                </div>
-            </div>
-            <!-- Xuxemon 4: Roca -->
-            <div class="card card--team">
-                <div class="card-xuxemon-image-placeholder"></div>
-                <div class="card-xuxemon-content">
-                    <div class="card-xuxemon-header">
-                        <h3 class="card-xuxemon-name">Rocky</h3>
-                        <span class="card-xuxemon-level">Lvl 21</span>
-                    </div>
-                    <div class="card-xuxemon-type">
-                        <span class="type-badge type-roca">ROCA</span>
-                    </div>
-                    <p class="card-xuxemon-stats">HP: 52 | ATK: 68 | DEF: 55</p>
+                    <p class="card-xuxemon-stats">Tamano: {{ xuxemon.tamano || 'Pequeno' }} | Nivel: {{ xuxemon.nivel || 1 }}</p>
                 </div>
             </div>
         </div>
+        <ng-template #sinXuxemons>
+            <div class="xuxemons-summary">
+                <div class="card card--team" *ngIf="!cargando">
+                    <div class="card-xuxemon-image">
+                        <img src="/images/xuxemons/Dragon agua - 1.png" alt="Sin Xuxemon">
+                    </div>
+                    <div class="card-xuxemon-content">
+                        <div class="card-xuxemon-header">
+                            <h3 class="card-xuxemon-name">Sin Xuxemons</h3>
+                            <span class="card-xuxemon-level">Lvl 1</span>
+                        </div>
+                        <div class="card-xuxemon-type">
+                            <span class="type-badge type-normal">NORMAL</span>
+                        </div>
+                        <p class="card-xuxemon-stats">¡Atrapa tu primer Xuxemon!</p>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
     </div>
 </section>

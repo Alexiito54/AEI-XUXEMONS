@@ -1,45 +1,17 @@
 <div class="app">
-    
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="logo-box"><h1>XUXEMONS</h1></div>
     <nav class="nav-box">
-      <div class="nav-item"
-           [class.active]="false"
-           (click)="navegarAlInicio()">Inicio</div>
-
-      <div class="nav-item active"
-           (click)="navegarAlXuxedex()">Xuxedex</div>
-
-      <div class="nav-item"
-           (click)="navegarAlInventario()">Mochila</div>
-
-      <div class="nav-item"
-           (click)="navegarAlAmigos()">Amigos</div>
-
-      <div class="nav-item"
-           (click)="navegarAlBatalla()">Batalla</div>
-
-      <div class="nav-item"
-           (click)="navegarAlChat()">Chat</div>
-
-      <div class="nav-item"
-           (click)="navegarAlPerfil()">Perfil</div>
-
-      <!-- Solo visible si isAdmin es true -->
-      @if (isAdmin) {
-        <div class="nav-item"
-             (click)="navegarAlAdmin()">Admin</div>
-      }
+      <div class="nav-item" [class.active]="false" (click)="navegarAlInicio()">Inicio</div>
+      <div class="nav-item active" (click)="navegarAlXuxedex()">Xuxedex</div>
+      <div class="nav-item" (click)="navegarAlInventario()">Mochila</div>
+      <div class="nav-item" (click)="navegarAlPerfil()">Perfil</div>
     </nav>
   </aside>
 
-  <!-- MAIN DEX -->
   <main class="dex-shell">
-
-    <!-- Luces decorativas superiores -->
     <div class="dex-lights">
       <div class="light"></div>
       <div class="light"></div>
@@ -47,7 +19,6 @@
       <div class="light-bar"></div>
     </div>
 
-    <!-- Pantalla resumen -->
     <div class="dex-screen-wrap">
       <div class="dex-screen">
         <div class="dex-screen-text">
@@ -66,7 +37,56 @@
       </div>
     </div>
 
-    <!-- Barra de búsqueda y filtros -->
+    @if (isAdmin) {
+      <section class="admin-panel">
+        <div class="admin-panel-header">
+          <div>
+            <div class="admin-panel-title">CENTRO ADMIN</div>
+            <div class="admin-panel-subtitle">Gestion de jugadores registrados</div>
+          </div>
+          <div class="admin-panel-count">JUGADORES: {{ adminJugadores.length }}</div>
+        </div>
+
+        @if (adminFeedbackMsg) {
+          <div class="admin-feedback" [class.error]="adminFeedbackType === 'error'">
+            {{ adminFeedbackMsg }}
+          </div>
+        }
+
+        @if (adminLoading) {
+          <div class="admin-empty-state">CARGANDO JUGADORES...</div>
+        } @else if (adminErrorMsg) {
+          <div class="admin-empty-state admin-empty-state--error">{{ adminErrorMsg }}</div>
+        } @else if (adminJugadores.length === 0) {
+          <div class="admin-empty-state">NO HAY JUGADORES REGISTRADOS</div>
+        } @else {
+          <div class="admin-player-grid">
+            @for (jugador of adminJugadores; track jugador.id) {
+              <div class="admin-player-card">
+                <div class="admin-player-main">
+                  <div class="admin-player-name">{{ jugador.name }} {{ jugador.apellidos }}</div>
+                  <div class="admin-player-id">{{ jugador.id_usuario }}</div>
+                  <div class="admin-player-email">{{ jugador.email }}</div>
+                </div>
+
+                <div class="admin-player-side">
+                  <div class="admin-player-total">XUXEMONS: {{ jugador.total_xuxemons }}</div>
+                  <button
+                    class="admin-assign-btn"
+                    type="button"
+                    [disabled]="asignandoJugadorId === jugador.id"
+                    (click)="asignarXuxemonAleatorio(jugador)"
+                  >
+                    {{ asignandoJugadorId === jugador.id ? 'ASIGNANDO...' : 'DAR ALEATORIO' }}
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+    }
+
     <div class="filter-bar">
       <input
         class="search-box"
@@ -79,47 +99,51 @@
       <button
         class="filter-btn"
         [class.active]="currentFilter === 'todos'"
-        (click)="setFilter('todos')">
+        (click)="setFilter('todos')"
+      >
         TODOS
       </button>
 
       <button
         class="filter-btn"
         [class.active]="currentFilter === 'atrapado'"
-        (click)="setFilter('atrapado')">
-        ✔ ATRAPAD.
+        (click)="setFilter('atrapado')"
+      >
+        ATRAPADOS
       </button>
 
       <button
         class="filter-btn"
         [class.active]="currentFilter === 'visto'"
-        (click)="setFilter('visto')">
-        👁 VISTOS
+        (click)="setFilter('visto')"
+      >
+        VISTOS
       </button>
 
       <button
         class="filter-btn"
-        [class.active]="currentFilter === 'nuevo'"
-        (click)="setFilter('nuevo')">
-        ? NUEVOS
+        [class.active]="currentFilter === 'oculto'"
+        (click)="setFilter('oculto')"
+      >
+        DESCONOCIDOS
       </button>
     </div>
 
     <div class="grid-title">XUXEDEX</div>
 
-    <!-- Grid de Xuxemons -->
     <div class="xuxemon-grid" id="xuxemon-grid">
-      @for ( x of listFiltrada; track x.id) {
-        <div
-          class="xuxemon-card"
-          (click)="abrirModal(x)"
-        >
+      @for (x of listFiltrada; track x.id) {
+        <div class="xuxemon-card" (click)="abrirModal(x)">
           <div class="xuxemon-card-num">
             #{{ x.id | number:'3.0' }}
           </div>
 
           <div class="xuxemon-card-sprite">
-            <img [src]="x.imagen" [alt]="x.nombre">
+            @if (x.imagenMostrada && x.nombre !== '???') {
+              <img [src]="x.imagenMostrada" [alt]="x.nombre">
+            } @else {
+              <img [src]="x.imagenMostrada" alt="desconocido" class="placeholder-black">
+            }
           </div>
 
           <div class="xuxemon-card-name">
@@ -132,35 +156,31 @@
 
           <div class="xuxemon-card-tags">
             @if (x.atrapado) {
-              <span class="tag tag-caught">✔</span>
-            }
-            @if (x.visto) {
-              <span class="tag tag-seen">👁</span>
-            }
-            @if (x.nuevo) {
-              <span class="tag tag-new">NEW</span>
+              <span class="tag tag-caught">ATRAPADO</span>
+            } @else if (x.oculto) {
+              <span class="tag tag-unknown">?</span>
+            } @else {
+              <span class="tag tag-seen">VISTO</span>
             }
           </div>
         </div>
       }
     </div>
-
   </main>
 </div>
 
-<!-- MODAL de detalle -->
-<div
-  class="modal-overlay"
-  [class.open]="modalAbierto"
-  (click)="cerrarModal()"
->
+<div class="modal-overlay" [class.open]="modalAbierto" (click)="cerrarModal()">
   <div class="modal-box" (click)="$event.stopPropagation()">
-    <div class="modal-close" (click)="cerrarModal()">✕ CERRAR</div>
+    <div class="modal-close" (click)="cerrarModal()">X CERRAR</div>
 
     @if (selected) {
       <div class="modal-screen">
         <div class="modal-sprite">
-          <img [src]="selected.imagen" [alt]="selected.nombre">
+          @if (selected.imagenMostrada && selected.nombre !== '???') {
+            <img [src]="selected.imagenMostrada" [alt]="selected.nombre">
+          } @else {
+            <img [src]="selected.imagenMostrada" alt="desconocido" class="placeholder-black">
+          }
         </div>
         <div class="modal-info">
           <div class="modal-num">
@@ -173,90 +193,18 @@
             <span class="type-pill">{{ selected.tipo }}</span>
             <span class="type-pill">{{ selected.tamano }}</span>
           </div>
-          
-          <!-- Información si está capturado -->
-          @if (selectedColeccion) {
-            <div class="modal-stats">
-              <div class="stat-row">
-                <strong>Nivel:</strong> {{ selectedColeccion.nivel }}
-              </div>
-              <div class="stat-row">
-                <strong>Tamaño:</strong> {{ selectedColeccion.tamano_actual }}
-              </div>
-              <div class="stat-row">
-                <strong>Alimentaciones:</strong> {{ selectedColeccion.alimentaciones_pendientes }}
-              </div>
-              
-              <!-- Mostrar enfermedades si las tiene -->
-              @if (selectedColeccion.enfermedades && selectedColeccion.enfermedades.length > 0) {
-                <div class="stat-row enfermedades">
-                  <strong>🦠 Enfermedades:</strong>
-                  <ul>
-                    @for (enfermedad of selectedColeccion.enfermedades; track enfermedad.id) {
-                      <li>{{ enfermedad.nombre }}</li>
-                    }
-                  </ul>
-                </div>
-              }
-            </div>
-
-            <!-- Acciones: Alimentar y Curar -->
-            <div class="modal-actions">
-              <!-- Alimentar -->
-              <div class="action-section">
-                <button 
-                  class="action-btn"
-                  [disabled]="!tieneXuxeParaAlimental || alimentando"
-                  (click)="alimentarXuxemon()"
-                >
-                  {{ alimentando ? '⏳ Alimentando...' : '🍖 ALIMENTAR' }}
-                </button>
-                @if (!tieneXuxeParaAlimental) {
-                  <small style="color: #ff6b6b;">No tienes Xuxes en la mochila</small>
-                } @else if (alimentarMsg) {
-                  <small [style.color]="alimentarMsg.includes('✅') ? '#51cf66' : '#ff6b6b'">
-                    {{ alimentarMsg }}
-                  </small>
-                }
-              </div>
-
-              <!-- Curar -->
-              <div class="action-section">
-                <select [(ngModel)]="vacunaSeleccionada" class="action-select">
-                  <option value="0">Selecciona una vacuna...</option>
-                  @for (vacuna of vacunasDisponibles; track vacuna.id) {
-                    <option [value]="vacuna.item_id">
-                      {{ vacuna.item.icono }} {{ vacuna.item.nombre }} (x{{ vacuna.cantidad }})
-                    </option>
-                  }
-                </select>
-                <button 
-                  class="action-btn"
-                  [disabled]="!vacunaSeleccionada || curando || vacunasDisponibles.length === 0"
-                  (click)="curarXuxemon()"
-                >
-                  {{ curando ? '⏳ Curando...' : '💊 CURAR' }}
-                </button>
-                @if (vacunasDisponibles.length === 0) {
-                  <small style="color: #ff6b6b;">No tienes vacunas en la mochila</small>
-                } @else if (curarMsg) {
-                  <small [style.color]="curarMsg.includes('✅') ? '#51cf66' : '#ff6b6b'">
-                    {{ curarMsg }}
-                  </small>
-                }
-              </div>
-
-              <!-- Liberar -->
-              <button 
-                class="action-btn danger"
-                (click)="liberarXuxemon(selectedColeccion.id)"
-              >
-                🔓 LIBERAR
-              </button>
-            </div>
-          } @else {
+          <div class="modal-desc">
+            @if (selected.oculto) {
+              Estado: DESCONOCIDO
+            } @else if (selected.atrapado) {
+              Estado: ATRAPADO
+            } @else {
+              Estado: VISTO
+            }
+          </div>
+          @if (selected.cantidadCapturada > 1) {
             <div class="modal-desc">
-              Estado: NO ATRAPADO
+              Capturas registradas: {{ selected.cantidadCapturada }}
             </div>
           }
         </div>

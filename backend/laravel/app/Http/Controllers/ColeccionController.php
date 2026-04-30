@@ -9,6 +9,7 @@ use App\Models\Item;
 use App\Models\Enfermedad;
 use App\Models\Vacuna;
 use App\Models\ConfiguracionAdmin;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -18,32 +19,140 @@ class ColeccionController extends Controller
     {
         $user = $request->user();
         $coleccion = Coleccion::where('id_usuario', $user->id)
-            ->with('xuxemon')
+            ->with(['xuxemon', 'enfermedades'])
             ->get();
 
         return response()->json($coleccion, 200);
     }
 
+    /**
+     * Obtener datos de la Xuxedex según el rol del usuario
+     * Admin: Ve todos los Xuxemons como atrapados
+     * Usuario normal: Ve algunos como atrapados, otros ocultos
+     */
+    public function xuxedex(Request $request)
+    {
+        $user = $request->user();
+        $isAdmin = $user->esAdmin();
+
+        // Obtener todos los Xuxemons disponibles
+        $todosXuxemons = Xuxemon::all();
+
+        // Obtener los Xuxemons capturados y cuantas copias tiene de cada uno
+        $capturasPorXuxemon = Coleccion::where('id_usuario', $user->id)
+            ->select('id_xuxemon', DB::raw('COUNT(*) as total'))
+            ->groupBy('id_xuxemon')
+            ->pluck('total', 'id_xuxemon');
+        $xuxemonsCapturados = $capturasPorXuxemon->keys()->map(fn ($id) => (int) $id)->all();
+
+        $resultado = [];
+
+        if ($isAdmin) {
+            // ADMIN: Todos los Xuxemons aparecen como atrapados y vistos
+            foreach ($todosXuxemons as $xuxemon) {
+                $resultado[] = [
+                    'id' => $xuxemon->id,
+                    'nombre' => $xuxemon->nombre,
+                    'tipo' => $xuxemon->tipo,
+                    'tamaño' => $xuxemon->tamaño,
+                    'imagen' => $xuxemon->imagen,
+                    'cantidad_capturada' => (int) ($capturasPorXuxemon->get($xuxemon->id, 0)),
+                    'atrapado' => true,  // Todos atrapados para admin
+                    'visto' => true,     // Todos vistos para admin
+                    'oculto' => false,   // Ninguno oculto para admin
+                ];
+            }
+        } else {
+            // USUARIO NORMAL: Solo algunos aparecen como atrapados
+            $totalXuxemons = $todosXuxemons->count();
+            $mitad = (int) ceil($totalXuxemons / 2); // La mitad, redondeado hacia arriba
+
+            // Seleccionar aleatoriamente cuáles mostrar como atrapados
+            // Para consistencia, usar el ID del usuario como semilla
+            $xuxemonsDisponibles = $todosXuxemons->pluck('id')->toArray();
+            mt_srand($user->id); // Semilla consistente por usuario
+            shuffle($xuxemonsDisponibles);
+            $xuxemonsVisibles = array_slice($xuxemonsDisponibles, 0, $mitad);
+
+            foreach ($todosXuxemons as $xuxemon) {
+                $estaAtrapado = in_array($xuxemon->id, $xuxemonsCapturados);
+                $estaVisible = in_array($xuxemon->id, $xuxemonsVisibles);
+
+                // Si está atrapado, siempre debe mostrarse como visto y no oculto
+                $esVisto = $estaVisible || $estaAtrapado;
+                $esOculto = !$esVisto;
+
+                $resultado[] = [
+                    'id' => $xuxemon->id,
+                    'nombre' => $xuxemon->nombre,
+                    'tipo' => $xuxemon->tipo,
+                    'tamaño' => $xuxemon->tamaño,
+                    'imagen' => $xuxemon->imagen,
+                    'cantidad_capturada' => (int) ($capturasPorXuxemon->get($xuxemon->id, 0)),
+                    'atrapado' => $estaAtrapado,
+                    'visto' => $esVisto,
+                    'oculto' => $esOculto,
+                ];
+            }
+        }
+
+        return response()->json([
+            'xuxemons' => $resultado,
+            'estadisticas' => [
+                'total' => $todosXuxemons->count(),
+                'atrapados' => $isAdmin ? $todosXuxemons->count() : count(array_filter($resultado, fn($x) => $x['atrapado'])),
+                'vistos' => $isAdmin ? $todosXuxemons->count() : count(array_filter($resultado, fn($x) => $x['visto'])),
+                'is_admin' => $isAdmin,
+            ]
+        ], 200);
+    }
+
     public function store(Request $request)
     {
         $user = $request->user();
+        $resultado = $this->crearXuxemonAleatorioParaUsuario($user);
 
-        // Obtener un Xuxemon aleatorio
-        $xuxemon = Xuxemon::inRandomOrder()->first();
-
-        if (!$xuxemon) {
+        if (!$resultado) {
             return response()->json(['message' => 'No hay xuxemons disponibles'], 404);
         }
 
-        $coleccion = Coleccion::create([
-            'id_usuario' => $user->id,
-            'id_xuxemon' => $xuxemon->id,
-        ]);
+        [$xuxemon, $coleccion] = $resultado;
 
         return response()->json([
             'message' => 'Xuxemon capturado',
             'xuxemon' => $xuxemon,
             'coleccion' => $coleccion,
+        ], 201);
+    }
+
+    public function storeForUser(Request $request, User $user)
+    {
+        if (!$user->esJugador()) {
+            return response()->json([
+                'message' => 'Solo se pueden asignar Xuxemons a jugadores',
+            ], 422);
+        }
+
+        $resultado = $this->crearXuxemonAleatorioParaUsuario($user);
+
+        if (!$resultado) {
+            return response()->json(['message' => 'No hay xuxemons disponibles'], 404);
+        }
+
+        [$xuxemon, $coleccion] = $resultado;
+
+        return response()->json([
+            'message' => 'Xuxemon aleatorio asignado correctamente',
+            'xuxemon' => $xuxemon,
+            'coleccion' => $coleccion,
+            'jugador' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'apellidos' => $user->apellidos,
+                'email' => $user->email,
+                'id_usuario' => $user->id_usuario,
+                'total_xuxemons' => $user->totalXuxemonsUnicosColeccion(),
+            ],
         ], 201);
     }
 
@@ -102,7 +211,19 @@ class ColeccionController extends Controller
 
         // Obtener configuración
         $config = ConfiguracionAdmin::obtener();
-        $xuxesNecesarios = ($coleccion->tamaño_actual == 'Pequeño') ? $config->xuxes_pequeno_mediano : $config->xuxes_mediano_grande;
+       $xuxesNecesarios = ($coleccion->tamaño_actual == 'Pequeño') 
+            ? $config->xuxes_pequeno_mediano 
+            : $config->xuxes_mediano_grande;
+
+        $tesBajonAzucar = DB::table('xuxemon_enfermedad')
+            ->where('coleccion_id', $coleccion->id)
+            ->join('enfermedades', 'xuxemon_enfermedad.enfermedad_id', '=', 'enfermedades.id')
+            ->where('enfermedades.nombre', 'Bajón de azúcar')
+            ->exists();
+
+        if ($tesBajonAzucar) {
+            $xuxesNecesarios += 2;
+        }
 
         // Calcular enfermedades existentes
         $enfermedades = DB::table('xuxemon_enfermedad')
@@ -166,18 +287,16 @@ class ColeccionController extends Controller
         }
 
         $validated = $request->validate([
-            'id_vacuna' => 'required|exists:vacunas,id',
+            'id_item' => 'required|exists:items,id', 
         ]);
 
         $vacuna = Vacuna::find($validated['id_vacuna']);
 
-        // Verificar si tiene vacuna en mochila
-        $itemVacuna = Item::where('tipo', 'vacuna')
-            ->where('nombre', $vacuna->nombre)
-            ->first();
+        $itemVacuna = Item::find($validated['id_item']);  
+        $vacuna = Vacuna::where('nombre', $itemVacuna->nombre)->first();
 
-        if (!$itemVacuna) {
-            return response()->json(['message' => 'Vacuna no existe como item'], 500);
+        if (!$vacuna) {
+            return response()->json(['message' => 'Vacuna no trobada al sistema'], 404);
         }
 
         $mochilaVacuna = Mochila::where('id_usuario', $request->user()->id)
@@ -218,5 +337,20 @@ class ColeccionController extends Controller
             'enfermedades_restantes' => $enfermedadesRestantes,
         ], 200);
     }
-}
 
+    private function crearXuxemonAleatorioParaUsuario(User $user): ?array
+    {
+        $xuxemon = Xuxemon::inRandomOrder()->first();
+
+        if (!$xuxemon) {
+            return null;
+        }
+
+        $coleccion = Coleccion::create([
+            'id_usuario' => $user->id,
+            'id_xuxemon' => $xuxemon->id,
+        ]);
+
+        return [$xuxemon, $coleccion];
+    }
+}
