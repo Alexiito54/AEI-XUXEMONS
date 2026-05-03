@@ -27,81 +27,66 @@
 
     <!-- Panel Admin -->
     @if (isAdmin) {
-      <div class="admin-panel-custom">
-        <h3>⚙️ PANEL ADMINISTRADOR</h3>
-        <p style="font-size: 11px; color: #666;">Gestiona items para jugadores</p>
+  <div class="admin-panel-custom">
+    <h3>⚙️ PANEL ADMINISTRADOR</h3>
+    <p style="font-size: 11px; color: #666;">Gestiona items para jugadores</p>
 
-        <div class="admin-panel-row">
-          <label>Jugador (ID):</label>
-          <input type="number" [(ngModel)]="adminTargetUserId" min="1" placeholder="Ingresa ID del jugador">
-        </div>
-
-        <!-- XUXES -->
-        <div class="admin-panel-row">
-          <label>Xuxa a añadir:</label>
-          <select [(ngModel)]="adminItemId">
-            @for (item of availableItems; track item.id) {
-              <option [value]="item.id">{{ item.icono }} {{ item.nombre }}</option>
-            }
-          </select>
-        </div>
-
-        <div class="admin-panel-row">
-          <label>Cantidad:</label>
-          <input type="number" [(ngModel)]="adminCantidad" min="1">
-        </div>
-
-        <button class="admin-panel-button" (click)="adminAddXuxes()">
-          ✅ AÑADIR XUXES
-        </button>
-
-        <hr style="border-color: #444; margin: 12px 0;">
-
-        <!-- VACUNES -->
-        <p style="font-size: 11px; color: #aaa;">Añadir vacuna (1 unidad por slot)</p>
-
-        <div class="admin-panel-row">
-          <label>Vacuna a añadir:</label>
-          <select [(ngModel)]="adminVacunaId">
-            @for (vac of availableVacunas; track vac.id) {
-              <option [value]="vac.id">{{ vac.icono }} {{ vac.nombre }}</option>
-            }
-          </select>
-        </div>
-
-        <button class="admin-panel-button" (click)="adminAddVacuna()"
-                style="background: #5b21b6;">
-          💉 AÑADIR VACUNA
-        </button>
-
-        @if (adminError) {
-          <div class="admin-panel-message error">❌ {{ adminError }}</div>
+    <!-- Selector de jugador -->
+    <div class="admin-panel-row">
+      <label>Jugador:</label>
+      <select [(ngModel)]="adminTargetUserId">
+        @for (j of jugadores; track j.id) {
+          <option [ngValue]="j.id">{{ j.name }} {{ j.apellidos }} — {{ j.id_usuario }}</option>
         }
-        @if (adminSuccess) {
-          <div class="admin-panel-message success">✅ {{ adminSuccess }}</div>
-        }
+      </select>
+    </div>
 
-        @if (availableItems.length > 0) {
-          <div class="admin-panel-items">
-            <p><strong>📋 Items disponibles:</strong></p>
-            <div class="admin-panel-items-list">
-              @for (item of availableItems; track item.id) {
-                <div class="admin-panel-item">
-                  {{ item.icono }} <strong>{{ item.nombre }}</strong>
-                  <span style="color: #999;"> (Apilable ×5)</span>
-                </div>
-              }
-              @for (vac of availableVacunas; track vac.id) {
-                <div class="admin-panel-item">
-                  {{ vac.icono }} <strong>{{ vac.nombre }}</strong>
-                  <span style="color: #999;"> (No apilable)</span>
-                </div>
-              }
-            </div>
-          </div>
+    <!-- XUXES -->
+    <div class="admin-panel-row">
+      <label>Xuxa a añadir:</label>
+      <select [(ngModel)]="adminItemId">
+        @for (item of availableItems; track item.id) {
+          <option [value]="item.id">{{ item.icono }} {{ item.nombre }}</option>
         }
-      </div>
+      </select>
+    </div>
+
+    <div class="admin-panel-row">
+      <label>Cantidad:</label>
+      <input type="number" [(ngModel)]="adminCantidad" min="1">
+    </div>
+
+    <button class="admin-panel-button" (click)="adminAddXuxes()">
+      ✅ AÑADIR XUXES
+    </button>
+
+    <hr style="border-color: #444; margin: 12px 0;">
+
+    <!-- VACUNAS -->
+    <p style="font-size: 11px; color: #aaa;">Añadir vacuna (1 unidad por slot)</p>
+
+    <div class="admin-panel-row">
+      <label>Vacuna a añadir:</label>
+      <select [(ngModel)]="adminVacunaId">
+        @for (vac of availableVacunas; track vac.id) {
+          <option [value]="vac.id">{{ vac.icono }} {{ vac.nombre }}</option>
+        }
+      </select>
+    </div>
+
+    <button class="admin-panel-button" (click)="adminAddVacuna()"
+            style="background: #5b21b6;">
+      💉 AÑADIR VACUNA
+    </button>
+
+    @if (adminError) {
+      <div class="admin-panel-message error">❌ {{ adminError }}</div>
     }
+    @if (adminSuccess) {
+      <div class="admin-panel-message success">✅ {{ adminSuccess }}</div>
+    }
+  </div>
+}
 
     <!-- Mochila principal -->
     <div class="mochila-container">

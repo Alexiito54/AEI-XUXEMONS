@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\PerfilController;
 use App\Models\User;
 use App\Models\Item;
 use App\Models\Mochila;

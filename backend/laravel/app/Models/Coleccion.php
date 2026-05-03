@@ -53,17 +53,15 @@ class Coleccion extends Model
     }
 
     public function xuxesNecesariosParaCrecer(): int
-    {
-        $base = match ($this->tamaño_actual) {
-            'Pequeño' => 3,
-            'Mediano' => 5,
-            default   => 999,
-        };
+{
+    $config = \App\Models\ConfiguracionAdmin::obtener();
 
-        if ($this->tieneEnfermedad('Bajón de azúcar')) {
-            $base += 2;
-        }
+    $base = $config->xuxesParaEvolucionar($this->tamaño_actual);
 
-        return $base;
+    if ($this->tieneEnfermedad('Bajón de azúcar')) {
+        $base += 2;
     }
+
+    return $base;
+}
 }

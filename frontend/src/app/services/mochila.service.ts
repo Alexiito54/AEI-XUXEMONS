@@ -4,8 +4,8 @@ import { Observable } from 'rxjs';
 
 export interface MochilaItem {
   id: number;
-  user_id: number;
-  item_id: number;
+  id_usuario: number;  
+  id_item: number;     
   cantidad: number;
   slot: number;
   item: {

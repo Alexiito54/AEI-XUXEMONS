@@ -29,6 +29,8 @@ class User extends Authenticatable
         'password',
         'id_usuario',
         'rol',
+        'last_xuxes_diarios',   
+        'last_xuxemon_diario',
     ];
 
     /**
@@ -51,6 +53,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'last_xuxes_diarios'   => 'datetime', 
+            'last_xuxemon_diario'  => 'datetime',
         ];
     }
 

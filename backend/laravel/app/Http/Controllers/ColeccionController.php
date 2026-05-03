@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\User;
 use App\Models\Coleccion;
 use App\Models\Xuxemon;
 use App\Models\Mochila;
@@ -9,7 +9,6 @@ use App\Models\Item;
 use App\Models\Enfermedad;
 use App\Models\Vacuna;
 use App\Models\ConfiguracionAdmin;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -25,20 +24,13 @@ class ColeccionController extends Controller
         return response()->json($coleccion, 200);
     }
 
-    /**
-     * Obtener datos de la Xuxedex según el rol del usuario
-     * Admin: Ve todos los Xuxemons como atrapados
-     * Usuario normal: Ve algunos como atrapados, otros ocultos
-     */
     public function xuxedex(Request $request)
     {
         $user = $request->user();
         $isAdmin = $user->esAdmin();
 
-        // Obtener todos los Xuxemons disponibles
         $todosXuxemons = Xuxemon::all();
 
-        // Obtener los Xuxemons capturados y cuantas copias tiene de cada uno
         $capturasPorXuxemon = Coleccion::where('id_usuario', $user->id)
             ->select('id_xuxemon', DB::raw('COUNT(*) as total'))
             ->groupBy('id_xuxemon')
@@ -48,50 +40,78 @@ class ColeccionController extends Controller
         $resultado = [];
 
         if ($isAdmin) {
-            // ADMIN: Todos los Xuxemons aparecen como atrapados y vistos
             foreach ($todosXuxemons as $xuxemon) {
+                $instancias = Coleccion::where('id_usuario', $user->id)
+                    ->where('id_xuxemon', $xuxemon->id)
+                    ->with('enfermedades')
+                    ->get()
+                    ->map(fn($c) => [
+                        'coleccion_id'              => $c->id,
+                        'tamano_actual'             => $c->tamaño_actual,
+                        'nivel'                     => $c->nivel,
+                        'alimentaciones_pendientes' => $c->alimentaciones_pendientes,
+                        'esta_enfermo'              => $c->estaEnfermo(),
+                        'enfermedades'              => $c->enfermedades->map(fn($e) => [
+                            'id'     => $e->id,
+                            'nombre' => $e->nombre,
+                        ]),
+                    ]);
+
                 $resultado[] = [
-                    'id' => $xuxemon->id,
-                    'nombre' => $xuxemon->nombre,
-                    'tipo' => $xuxemon->tipo,
-                    'tamaño' => $xuxemon->tamaño,
-                    'imagen' => $xuxemon->imagen,
+                    'id'                 => $xuxemon->id,
+                    'nombre'             => $xuxemon->nombre,
+                    'tipo'               => $xuxemon->tipo,
+                    'tamaño'             => $xuxemon->tamaño,
+                    'imagen'             => $xuxemon->imagen,
                     'cantidad_capturada' => (int) ($capturasPorXuxemon->get($xuxemon->id, 0)),
-                    'atrapado' => true,  // Todos atrapados para admin
-                    'visto' => true,     // Todos vistos para admin
-                    'oculto' => false,   // Ninguno oculto para admin
+                    'atrapado'           => true,
+                    'visto'              => true,
+                    'oculto'             => false,
+                    'instancias'         => $instancias,
                 ];
             }
         } else {
-            // USUARIO NORMAL: Solo algunos aparecen como atrapados
             $totalXuxemons = $todosXuxemons->count();
-            $mitad = (int) ceil($totalXuxemons / 2); // La mitad, redondeado hacia arriba
+            $mitad = (int) ceil($totalXuxemons / 2);
 
-            // Seleccionar aleatoriamente cuáles mostrar como atrapados
-            // Para consistencia, usar el ID del usuario como semilla
             $xuxemonsDisponibles = $todosXuxemons->pluck('id')->toArray();
-            mt_srand($user->id); // Semilla consistente por usuario
+            mt_srand($user->id);
             shuffle($xuxemonsDisponibles);
             $xuxemonsVisibles = array_slice($xuxemonsDisponibles, 0, $mitad);
 
             foreach ($todosXuxemons as $xuxemon) {
                 $estaAtrapado = in_array($xuxemon->id, $xuxemonsCapturados);
-                $estaVisible = in_array($xuxemon->id, $xuxemonsVisibles);
+                $estaVisible  = in_array($xuxemon->id, $xuxemonsVisibles);
+                $esVisto      = $estaVisible || $estaAtrapado;
+                $esOculto     = !$esVisto;
 
-                // Si está atrapado, siempre debe mostrarse como visto y no oculto
-                $esVisto = $estaVisible || $estaAtrapado;
-                $esOculto = !$esVisto;
+                $instancias = Coleccion::where('id_usuario', $user->id)
+                    ->where('id_xuxemon', $xuxemon->id)
+                    ->with('enfermedades')
+                    ->get()
+                    ->map(fn($c) => [
+                        'coleccion_id'              => $c->id,
+                        'tamano_actual'             => $c->tamaño_actual,
+                        'nivel'                     => $c->nivel,
+                        'alimentaciones_pendientes' => $c->alimentaciones_pendientes,
+                        'esta_enfermo'              => $c->estaEnfermo(),
+                        'enfermedades'              => $c->enfermedades->map(fn($e) => [
+                            'id'     => $e->id,
+                            'nombre' => $e->nombre,
+                        ]),
+                    ]);
 
                 $resultado[] = [
-                    'id' => $xuxemon->id,
-                    'nombre' => $xuxemon->nombre,
-                    'tipo' => $xuxemon->tipo,
-                    'tamaño' => $xuxemon->tamaño,
-                    'imagen' => $xuxemon->imagen,
+                    'id'                 => $xuxemon->id,
+                    'nombre'             => $xuxemon->nombre,
+                    'tipo'               => $xuxemon->tipo,
+                    'tamaño'             => $xuxemon->tamaño,
+                    'imagen'             => $xuxemon->imagen,
                     'cantidad_capturada' => (int) ($capturasPorXuxemon->get($xuxemon->id, 0)),
-                    'atrapado' => $estaAtrapado,
-                    'visto' => $esVisto,
-                    'oculto' => $esOculto,
+                    'atrapado'           => $estaAtrapado,
+                    'visto'              => $esVisto,
+                    'oculto'             => $esOculto,
+                    'instancias'         => $instancias,
                 ];
             }
         }
@@ -99,13 +119,29 @@ class ColeccionController extends Controller
         return response()->json([
             'xuxemons' => $resultado,
             'estadisticas' => [
-                'total' => $todosXuxemons->count(),
+                'total'    => $todosXuxemons->count(),
                 'atrapados' => $isAdmin ? $todosXuxemons->count() : count(array_filter($resultado, fn($x) => $x['atrapado'])),
-                'vistos' => $isAdmin ? $todosXuxemons->count() : count(array_filter($resultado, fn($x) => $x['visto'])),
+                'vistos'   => $isAdmin ? $todosXuxemons->count() : count(array_filter($resultado, fn($x) => $x['visto'])),
                 'is_admin' => $isAdmin,
             ]
         ], 200);
     }
+    public function indexForUser(User $user)
+{
+    $coleccion = Coleccion::with('xuxemon')
+        ->where('id_usuario', $user->id)
+        ->get();
+
+    return response()->json([
+        'jugador' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+        ],
+        'coleccion' => $coleccion,
+        'total' => $coleccion->count(),
+    ], 200);
+}
 
     public function store(Request $request)
     {
@@ -119,8 +155,8 @@ class ColeccionController extends Controller
         [$xuxemon, $coleccion] = $resultado;
 
         return response()->json([
-            'message' => 'Xuxemon capturado',
-            'xuxemon' => $xuxemon,
+            'message'  => 'Xuxemon capturado',
+            'xuxemon'  => $xuxemon,
             'coleccion' => $coleccion,
         ], 201);
     }
@@ -142,15 +178,15 @@ class ColeccionController extends Controller
         [$xuxemon, $coleccion] = $resultado;
 
         return response()->json([
-            'message' => 'Xuxemon aleatorio asignado correctamente',
-            'xuxemon' => $xuxemon,
+            'message'  => 'Xuxemon aleatorio asignado correctamente',
+            'xuxemon'  => $xuxemon,
             'coleccion' => $coleccion,
-            'jugador' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'apellidos' => $user->apellidos,
-                'email' => $user->email,
-                'id_usuario' => $user->id_usuario,
+            'jugador'  => [
+                'id'           => $user->id,
+                'name'         => $user->name,
+                'apellidos'    => $user->apellidos,
+                'email'        => $user->email,
+                'id_usuario'   => $user->id_usuario,
                 'total_xuxemons' => $user->totalXuxemonsUnicosColeccion(),
             ],
         ], 201);
@@ -168,37 +204,23 @@ class ColeccionController extends Controller
 
     public function alimentar(Request $request, Coleccion $coleccion)
     {
-        // Verificar autorización
         if ($coleccion->id_usuario != $request->user()->id) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 
-        // Verificar si tiene enfermedad que impide alimentación
-        $enfermedadesImpiden = DB::table('xuxemon_enfermedad')
-            ->where('coleccion_id', $coleccion->id)
-            ->join('enfermedades', 'xuxemon_enfermedad.enfermedad_id', '=', 'enfermedades.id')
-            ->where('enfermedades.impide_alimentacion', true)
-            ->exists();
-
-        if ($enfermedadesImpiden) {
+        if (!$coleccion->puedAlimentarse()) {
             return response()->json(['message' => 'El Xuxemon no puede alimentarse - está afectado por una enfermedad'], 400);
         }
 
-        // Obtener item Xuxe de mochila
-        $xuxeItem = Item::where('tipo', 'xuxe')->first();
-        if (!$xuxeItem) {
-            return response()->json(['message' => 'Item de Xuxe no encontrado'], 500);
-        }
-
         $mochilaXuxe = Mochila::where('id_usuario', $request->user()->id)
-            ->where('id_item', $xuxeItem->id)
+            ->whereHas('item', fn($q) => $q->where('tipo', 'xuxe'))
+            ->where('cantidad', '>', 0)
             ->first();
 
-        if (!$mochilaXuxe || $mochilaXuxe->cantidad < 1) {
+        if (!$mochilaXuxe) {
             return response()->json(['message' => 'No tienes Xuxes en la mochila'], 400);
         }
 
-        // Disminuir cantidad de Xuxes
         $mochilaXuxe->cantidad--;
         if ($mochilaXuxe->cantidad == 0) {
             $mochilaXuxe->delete();
@@ -206,49 +228,32 @@ class ColeccionController extends Controller
             $mochilaXuxe->save();
         }
 
-        // Incrementar alimentaciones pendientes
         $coleccion->alimentaciones_pendientes++;
+        $xuxesNecesarios = $coleccion->xuxesNecesariosParaCrecer();
 
-        // Obtener configuración
         $config = ConfiguracionAdmin::obtener();
-       $xuxesNecesarios = ($coleccion->tamaño_actual == 'Pequeño') 
-            ? $config->xuxes_pequeno_mediano 
-            : $config->xuxes_mediano_grande;
-
-        $tesBajonAzucar = DB::table('xuxemon_enfermedad')
-            ->where('coleccion_id', $coleccion->id)
-            ->join('enfermedades', 'xuxemon_enfermedad.enfermedad_id', '=', 'enfermedades.id')
-            ->where('enfermedades.nombre', 'Bajón de azúcar')
-            ->exists();
-
-        if ($tesBajonAzucar) {
-            $xuxesNecesarios += 2;
-        }
-
-        // Calcular enfermedades existentes
-        $enfermedades = DB::table('xuxemon_enfermedad')
+        $enfermedadesActuales = DB::table('xuxemon_enfermedad')
             ->where('coleccion_id', $coleccion->id)
             ->pluck('enfermedad_id')
             ->toArray();
 
-        // Crear enfermedad aleatorio
-        $todasEnfermedades = Enfermedad::all();
-        foreach ($todasEnfermedades as $enfermedad) {
-            $chance = rand(1, 100);
-            if ($chance <= $enfermedad->porcentaje_infeccion) {
-                if (!in_array($enfermedad->id, $enfermedades)) {
+        foreach (Enfermedad::all() as $enfermedad) {
+            $porcentaje = $config->porcentajeInfeccion($enfermedad->nombre);
+            if ($porcentaje > 0 && rand(1, 100) <= $porcentaje) {
+                if (!in_array($enfermedad->id, $enfermedadesActuales)) {
                     DB::table('xuxemon_enfermedad')->insert([
-                        'coleccion_id' => $coleccion->id,
+                        'coleccion_id'  => $coleccion->id,
                         'enfermedad_id' => $enfermedad->id,
-                        'created_at' => now(),
-                        'updated_at' => now(),
+                        'created_at'    => now(),
+                        'updated_at'    => now(),
                     ]);
                 }
             }
         }
 
-        // Verificar si sube de tamaño
         $subeNivel = false;
+        $xuxemonEvolucionado = null;
+
         if ($coleccion->alimentaciones_pendientes >= $xuxesNecesarios) {
             $coleccion->alimentaciones_pendientes -= $xuxesNecesarios;
             $coleccion->nivel++;
@@ -258,6 +263,13 @@ class ColeccionController extends Controller
             } elseif ($coleccion->tamaño_actual == 'Mediano') {
                 $coleccion->tamaño_actual = 'Grande';
             }
+
+            $xuxemonActual = Xuxemon::with('evolucion')->find($coleccion->id_xuxemon);
+            if ($xuxemonActual && $xuxemonActual->evolucion) {
+                $coleccion->id_xuxemon = $xuxemonActual->evolucion->id;
+                $xuxemonEvolucionado = $xuxemonActual->evolucion;
+            }
+
             $subeNivel = true;
         }
 
@@ -270,29 +282,27 @@ class ColeccionController extends Controller
             ->get();
 
         return response()->json([
-            'message' => $subeNivel ? 'El Xuxemon subió de nivel!' : 'Alimentado correctamente',
-            'coleccion' => $coleccion,
-            'tamaño_actual' => $coleccion->tamaño_actual,
-            'nivel' => $coleccion->nivel,
-            'enfermedades' => $enfermedadesActuales,
-            'subio_nivel' => $subeNivel,
+            'message'              => $subeNivel ? 'El Xuxemon subió de nivel!' : 'Alimentado correctamente',
+            'coleccion'            => $coleccion,
+            'tamano_actual'        => $coleccion->tamaño_actual,
+            'nivel'                => $coleccion->nivel,
+            'enfermedades'         => $enfermedadesActuales,
+            'subio_nivel'          => $subeNivel,
+            'xuxemon_evolucionado' => $xuxemonEvolucionado,
         ], 200);
     }
 
     public function curar(Request $request, Coleccion $coleccion)
     {
-        // Verificar autorización
         if ($coleccion->id_usuario != $request->user()->id) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 
         $validated = $request->validate([
-            'id_item' => 'required|exists:items,id', 
+            'id_item' => 'required|exists:items,id',
         ]);
 
-        $vacuna = Vacuna::find($validated['id_vacuna']);
-
-        $itemVacuna = Item::find($validated['id_item']);  
+        $itemVacuna = Item::find($validated['id_item']);
         $vacuna = Vacuna::where('nombre', $itemVacuna->nombre)->first();
 
         if (!$vacuna) {
@@ -307,17 +317,38 @@ class ColeccionController extends Controller
             return response()->json(['message' => 'No tienes esta vacuna en la mochila'], 400);
         }
 
-        // Eliminar vacuna de mochila
-        $mochilaVacuna->delete();
-
         if ($vacuna->nombre == 'Inxulina') {
-            // Cura todas las enfermedades
+            $mochilaVacuna->cantidad--;
+            if ($mochilaVacuna->cantidad <= 0) {
+                $mochilaVacuna->delete();
+            } else {
+                $mochilaVacuna->save();
+            }
+
             DB::table('xuxemon_enfermedad')
                 ->where('coleccion_id', $coleccion->id)
                 ->delete();
             $curadas = 'todas las enfermedades';
         } else {
-            // Cura enfermedad específica
+            // Verificar que tiene esa enfermedad antes de consumir la vacuna
+            $tieneEnfermedad = DB::table('xuxemon_enfermedad')
+                ->where('coleccion_id', $coleccion->id)
+                ->where('enfermedad_id', $vacuna->cura_enfermedad_id)
+                ->exists();
+
+            if (!$tieneEnfermedad) {
+                return response()->json([
+                    'message' => 'Este Xuxemon no tiene esa enfermedad',
+                ], 422);
+            }
+
+            $mochilaVacuna->cantidad--;
+            if ($mochilaVacuna->cantidad <= 0) {
+                $mochilaVacuna->delete();
+            } else {
+                $mochilaVacuna->save();
+            }
+
             DB::table('xuxemon_enfermedad')
                 ->where('coleccion_id', $coleccion->id)
                 ->where('enfermedad_id', $vacuna->cura_enfermedad_id)
@@ -332,23 +363,24 @@ class ColeccionController extends Controller
             ->get();
 
         return response()->json([
-            'message' => "Curado de $curadas",
-            'coleccion' => $coleccion,
+            'message'                => "Curado de $curadas",
+            'coleccion'              => $coleccion,
             'enfermedades_restantes' => $enfermedadesRestantes,
         ], 200);
     }
 
     private function crearXuxemonAleatorioParaUsuario(User $user): ?array
     {
-        $xuxemon = Xuxemon::inRandomOrder()->first();
+        $xuxemon = Xuxemon::where('tamaño', 'Pequeño')->inRandomOrder()->first();
 
         if (!$xuxemon) {
             return null;
         }
 
         $coleccion = Coleccion::create([
-            'id_usuario' => $user->id,
-            'id_xuxemon' => $xuxemon->id,
+            'id_usuario'    => $user->id,
+            'id_xuxemon'    => $xuxemon->id,
+            'tamaño_actual' => 'Pequeño',
         ]);
 
         return [$xuxemon, $coleccion];

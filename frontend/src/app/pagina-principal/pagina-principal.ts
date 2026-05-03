@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { XuxemonsService, ColeccionXuxemon, XuxedexResponse } from '../services/xuxemons.service';
+import { XuxemonsService, ColeccionXuxemon } from '../services/xuxemons.service';
 import { AuthService } from '../auth.service';
 
 interface Usuario {
@@ -20,7 +20,12 @@ interface Usuario {
   encapsulation: ViewEncapsulation.None
 })
 export class PaginaPrincipal implements OnInit {
+
+  // Usuario
   usuario: Usuario | null = null;
+  isAdmin: boolean = false;
+
+  // Jugador
   coleccion: ColeccionXuxemon[] = [];
   xuxemonsTotales: number = 0;
   xuxemonsAtrapados: number = 0;
@@ -29,7 +34,18 @@ export class PaginaPrincipal implements OnInit {
   amigos: number = 0;
   nivel: number = 1;
   cargando: boolean = true;
-  isAdmin: boolean = false;
+
+  // Admin — estadísticas
+  totalJugadores: number = 0;
+  totalXuxemonsCapturados: number = 0;
+  totalEnfermos: number = 0;
+  jugadoresRecientes: any[] = [];
+
+  // Admin — modal ficha
+  jugadorSeleccionado: any = null;
+  coleccionJugador: any[] = [];
+  modalAbierto: boolean = false;
+  cargandoModal: boolean = false;
 
   constructor(
     private router: Router,
@@ -43,25 +59,16 @@ export class PaginaPrincipal implements OnInit {
 
   cargarDatos() {
     this.cargando = true;
-    
-    // Obtener datos del usuario
     this.usuario = this.authService.getStoredUser();
     this.isAdmin = this.authService.isAdmin();
-    
-    // Cargar colección de Xuxemons
+
     this.xuxemonsService.getColeccion().subscribe({
       next: (data) => {
         this.coleccion = data;
         this.capturasTotales = data.length;
-        
-        // Si es admin, mostrar todos los xuxemons como atrapados
-        if (this.isAdmin) {
-          // El total de atrapados será igual al total de xuxemons disponibles
-          // Se actualizará cuando cargue el xuxedex
-        } else {
+        if (!this.isAdmin) {
           this.xuxemonsAtrapados = this.contarXuxemonsUnicos(data);
         }
-        
         this.calcularNivel();
         this.cargando = false;
       },
@@ -71,35 +78,71 @@ export class PaginaPrincipal implements OnInit {
       }
     });
 
-    // Cargar Xuxedex para obtener total de Xuxemons disponibles
     this.xuxemonsService.getXuxedex().subscribe({
       next: (data) => {
         this.xuxemonsTotales = data.estadisticas.total;
-        
-        // Si es admin, los atrapados son iguales al total
         if (this.isAdmin) {
           this.xuxemonsAtrapados = this.xuxemonsTotales;
+          this.cargando = false;
+          this.cargarEstadisticasAdmin();
         }
       },
       error: (err) => {
         console.error('Error al cargar Xuxedex:', err);
-        // Si falla, intentamos obtener el total de otra forma
         this.xuxemonsService.getTodosXuxemons().subscribe({
           next: (xuxemons) => {
             this.xuxemonsTotales = xuxemons.length;
-            // Si es admin, los atrapados son iguales al total
-            if (this.isAdmin) {
-              this.xuxemonsAtrapados = this.xuxemonsTotales;
-            }
+            if (this.isAdmin) this.xuxemonsAtrapados = this.xuxemonsTotales;
           }
         });
       }
     });
   }
 
+  cargarEstadisticasAdmin() {
+    this.xuxemonsService.getAdminJugadores().subscribe({
+      next: (response) => {
+        this.jugadoresRecientes = response.jugadores;
+        this.totalJugadores = response.jugadores.length;
+        this.totalXuxemonsCapturados = response.jugadores
+          .reduce((acc: number, j: any) => acc + (j.total_xuxemons || 0), 0);
+      },
+      error: (err) => console.error('Error cargando jugadores admin:', err)
+    });
+  }
+
+  // Modal ficha jugador
+  abrirFichaJugador(jugador: any) {
+    this.jugadorSeleccionado = jugador;
+    this.modalAbierto = true;
+    this.cargandoModal = true;
+    this.coleccionJugador = [];
+
+    this.xuxemonsService.getColeccionJugador(jugador.id).subscribe({
+      next: (data) => {
+        this.coleccionJugador = data.coleccion;
+        this.cargandoModal = false;
+      },
+      error: (err) => {
+        console.error('Error cargando colección del jugador:', err);
+        this.cargandoModal = false;
+      }
+    });
+  }
+
+  cerrarModal() {
+    this.modalAbierto = false;
+    this.jugadorSeleccionado = null;
+    this.coleccionJugador = [];
+  }
+
+  getBarraProgreso(total: number): string {
+    const porcentaje = Math.round((total / this.xuxemonsTotales) * 10);
+    return '█'.repeat(porcentaje) + '░'.repeat(10 - porcentaje);
+  }
+
+  // Helpers
   calcularNivel() {
-    // El nivel se calcula basado en los Xuxemons atrapados
-    // Cada 5 Xuxemons = 1 nivel, máximo nivel 50
     this.nivel = Math.min(50, Math.floor(this.capturasTotales / 5) + 1);
   }
 
@@ -111,41 +154,38 @@ export class PaginaPrincipal implements OnInit {
     ).size;
   }
 
-  getEquipo(): ColeccionXuxemon[] {
-    // Retorna hasta 4 Xuxemons del equipo (los primeros 4 de la colección)
-    return this.coleccion.slice(0, 4);
-  }
+  getEquipo(): any[] {
+  return this.coleccion.slice(0, 4);
+}
 
-  obtenerImagenXuxemon(xuxemon: any): string {
-    const imagen = xuxemon.xuxemon?.imagen?.toString().trim();
-    if (imagen) {
-      if (/^https?:\/\//.test(imagen) || imagen.startsWith('/')) {
-        return encodeURI(imagen);
-      }
-      return encodeURI(`/images/xuxemons/${imagen}`);
+  obtenerImagenXuxemon(item: any): string {
+  const imagen = item.xuxemon?.imagen?.toString().trim();
+  if (imagen) {
+    if (/^https?:\/\//.test(imagen) || imagen.startsWith('/')) {
+      return encodeURI(imagen);
     }
-
-    // Si no hay imagen, usar una por defecto según el tipo
-    return this.obtenerImagenPorTipoTamaño(xuxemon.xuxemon?.tipo, xuxemon.tamano);
+    return encodeURI(`/images/xuxemons/${imagen}`);
   }
+  return this.obtenerImagenPorTipoTamaño(item.xuxemon?.tipo, item.tamaño_actual || item.tamano);
+}
 
   private obtenerImagenPorTipoTamaño(tipo: string, tamaño: string): string {
     const size = (tamaño || '').toLowerCase();
     switch (tipo) {
       case 'Agua':
         if (size.includes('peque')) return '/images/xuxemons/Slime agua - 1.png';
-        if (size.includes('med')) return '/images/xuxemons/Dragon agua - 2.png';
-        if (size.includes('gran')) return '/images/xuxemons/Dragon agua - 3.png';
+        if (size.includes('med'))   return '/images/xuxemons/Dragon agua - 2.png';
+        if (size.includes('gran'))  return '/images/xuxemons/Dragon agua - 3.png';
         return '/images/xuxemons/Slime agua - 1.png';
       case 'Tierra':
         if (size.includes('peque')) return '/images/xuxemons/Golem roca - 1.png';
-        if (size.includes('med')) return '/images/xuxemons/Golem roca - 2.png';
-        if (size.includes('gran')) return '/images/xuxemons/Golem roca - 3.png';
+        if (size.includes('med'))   return '/images/xuxemons/Golem roca - 2.png';
+        if (size.includes('gran'))  return '/images/xuxemons/Golem roca - 3.png';
         return '/images/xuxemons/Golem roca - 1.png';
       case 'Aire':
         if (size.includes('peque')) return '/images/xuxemons/Cabra aire - 1.png';
-        if (size.includes('med')) return '/images/xuxemons/Cabra aire - 2.png';
-        if (size.includes('gran')) return '/images/xuxemons/Cabra fuego - 3.png';
+        if (size.includes('med'))   return '/images/xuxemons/Cabra aire - 2.png';
+        if (size.includes('gran'))  return '/images/xuxemons/Cabra fuego - 3.png';
         return '/images/xuxemons/Ave fuego - 1.png';
       default:
         return '/images/xuxemons/Dragon agua - 1.png';
@@ -153,20 +193,8 @@ export class PaginaPrincipal implements OnInit {
   }
 
   // Navegación
-  navegarAlInicio() {
-    this.router.navigate(['/pagina-principal']);
-  }
-
-  navegarAlXuxedex() {
-    this.router.navigate(['/xuxedex']);
-  }
-
-  navegarAlInventario() {
-    this.router.navigate(['/mochila']);
-  }
-
-  navegarAlPerfil() {
-    this.router.navigate(['/info-usuario']);
-  }
-  
+  navegarAlInicio()     { this.router.navigate(['/pagina-principal']); }
+  navegarAlXuxedex()    { this.router.navigate(['/xuxedex']); }
+  navegarAlInventario() { this.router.navigate(['/mochila']); }
+  navegarAlPerfil()     { this.router.navigate(['/info-usuario']); }
 }

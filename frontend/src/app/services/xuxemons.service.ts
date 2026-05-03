@@ -26,6 +26,15 @@ export interface Vacuna {
   cura_enfermedad_id: number | null;
 }
   
+export interface XuxemonInstancia {
+  coleccion_id: number;
+  tamano_actual: string;  
+  nivel: number;
+  alimentaciones_pendientes: number;
+  esta_enfermo: boolean;
+  enfermedades: { id: number; nombre: string }[];
+}
+
 export interface XuxedexEntry {
   id: number;
   nombre: string;
@@ -36,6 +45,7 @@ export interface XuxedexEntry {
   atrapado: boolean;
   visto: boolean;
   oculto: boolean;
+  instancias: XuxemonInstancia[];
 }
 
 export interface XuxedexResponse {
@@ -56,6 +66,7 @@ export interface ColeccionXuxemon {
   id_xuxemon?: number;
   capturado_en: string;
   tamano: string;
+  tamaño_actual?: string;
   nivel: number;
   alimentaciones_pendientes: number;
   xuxemon: Xuxemon;
@@ -140,6 +151,12 @@ export class XuxemonsService {
       }
     );
   }
+  getColeccionJugador(userId: number): Observable<any> {
+  return this.http.get<any>(
+    `${this.apiUrl}/admin/jugadores/${userId}/coleccion`,
+    { headers: this.getHeaders() }
+  );
+}
 
 
   // Capturar un Xuxemon aleatorio (protegido)

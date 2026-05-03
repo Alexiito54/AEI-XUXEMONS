@@ -35,6 +35,7 @@ Route::get('/vacunas/{vacuna}', [VacunaController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
     // Auth routes
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/perfil/stats', [UserController::class, 'perfilStats']);
 
     // User routes
     Route::get('/user', [UserController::class, 'getUser']);
@@ -69,5 +70,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/vacunas', [VacunaController::class, 'store']);
         Route::get('/configuracion', [ConfiguracionAdminController::class, 'show']);
         Route::put('/configuracion', [ConfiguracionAdminController::class, 'update']);
+        Route::get('/admin/jugadores/{user}/coleccion', [ColeccionController::class, 'indexForUser']);
     });
 });

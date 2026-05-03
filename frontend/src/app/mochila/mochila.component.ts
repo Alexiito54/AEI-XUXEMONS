@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Item, MochilaService, MochilaItem } from '../services/mochila.service';
+import { XuxemonsService, AdminJugador } from '../services/xuxemons.service';
 
 interface SlotView {
   id: number;
@@ -29,11 +30,12 @@ const TOTAL_SLOTS = 20;
 })
 export class MochilaComponent implements OnInit {
 
-  isAdmin = sessionStorage.getItem('role') === 'administrador';
-  userInternalId = Number(sessionStorage.getItem('user_internal_id') || '0');
+  isAdmin = localStorage.getItem('role') === 'administrador';
+  userInternalId = Number(localStorage.getItem('user_internal_id') || '0');
 
   availableItems: Item[] = [];
   availableVacunas: Item[] = [];
+  jugadores: AdminJugador[] = [];
 
   adminItemId = 0;
   adminVacunaId = 0;
@@ -46,12 +48,17 @@ export class MochilaComponent implements OnInit {
   cargando = true;
   error = '';
 
-  constructor(private router: Router, private mochilaService: MochilaService) {}
+  constructor(
+    private router: Router,
+    private mochilaService: MochilaService,
+    private xuxemonsService: XuxemonsService
+  ) {}
 
   ngOnInit(): void {
     this.cargarMochila();
     if (this.isAdmin) {
       this.cargarItems();
+      this.cargarJugadores();
     }
   }
 
@@ -72,18 +79,43 @@ export class MochilaComponent implements OnInit {
   cargarItems(): void {
     this.mochilaService.getItems().subscribe({
       next: (items) => {
-        this.availableItems = items.filter(item => item.tipo === 'xuxe');
+        this.availableItems  = items.filter(item => item.tipo === 'xuxe');
         this.availableVacunas = items.filter(item => item.tipo === 'vacuna');
 
-        if (this.availableItems.length) {
-          this.adminItemId = this.availableItems[0].id;
-        }
-        if (this.availableVacunas.length) {
-          this.adminVacunaId = this.availableVacunas[0].id;
-        }
+        if (this.availableItems.length)   this.adminItemId   = this.availableItems[0].id;
+        if (this.availableVacunas.length) this.adminVacunaId = this.availableVacunas[0].id;
       },
       error: () => {
         this.adminError = 'Error al cargar la lista de items';
+      }
+    });
+  }
+
+  cargarJugadores(): void {
+    this.xuxemonsService.getAdminJugadores().subscribe({
+      next: (res) => {
+        this.jugadores = res.jugadores;
+        // Incluir al propio admin como opción
+        const adminData = JSON.parse(localStorage.getItem('user') || '{}');
+        if (adminData?.id) {
+          this.jugadores = [
+            { 
+              id: adminData.id, 
+              name: adminData.name + ' (Admin)', 
+              apellidos: '',
+              email: adminData.email || '',
+              id_usuario: adminData.id_usuario || '',
+              rol: 'administrador',
+              total_xuxemons: 0
+            },
+            ...this.jugadores
+          ];
+        }
+        // Seleccionar el propio admin por defecto
+        this.adminTargetUserId = adminData?.id || this.userInternalId;
+      },
+      error: () => {
+        this.adminError = 'Error al cargar jugadores';
       }
     });
   }
@@ -96,20 +128,12 @@ export class MochilaComponent implements OnInit {
         let remaining = mochilaItem.cantidad;
         while (remaining > 0) {
           const stackSize = Math.min(remaining, MAX_STACK);
-          result.push({
-            id: mochilaItem.id,
-            item: mochilaItem.item,
-            cantidad: stackSize
-          });
+          result.push({ id: mochilaItem.id, item: mochilaItem.item, cantidad: stackSize });
           remaining -= stackSize;
         }
       } else {
         for (let i = 0; i < mochilaItem.cantidad; i++) {
-          result.push({
-            id: mochilaItem.id,
-            item: mochilaItem.item,
-            cantidad: 1
-          });
+          result.push({ id: mochilaItem.id, item: mochilaItem.item, cantidad: 1 });
         }
       }
     }
@@ -118,13 +142,8 @@ export class MochilaComponent implements OnInit {
     return result.slice(0, TOTAL_SLOTS);
   }
 
-  get slotsUsados(): number {
-    return this.slots.filter(s => s !== null).length;
-  }
-
-  get isFull(): boolean {
-    return this.slotsUsados >= TOTAL_SLOTS;
-  }
+  get slotsUsados(): number  { return this.slots.filter(s => s !== null).length; }
+  get isFull(): boolean      { return this.slotsUsados >= TOTAL_SLOTS; }
 
   get totalXuxes(): number {
     return this.mochila
@@ -138,9 +157,7 @@ export class MochilaComponent implements OnInit {
       .reduce((acc, item) => acc + item.cantidad, 0);
   }
 
-  asSlot(slot: SlotView | null): SlotView {
-    return slot as SlotView;
-  }
+  asSlot(slot: SlotView | null): SlotView { return slot as SlotView; }
 
   eliminarItem(id: number): void {
     this.mochilaService.eliminarItem(id).subscribe({
@@ -154,7 +171,7 @@ export class MochilaComponent implements OnInit {
     this.adminSuccess = '';
 
     if (!this.adminTargetUserId || this.adminTargetUserId <= 0) {
-      this.adminError = 'Introduce el ID interno del jugador objetivo';
+      this.adminError = 'Selecciona un jugador';
       return;
     }
     if (!this.adminItemId) {
@@ -184,7 +201,7 @@ export class MochilaComponent implements OnInit {
     this.adminSuccess = '';
 
     if (!this.adminTargetUserId || this.adminTargetUserId <= 0) {
-      this.adminError = 'Introduce el ID interno del jugador objetivo';
+      this.adminError = 'Selecciona un jugador';
       return;
     }
     if (!this.adminVacunaId) {
@@ -209,5 +226,4 @@ export class MochilaComponent implements OnInit {
   navegarAlXuxedex()    { this.router.navigate(['/xuxedex']); }
   navegarAlInventario() { this.router.navigate(['/mochila']); }
   navegarAlPerfil()     { this.router.navigate(['/info-usuario']); }
-  navegarAlAdmin()      { this.router.navigate(['/admin']); }
 }

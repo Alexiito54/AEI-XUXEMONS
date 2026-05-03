@@ -100,6 +100,52 @@ class UserController extends Controller
         }
     }
 
+public function perfilStats(Request $request)
+{
+    $user = $request->user();
+
+    $totalXuxemons = Coleccion::where('id_usuario', $user->id)
+    ->distinct('id_xuxemon')
+    ->count('id_xuxemon');
+
+    $xuxemonsPorTipo = Coleccion::where('id_usuario', $user->id)
+    ->join('xuxemons', 'colecciones.id_xuxemon', '=', 'xuxemons.id')
+    ->selectRaw('xuxemons.tipo, COUNT(DISTINCT colecciones.id_xuxemon) as total')
+    ->groupBy('xuxemons.tipo')
+    ->get()
+    ->map(fn($item) => [
+        'tipo'  => $item->tipo,
+        'total' => $item->total,
+        'icono' => match($item->tipo) {
+            'Agua'   => '💧',
+            'Tierra' => '🪨',
+            'Aire'   => '💨',
+            default  => '❓',
+        },
+    ]);
+
+    $nivel = min(50, (int) floor($totalXuxemons / 5) + 1);
+    $xpActual = $totalXuxemons % 5;
+    $xpSiguiente = 5;
+
+    return response()->json([
+        'total_xuxemons'      => $totalXuxemons,
+        'total_batallas'      => 0,
+        'total_amigos'        => 0,
+        'nivel'               => $nivel,
+        'xp_actual'           => $xpActual,
+        'xp_siguiente_nivel'  => $xpSiguiente,
+        'porcentaje_victorias' => 0,
+        'xuxemons_por_tipo'   => $xuxemonsPorTipo,
+        'preferencias'        => [
+            'notificaciones_batalla' => false,
+            'perfil_publico'         => false,
+            'mensajes_privados'      => false,
+        ],
+    ], 200);
+}
+
+
     /**
      * Change the user's password.
      *

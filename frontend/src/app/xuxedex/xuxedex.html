@@ -1,18 +1,18 @@
 <div class="app">
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
-  <aside class="sidebar">
+  <aside class="sidebar" role="navigation" aria-label="Menú principal">
     <div class="logo-box"><h1>XUXEMONS</h1></div>
     <nav class="nav-box">
-      <div class="nav-item" [class.active]="false" (click)="navegarAlInicio()">Inicio</div>
-      <div class="nav-item active" (click)="navegarAlXuxedex()">Xuxedex</div>
-      <div class="nav-item" (click)="navegarAlInventario()">Mochila</div>
-      <div class="nav-item" (click)="navegarAlPerfil()">Perfil</div>
+      <div class="nav-item" tabindex="0" (click)="navegarAlInicio()" (keydown.enter)="navegarAlInicio()">Inicio</div>
+      <div class="nav-item active" tabindex="0" (click)="navegarAlXuxedex()" (keydown.enter)="navegarAlXuxedex()">Xuxedex</div>
+      <div class="nav-item" tabindex="0" (click)="navegarAlInventario()" (keydown.enter)="navegarAlInventario()">Mochila</div>
+      <div class="nav-item" tabindex="0" (click)="navegarAlPerfil()" (keydown.enter)="navegarAlPerfil()">Perfil</div>
     </nav>
   </aside>
 
   <main class="dex-shell">
-    <div class="dex-lights">
+    <div class="dex-lights" aria-hidden="true">
       <div class="light"></div>
       <div class="light"></div>
       <div class="light"></div>
@@ -26,29 +26,33 @@
           Hola, Entrenador!<br>
           Tu registro de Xuxemons.
         </div>
-        <div class="dex-counter">
+        <div class="dex-counter" aria-live="polite">
           ATRAPADOS<br>
-          <span id="caught-count">{{ caughtCount }}</span> /
-          <span id="total-count">{{ totalCount }}</span>
+          <span>{{ caughtCount }}</span> / <span>{{ totalCount }}</span>
           <br><br>
           VISTOS<br>
-          <span id="seen-count">{{ seenCount }}</span>
+          <span>{{ seenCount }}</span>
         </div>
       </div>
     </div>
 
     @if (isAdmin) {
-      <section class="admin-panel">
+      <section class="admin-panel" aria-label="Panel de administración">
         <div class="admin-panel-header">
           <div>
             <div class="admin-panel-title">CENTRO ADMIN</div>
-            <div class="admin-panel-subtitle">Gestion de jugadores registrados</div>
+            <div class="admin-panel-subtitle">Gestión de jugadores registrados</div>
           </div>
           <div class="admin-panel-count">JUGADORES: {{ adminJugadores.length }}</div>
         </div>
 
         @if (adminFeedbackMsg) {
-          <div class="admin-feedback" [class.error]="adminFeedbackType === 'error'">
+          <div
+            class="admin-feedback"
+            [class.error]="adminFeedbackType === 'error'"
+            role="status"
+            aria-live="polite"
+          >
             {{ adminFeedbackMsg }}
           </div>
         }
@@ -56,7 +60,7 @@
         @if (adminLoading) {
           <div class="admin-empty-state">CARGANDO JUGADORES...</div>
         } @else if (adminErrorMsg) {
-          <div class="admin-empty-state admin-empty-state--error">{{ adminErrorMsg }}</div>
+          <div class="admin-empty-state admin-empty-state--error" role="alert">{{ adminErrorMsg }}</div>
         } @else if (adminJugadores.length === 0) {
           <div class="admin-empty-state">NO HAY JUGADORES REGISTRADOS</div>
         } @else {
@@ -68,13 +72,13 @@
                   <div class="admin-player-id">{{ jugador.id_usuario }}</div>
                   <div class="admin-player-email">{{ jugador.email }}</div>
                 </div>
-
                 <div class="admin-player-side">
                   <div class="admin-player-total">XUXEMONS: {{ jugador.total_xuxemons }}</div>
                   <button
                     class="admin-assign-btn"
                     type="button"
                     [disabled]="asignandoJugadorId === jugador.id"
+                    [attr.aria-label]="'Dar Xuxemon aleatorio a ' + jugador.name"
                     (click)="asignarXuxemonAleatorio(jugador)"
                   >
                     {{ asignandoJugadorId === jugador.id ? 'ASIGNANDO...' : 'DAR ALEATORIO' }}
@@ -87,8 +91,10 @@
       </section>
     }
 
-    <div class="filter-bar">
+    <div class="filter-bar" role="search">
+      <label for="buscador" class="sr-only">Buscar Xuxemon</label>
       <input
+        id="buscador"
         class="search-box"
         type="text"
         placeholder="BUSCAR XUXEMON..."
@@ -96,59 +102,37 @@
         (ngModelChange)="onSearchChange($event)"
       />
 
-      <button
-        class="filter-btn"
-        [class.active]="currentFilter === 'todos'"
-        (click)="setFilter('todos')"
-      >
-        TODOS
-      </button>
-
-      <button
-        class="filter-btn"
-        [class.active]="currentFilter === 'atrapado'"
-        (click)="setFilter('atrapado')"
-      >
-        ATRAPADOS
-      </button>
-
-      <button
-        class="filter-btn"
-        [class.active]="currentFilter === 'visto'"
-        (click)="setFilter('visto')"
-      >
-        VISTOS
-      </button>
-
-      <button
-        class="filter-btn"
-        [class.active]="currentFilter === 'oculto'"
-        (click)="setFilter('oculto')"
-      >
-        DESCONOCIDOS
-      </button>
+      <button class="filter-btn" [class.active]="currentFilter === 'todos'"    (click)="setFilter('todos')"    [attr.aria-pressed]="currentFilter === 'todos'">TODOS</button>
+      <button class="filter-btn" [class.active]="currentFilter === 'atrapado'" (click)="setFilter('atrapado')" [attr.aria-pressed]="currentFilter === 'atrapado'">ATRAPADOS</button>
+      <button class="filter-btn" [class.active]="currentFilter === 'visto'"    (click)="setFilter('visto')"    [attr.aria-pressed]="currentFilter === 'visto'">VISTOS</button>
+      <button class="filter-btn" [class.active]="currentFilter === 'oculto'"   (click)="setFilter('oculto')"   [attr.aria-pressed]="currentFilter === 'oculto'">DESCONOCIDOS</button>
     </div>
 
-    <div class="grid-title">XUXEDEX</div>
+    <div class="grid-title" aria-live="polite">
+      XUXEDEX — {{ listFiltrada.length }} resultados
+    </div>
 
-    <div class="xuxemon-grid" id="xuxemon-grid">
+    <div class="xuxemon-grid" role="list">
       @for (x of listFiltrada; track x.id) {
-        <div class="xuxemon-card" (click)="abrirModal(x)">
-          <div class="xuxemon-card-num">
-            #{{ x.id | number:'3.0' }}
-          </div>
+        <div
+          class="xuxemon-card"
+          role="listitem"
+          tabindex="0"
+          [attr.aria-label]="x.oculto ? 'Xuxemon desconocido' : x.nombre + ', ' + x.tipo + ', ' + (x.atrapado ? 'atrapado' : x.visto ? 'visto' : 'desconocido')"
+          (click)="abrirModal(x)"
+          (keydown.enter)="abrirModal(x)"
+        >
+          <div class="xuxemon-card-num">#{{ x.id | number:'3.0' }}</div>
 
           <div class="xuxemon-card-sprite">
             @if (x.imagenMostrada && x.nombre !== '???') {
               <img [src]="x.imagenMostrada" [alt]="x.nombre">
             } @else {
-              <img [src]="x.imagenMostrada" alt="desconocido" class="placeholder-black">
+              <img [src]="x.imagenMostrada" alt="Xuxemon desconocido" class="placeholder-black">
             }
           </div>
 
-          <div class="xuxemon-card-name">
-            {{ x.nombre }}
-          </div>
+          <div class="xuxemon-card-name">{{ x.nombre }}</div>
 
           <div class="xuxemon-card-types">
             <span class="type-pill">{{ x.tipo }}</span>
@@ -169,9 +153,36 @@
   </main>
 </div>
 
-<div class="modal-overlay" [class.open]="modalAbierto" (click)="cerrarModal()">
-  <div class="modal-box" (click)="$event.stopPropagation()">
-    <div class="modal-close" (click)="cerrarModal()">X CERRAR</div>
+<!-- OVERLAY EVOLUCIÓN -->
+@if (mostrandoEvolucion) {
+  <div
+    class="evolucion-overlay"
+    aria-live="assertive"
+    aria-label="¡Tu Xuxemon está evolucionando!"
+    role="status"
+  >
+    <img class="evolucion-sprite-antes" [src]="evolucionAntes" alt="Forma anterior">
+    <div class="evolucion-flecha" aria-hidden="true">→</div>
+    <img class="evolucion-sprite-despues" [src]="evolucionDespues" [alt]="evolucionNombre">
+    <div class="evolucion-nombre">{{ evolucionNombre }}</div>
+    <div class="evolucion-subtexto">¡Ha evolucionado!</div>
+  </div>
+}
+
+<!-- MODAL DETALLE -->
+<div
+  class="modal-overlay"
+  [class.open]="modalAbierto"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-label]="selected ? 'Detalle de ' + selected.nombre : 'Modal Xuxemon'"
+  (click)="cerrarModal()"
+>
+  <div class="modal-box" tabindex="-1" (click)="$event.stopPropagation()">
+
+    <button class="modal-close" (click)="cerrarModal()" aria-label="Cerrar modal">
+      ✕ CERRAR
+    </button>
 
     @if (selected) {
       <div class="modal-screen">
@@ -179,16 +190,13 @@
           @if (selected.imagenMostrada && selected.nombre !== '???') {
             <img [src]="selected.imagenMostrada" [alt]="selected.nombre">
           } @else {
-            <img [src]="selected.imagenMostrada" alt="desconocido" class="placeholder-black">
+            <img [src]="selected.imagenMostrada" alt="Xuxemon desconocido" class="placeholder-black">
           }
         </div>
+
         <div class="modal-info">
-          <div class="modal-num">
-            #{{ selected.id | number:'3.0' }}
-          </div>
-          <div class="modal-name">
-            {{ selected.nombre }}
-          </div>
+          <div class="modal-num">#{{ selected.id | number:'3.0' }}</div>
+          <div class="modal-name">{{ selected.nombre }}</div>
           <div class="modal-types">
             <span class="type-pill">{{ selected.tipo }}</span>
             <span class="type-pill">{{ selected.tamano }}</span>
@@ -203,12 +211,118 @@
             }
           </div>
           @if (selected.cantidadCapturada > 1) {
-            <div class="modal-desc">
-              Capturas registradas: {{ selected.cantidadCapturada }}
-            </div>
+            <div class="modal-desc">Capturas: {{ selected.cantidadCapturada }}</div>
           }
         </div>
       </div>
+
+      <!-- Mensajes accesibles -->
+      <div aria-live="assertive" class="sr-only">
+        @if (accionMensaje) { {{ accionMensaje }} }
+        @if (accionError)   { Error: {{ accionError }} }
+      </div>
+
+      @if (accionMensaje) {
+        <div class="modal-desc modal-sano" role="status">✅ {{ accionMensaje }}</div>
+      }
+      @if (accionError) {
+        <div class="modal-desc modal-enfermo" role="alert">❌ {{ accionError }}</div>
+      }
+
+      <!-- Instancias capturadas -->
+      @if (selected.atrapado && selected.instancias && selected.instancias.length > 0) {
+        <div class="modal-instancias">
+          @for (inst of selected.instancias; track inst.coleccion_id) {
+            <div class="modal-instancia">
+
+              <!-- Tamaño y nivel -->
+              <div class="modal-desc">
+                @if (inst.tamano_actual === 'Grande') {
+                  🏆 <strong>GRANDE</strong> — Nivel máximo alcanzado
+                } @else {
+                  Tamaño: <strong>{{ inst.tamano_actual }}</strong> — Nivel: {{ inst.nivel }}
+                }
+              </div>
+
+              <!-- Barra de hambre -->
+              @if (inst.tamano_actual !== 'Grande') {
+                <div class="barra-hambre-wrap">
+                  <div class="barra-hambre-label">
+                    🍬 Alimentaciones: {{ inst.alimentaciones_pendientes }} / {{ inst.tamano_actual === 'Pequeño' ? 3 : 5 }}
+                  </div>
+                  <div
+                    class="barra-hambre"
+                    role="progressbar"
+                    [attr.aria-valuenow]="inst.alimentaciones_pendientes"
+                    aria-valuemin="0"
+                    [attr.aria-valuemax]="inst.tamano_actual === 'Pequeño' ? 3 : 5"
+                    [attr.aria-label]="'Progreso de alimentación de ' + selected.nombre"
+                  >
+                    <div
+                      class="barra-hambre-fill"
+                      [class]="claseBarraHambre(inst)"
+                      [style.width.%]="porcentajeHambre(inst)"
+                    ></div>
+                  </div>
+                </div>
+              }
+
+              <!-- Estado de salud -->
+              @if (inst.esta_enfermo) {
+                <div class="modal-desc modal-enfermo" role="status">⚠️ ENFERMO</div>
+                @for (enf of inst.enfermedades; track enf.id) {
+                  <div class="modal-desc modal-enfermedad">🦠 {{ enf.nombre }}</div>
+                }
+
+                <!-- Curar -->
+                @if (vacunasEnMochila.length > 0) {
+                  <fieldset style="border: none; padding: 0; margin: 4px 0 0 0;">
+                    <legend class="sr-only">Seleccionar vacuna para curar a {{ selected.nombre }}</legend>
+                    <select
+                      [(ngModel)]="vacunaSeleccionada"
+                      class="modal-select"
+                      [attr.aria-label]="'Vacuna para curar a ' + selected.nombre"
+                    >
+                      <option [ngValue]="null">-- Selecciona vacuna --</option>
+                      @for (v of vacunasEnMochila; track v.id) {
+                        <option [ngValue]="v.item.id">{{ v.item.nombre }} (x{{ v.cantidad }})</option>
+                      }
+                    </select>
+                    <button
+                      class="modal-btn modal-btn-curar"
+                      [disabled]="accionCargando || !vacunaSeleccionada"
+                      [attr.aria-label]="'Curar a ' + selected.nombre"
+                      (click)="curarXuxemon(inst)"
+                    >
+                      {{ accionCargando ? 'CURANDO...' : '💉 CURAR' }}
+                    </button>
+                  </fieldset>
+                } @else {
+                  <div class="modal-desc modal-enfermo">Sin vacunas en mochila</div>
+                }
+
+              } @else {
+                <div class="modal-desc modal-sano" role="status">✅ SANO</div>
+              }
+
+              <!-- Alimentar -->
+              @if (inst.tamano_actual !== 'Grande') {
+                <button
+                  class="modal-btn modal-btn-alimentar"
+                  [disabled]="accionCargando || !tieneXuxes"
+                  [attr.aria-label]="'Alimentar a ' + selected.nombre + ' con una xuxe'"
+                  (click)="alimentarXuxemon(inst)"
+                >
+                  {{ accionCargando ? 'ALIMENTANDO...' : '🍬 ALIMENTAR' }}
+                </button>
+              } @else {
+                <div class="modal-desc modal-sano">🏆 Ya no puede crecer más</div>
+              }
+
+            </div>
+          }
+        </div>
+      }
     }
   </div>
 </div>
