@@ -1,16 +1,35 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 interface UserData {
   id?: number;
   name: string;
+  apellidos?: string;
   email: string;
   phone?: string;
   fecha_nacimiento?: string;
   ciudad?: string;
+  id_usuario?: string;
+}
+
+interface PerfilStats {
+  total_xuxemons: number;
+  total_batallas: number;
+  total_amigos: number;
+  nivel: number;
+  xp_actual: number;
+  xp_siguiente_nivel: number;
+  porcentaje_victorias: number;
+  xuxemons_por_tipo: { tipo: string; total: number; icono: string }[];
+  preferencias: {
+    notificaciones_batalla: boolean;
+    perfil_publico: boolean;
+    mensajes_privados: boolean;
+  };
 }
 
 @Component({
@@ -18,195 +37,113 @@ interface UserData {
   imports: [CommonModule, FormsModule],
   templateUrl: './pag-info-usuario.html',
   styleUrl: './pag-info-usuario.css',
+  encapsulation: ViewEncapsulation.Emulated,
 })
+
 export class PagInfoUsuario implements OnInit {
-  // Estados de la UI
   isLoading = true;
   isEditing = false;
-  isChangingPassword = false;
   errorMsg = '';
   successMsg = '';
 
-  // Datos del usuario
-  currentUser: UserData = {
-    name: '',
-    email: '',
-    phone: '',
-    fecha_nacimiento: '',
-    ciudad: ''
-  };
-
+  currentUser: UserData = { name: '', email: '' };
   userData: UserData = { ...this.currentUser };
 
-  // Cambio de contraseña
-  passwordForm = {
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
+  stats: PerfilStats = {
+    total_xuxemons: 0,
+    total_batallas: 0,
+    total_amigos: 0,
+    nivel: 1,
+    xp_actual: 0,
+    xp_siguiente_nivel: 100,
+    porcentaje_victorias: 0,
+    xuxemons_por_tipo: [],
+    preferencias: {
+      notificaciones_batalla: false,
+      perfil_publico: false,
+      mensajes_privados: false
+    }
   };
 
-  // Confirmación de eliminación
   showDeleteConfirm = false;
   deleteConfirmText = '';
+  deletePassword = '';
+
+  // Getters calculados
+  get xpPorcentaje(): number {
+    if (this.stats.xp_siguiente_nivel === 0) return 100;
+    return Math.min(100, Math.round((this.stats.xp_actual / this.stats.xp_siguiente_nivel) * 100));
+  }
+
+  get rangoEntrenador(): string {
+    const nivel = this.stats.nivel;
+    if (nivel >= 50) return '★★★ MAESTRO';
+    if (nivel >= 30) return '★★ ÉLITE';
+    if (nivel >= 15) return '★ PRO';
+    if (nivel >= 5)  return '◆ AVANZADO';
+    return '◇ NOVATO';
+  }
+
+  get fechaRegistro(): string {
+    // Formatea la fecha de registro del usuario
+    return this.currentUser.fecha_nacimiento
+      ? new Date(this.currentUser.fecha_nacimiento).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })
+      : '—';
+  }
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
     this.loadUserData();
+    this.loadPerfilStats();
   }
 
   loadUserData() {
-    this.isLoading = true;
-    this.errorMsg = '';
-    this.authService.getUser().subscribe({
-      next: (response: any) => {
-        this.currentUser = response.data || response;
-        this.userData = { ...this.currentUser };
-        this.isLoading = false;
-      },
-      error: (error: any) => {
-        this.errorMsg = error.error?.message || 'Error al cargar los datos del usuario';
-        this.isLoading = false;
-        console.error('Error loading user:', error);
-      }
-    });
+  this.isLoading = true;
+  this.authService.getUser().subscribe({
+    next: (response: any) => {
+      // El backend devuelve { user: {...} }
+      this.currentUser = response.user || response;
+      this.userData = { ...this.currentUser };
+      this.isLoading = false;
+    },
+    error: (error: any) => {
+      this.errorMsg = error.error?.message || 'Error al cargar los datos del usuario';
+      this.isLoading = false;
+    }
+  });
+}
+
+loadPerfilStats() {
+  const token = this.authService.getToken();
+  const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+
+  this.http.get<any>('http://localhost:8000/api/perfil/stats', { headers }).subscribe({
+    next: (response) => {
+      this.stats = response;
+    },
+    error: () => {
+      console.warn('Endpoint /perfil/stats no disponible');
+    }
+  });
+}
+
+  guardarPreferencia(key: keyof typeof this.stats.preferencias, valor: boolean) {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    this.http.post('http://localhost:8000/api/perfil/preferencias', { [key]: valor }, { headers })
+      .subscribe({ error: () => console.warn('No se pudo guardar la preferencia') });
   }
 
   toggleEditMode() {
-    if (this.isEditing) {
-      this.userData = { ...this.currentUser };
-    }
+    if (this.isEditing) this.userData = { ...this.currentUser };
     this.isEditing = !this.isEditing;
     this.errorMsg = '';
     this.successMsg = '';
-  }
-
-  togglePasswordChange() {
-    this.isChangingPassword = !this.isChangingPassword;
-    this.resetPasswordForm();
-    this.errorMsg = '';
-    this.successMsg = '';
-  }
-
-  resetPasswordForm() {
-    this.passwordForm = {
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    };
-  }
-
-  saveUserData() {
-    this.errorMsg = '';
-    this.successMsg = '';
-
-    // Validaciones
-    if (!this.userData.name || this.userData.name.trim() === '') {
-      this.errorMsg = '✕ El nombre es requerido';
-      return;
-    }
-
-    if (!this.userData.email || this.userData.email.trim() === '') {
-      this.errorMsg = '✕ El email es requerido';
-      return;
-    }
-
-    if (!this.isValidEmail(this.userData.email)) {
-      this.errorMsg = '✕ El email no es válido';
-      return;
-    }
-
-    this.authService.updateUser(this.userData).subscribe({
-      next: (response) => {
-        this.currentUser = response.data || response;
-        this.userData = { ...this.currentUser };
-        this.isEditing = false;
-        this.successMsg = 'Información actualizada correctamente';
-        setTimeout(() => this.successMsg = '', 3000);
-      },
-      error: (error) => {
-        this.errorMsg = error.error?.message || 'Error al actualizar los datos';
-        console.error('Error updating user:', error);
-      }
-    });
-  }
-
-  savePasswordChange() {
-    this.errorMsg = '';
-    this.successMsg = '';
-
-    // Validaciones
-    if (!this.passwordForm.currentPassword) {
-      this.errorMsg = '✕ La contraseña actual es requerida';
-      return;
-    }
-
-    if (!this.passwordForm.newPassword || this.passwordForm.newPassword.length < 6) {
-      this.errorMsg = '✕ La nueva contraseña debe tener al menos 6 caracteres';
-      return;
-    }
-
-    if (this.passwordForm.newPassword !== this.passwordForm.confirmPassword) {
-      this.errorMsg = '✕ Las contraseñas nuevas no coinciden';
-      return;
-    }
-
-    this.authService.changePassword({
-      current_password: this.passwordForm.currentPassword,
-      new_password: this.passwordForm.newPassword
-    }).subscribe({
-      next: (response) => {
-        this.resetPasswordForm();
-        this.isChangingPassword = false;
-        this.successMsg = 'Contraseña actualizada correctamente';
-        setTimeout(() => this.successMsg = '', 3000);
-      },
-      error: (error) => {
-        this.errorMsg = error.error?.message || 'Error al cambiar la contraseña';
-        console.error('Error changing password:', error);
-      }
-    });
-  }
-
-  // Métodos para darse de baja
-  startDeleteAccount() {
-    this.showDeleteConfirm = true;
-    this.deleteConfirmText = '';
-    this.errorMsg = '';
-  }
-
-  cancelDelete() {
-    this.showDeleteConfirm = false;
-    this.deleteConfirmText = '';
-  }
-
-  confirmDeleteAccount() {
-    if (this.deleteConfirmText !== 'ELIMINAR MI CUENTA') {
-      this.errorMsg = '✕ Debes escribir "ELIMINAR MI CUENTA" para confirmar';
-      return;
-    }
-
-    this.authService.deleteUser().subscribe({
-      next: (response) => {
-        this.successMsg = 'Cuenta eliminada correctamente. Redirigiendo...';
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 2000);
-      },
-      error: (error) => {
-        this.errorMsg = error.error?.message || 'Error al eliminar la cuenta';
-        console.error('Error deleting account:', error);
-      }
-    });
-  }
-
-  // Método auxiliar para validar email
-  private isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
   }
 
   cancelEdit() {
@@ -214,51 +151,70 @@ export class PagInfoUsuario implements OnInit {
     this.isEditing = false;
     this.errorMsg = '';
   }
-  
-  navegarAlInicio() {
-    this.router.navigate(['/pagina-principal']);
+
+  saveUserData() {
+  this.errorMsg = '';
+  if (!this.userData.name?.trim()) { this.errorMsg = '✕ El nombre es requerido'; return; }
+  if (!this.userData.email?.trim()) { this.errorMsg = '✕ El email es requerido'; return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.userData.email)) { 
+    this.errorMsg = '✕ Email no válido'; return; 
   }
 
-  navegarAlXuxedex() {
-    this.router.navigate(['/xuxedex']);
-  }
+  const payload = {
+    name:      this.userData.name,
+    apellidos: this.userData.apellidos || '',
+    email:     this.userData.email,
+  };
 
-  navegarAlInventario() {
-    this.router.navigate(['/mochila']);
-  }
-
-  navegarAlAmigos() {
-    this.router.navigate(['/amigos']);
-  }
-
-  navegarAlBatalla() {
-    this.router.navigate(['/batalla']);
-  }
-
-  navegarAlChat() {
-    this.router.navigate(['/chat']);
-  }
-
-  navegarAlPerfil() {
-    this.router.navigate(['/info-usuario']);
-  }
-  
-  navegarAlAdmin() {
-    this.router.navigate(['/admin']);
-  }
-
-onLogout() {
-  this.authService.logout().subscribe({
-    next: () => {
-      this.authService.clearSession();
-      this.router.navigate(['/login']);
+  this.authService.updateUser(payload).subscribe({
+    next: (response: any) => {
+      this.currentUser = response.user || response;
+      this.userData = { ...this.currentUser };
+      this.isLoading = false;
+      // Actualizar localStorage
+      localStorage.setItem('user', JSON.stringify(this.currentUser));
+      this.isEditing = false;
+      this.successMsg = 'Información actualizada correctamente';
+      setTimeout(() => this.successMsg = '', 3000);
     },
-    error: () => {
-      this.authService.clearSession();
-      this.router.navigate(['/login']);
+    error: (error: any) => {
+      this.errorMsg = error.error?.message || 'Error al actualizar los datos';
     }
   });
 }
 
+  startDeleteAccount() { this.showDeleteConfirm = true; this.deleteConfirmText = ''; this.deletePassword = ''; }
+  cancelDelete() { this.showDeleteConfirm = false; }
 
+  confirmDeleteAccount() {
+    if (this.deleteConfirmText !== 'ELIMINAR MI CUENTA') {
+      this.errorMsg = '✕ Debes escribir "ELIMINAR MI CUENTA"'; return;
+    }
+    if (!this.deletePassword?.trim()) {
+      this.errorMsg = '✕ Debes ingresar tu contraseña'; return;
+    }
+    this.authService.deleteUser(this.deletePassword).subscribe({
+      next: () => {
+        this.authService.clearSession();
+        this.router.navigate(['/login']);
+      },
+      error: (error: any) => { this.errorMsg = error.error?.message || 'Error al eliminar la cuenta'; }
+    });
+  }
+
+  navegarAlInicio() { this.router.navigate(['/pagina-principal']); }
+  navegarAlXuxedex() { this.router.navigate(['/xuxedex']); }
+  navegarAlInventario() { this.router.navigate(['/mochila']); }
+  navegarAlAmigos() { this.router.navigate(['/amigos']); }
+  navegarAlBatalla() { this.router.navigate(['/batalla']); }
+  navegarAlChat() { this.router.navigate(['/chat']); }
+  navegarAlPerfil() { this.router.navigate(['/info-usuario']); }
+  navegarAlAdmin() { this.router.navigate(['/admin']); }
+
+  onLogout() {
+    this.authService.logout().subscribe({
+      next: () => { this.authService.clearSession(); this.router.navigate(['/login']); },
+      error: () => { this.authService.clearSession(); this.router.navigate(['/login']); }
+    });
+  }
 }

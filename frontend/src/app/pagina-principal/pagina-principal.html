@@ -1,116 +1,222 @@
-<!-- Página principal del entrenador -->
 <section class="main-page">
-    <!-- Importar fuente de estilo retro -->
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
-    <!-- Contenedor principal con menú y contenido -->
-    <div class="main-content">
-        <!-- Sección de bienvenida al entrenador -->
-        <div class="welcome-section">
-            <h2 class="welcome-title">¡Bienvenido, Entrenador!</h2>
-            <br>
-            <br>
-            <p class="welcome-description">- Resumen de tu aventura -</p>
-            <br>
-        </div>
-        <!-- Menú lateral de navegación -->
-        <div class="menu-section">
-            <div class="logo-section">
-                <h1 class="logo-title">XUXEMONS</h1>
-            </div>
-            <div class="menu-title">
-                <h3 (click)="navegarAlInicio()" style="cursor: pointer;">Inicio</h3>
-                <h3 (click)="navegarAlXuxedex()" style="cursor: pointer;">Xuxedex</h3>
-                <h3 (click)="navegarAlInventario()" style="cursor: pointer;">Mochila</h3>
-                <h3 (click)="navegarAlAmigos()" style="cursor: pointer;">Amigos</h3>
-                <h3 (click)="navegarAlBatalla()" style="cursor: pointer;">Batalla</h3>
-                <h3 (click)="navegarAlChat()" style="cursor: pointer;">Chat</h3>
-                <h3 (click)="navegarAlPerfil()" style="cursor: pointer;">Perfil</h3>
-                <h3 (click)="navegarAlAdmin()" style="cursor: pointer;">Admin</h3>
-            </div>
-        </div>
-        <!-- Grid de estadísticas principales del entrenador -->
-        <div class="stats-grid">
-            <div class="card card--xuxemons">
-                <h2 class="card-title">Xuxemons totales</h2>
-                <p class="card-value">25</p>
-            </div>
-            <div class="card card--fights">
-                <h2 class="card-title">Batallas disputadas</h2>
-                <p class="card-value">12</p>
-            </div>
-            <div class="card card--friends">
-                <h2 class="card-title">Amigos totales</h2>
-                <p class="card-value">8</p>
-            </div>
-            <div class="card card--level">
-                <h2 class="card-title">Nivel del entrenador</h2>
-                <p class="card-value">15</p>
-            </div>
-        </div>
-        <!-- Separador visual -->
-        <br><br><br><br><br><br>
-        <div class="team-section">
-            <h2 class="team-title"> - Tu equipo -</h2>
-        </div>
-        <!-- Resumen del equipo de Xuxemons para batalla -->
-        <div class="xuxemons-summary">
-            <!-- Xuxemon 1: Agua -->
-            <div class="card card--team">
-                <div class="card-xuxemon-image-placeholder"></div>
-                <div class="card-xuxemon-content">
-                    <div class="card-xuxemon-header">
-                        <h3 class="card-xuxemon-name">Aquader</h3>
-                        <span class="card-xuxemon-level">Lvl 18</span>
-                    </div>
-                    <div class="card-xuxemon-type">
-                        <span class="type-badge type-agua">AGUA</span>
-                    </div>
-                    <p class="card-xuxemon-stats">HP: 65 | ATK: 52 | DEF: 48</p>
-                </div>
-            </div>
-            <!-- Xuxemon 2: Fuego -->
-            <div class="card card--team">
-                <div class="card-xuxemon-image-placeholder"></div>
-                <div class="card-xuxemon-content">
-                    <div class="card-xuxemon-header">
-                        <h3 class="card-xuxemon-name">Flamix</h3>
-                        <span class="card-xuxemon-level">Lvl 20</span>
-                    </div>
-                    <div class="card-xuxemon-type">
-                        <span class="type-badge type-fuego">FUEGO</span>
-                    </div>
-                    <p class="card-xuxemon-stats">HP: 58 | ATK: 62 | DEF: 40</p>
-                </div>
-            </div>
-            <!-- Xuxemon 3: Planta -->
-            <div class="card card--team">
-                <div class="card-xuxemon-image-placeholder"></div>
-                <div class="card-xuxemon-content">
-                    <div class="card-xuxemon-header">
-                        <h3 class="card-xuxemon-name">Verdenta</h3>
-                        <span class="card-xuxemon-level">Lvl 19</span>
-                    </div>
-                    <div class="card-xuxemon-type">
-                        <span class="type-badge type-planta">PLANTA</span>
-                    </div>
-                    <p class="card-xuxemon-stats">HP: 60 | ATK: 55 | DEF: 58</p>
-                </div>
-            </div>
-            <!-- Xuxemon 4: Roca -->
-            <div class="card card--team">
-                <div class="card-xuxemon-image-placeholder"></div>
-                <div class="card-xuxemon-content">
-                    <div class="card-xuxemon-header">
-                        <h3 class="card-xuxemon-name">Rocky</h3>
-                        <span class="card-xuxemon-level">Lvl 21</span>
-                    </div>
-                    <div class="card-xuxemon-type">
-                        <span class="type-badge type-roca">ROCA</span>
-                    </div>
-                    <p class="card-xuxemon-stats">HP: 52 | ATK: 68 | DEF: 55</p>
-                </div>
-            </div>
-        </div>
+  <div class="main-content">
+
+    <!-- Menú lateral -->
+    <div class="menu-section">
+      <div class="logo-section">
+        <h1 class="logo-title">XUXEMONS</h1>
+      </div>
+      <div class="menu-title">
+        <h3 (click)="navegarAlInicio()"     style="cursor: pointer;">Inicio</h3>
+        <h3 (click)="navegarAlXuxedex()"    style="cursor: pointer;">Xuxedex</h3>
+        <h3 (click)="navegarAlInventario()" style="cursor: pointer;">Mochila</h3>
+        <h3 (click)="navegarAlPerfil()"     style="cursor: pointer;">Perfil</h3>
+      </div>
     </div>
+
+    <!-- ======= VISTA ADMIN ======= -->
+    <ng-container *ngIf="isAdmin">
+
+      <div class="admin-header">
+        <div class="admin-header-badge">⚙ MODO ADMIN</div>
+        <h2 class="admin-header-title">SALA DE CONTROL</h2>
+        <p class="admin-header-sub">Bienvenido, {{ usuario?.name || 'Administrador' }} — Gestiona el mundo Xuxemon</p>
+      </div>
+
+      <div class="stats-grid" style="margin-top: 20px;">
+        <div class="card card--xuxemons">
+          <h2 class="card-title">Xuxemons en juego</h2>
+          <p class="card-value">{{ xuxemonsTotales }}</p>
+        </div>
+        <div class="card card--fights">
+          <h2 class="card-title">Jugadores activos</h2>
+          <p class="card-value">{{ totalJugadores }}</p>
+        </div>
+        <div class="card card--friends">
+          <h2 class="card-title">Capturas totales</h2>
+          <p class="card-value">{{ totalXuxemonsCapturados }}</p>
+        </div>
+        <div class="card card--level">
+          <h2 class="card-title">Xuxemons enfermos</h2>
+          <p class="card-value">{{ totalEnfermos }}</p>
+        </div>
+      </div>
+
+      <div class="team-section" style="margin-top: 36px;">
+        <h2 class="team-title">▶ REGISTRO DE JUGADORES</h2>
+      </div>
+
+      <div class="admin-table-wrapper">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Jugador</th>
+              <th>Email</th>
+              <th>Xuxemons</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let jugador of jugadoresRecientes; let i = index"
+                class="admin-table-row"
+                (click)="abrirFichaJugador(jugador)"
+                style="cursor: pointer;">
+              <td class="admin-td-num">{{ i + 1 }}</td>
+              <td class="admin-td-name">{{ jugador.name }}</td>
+              <td class="admin-td-email">{{ jugador.email }}</td>
+              <td class="admin-td-count">
+                <span class="admin-badge-count">{{ jugador.total_xuxemons || 0 }}</span>
+              </td>
+              <td>
+                <span class="admin-badge-status admin-badge-status--ok">● ACTIVO</span>
+              </td>
+            </tr>
+            <tr *ngIf="jugadoresRecientes.length === 0 && !cargando">
+              <td colspan="5" class="admin-td-empty">Sin jugadores registrados</td>
+            </tr>
+            <tr *ngIf="cargando">
+              <td colspan="5" class="admin-td-empty">Cargando datos...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </ng-container>
+
+    <!-- ======= VISTA JUGADOR ======= -->
+    <ng-container *ngIf="!isAdmin">
+
+      <div class="welcome-section">
+        <h2 class="welcome-title">¡Bienvenido, {{ usuario?.name || 'Entrenador' }}!</h2>
+        <br><br>
+        <p class="welcome-description">— Resumen de tu aventura —</p>
+        <br>
+      </div>
+
+      <div class="stats-grid">
+        <div class="card card--xuxemons">
+          <h2 class="card-title">Xuxemons totales</h2>
+          <p class="card-value">{{ xuxemonsAtrapados }} / {{ xuxemonsTotales }}</p>
+        </div>
+        <div class="card card--fights">
+          <h2 class="card-title">Batallas disputadas</h2>
+          <p class="card-value">{{ batallas }}</p>
+        </div>
+        <div class="card card--friends">
+          <h2 class="card-title">Amigos totales</h2>
+          <p class="card-value">{{ amigos }}</p>
+        </div>
+        <div class="card card--level">
+          <h2 class="card-title">Nivel del entrenador</h2>
+          <p class="card-value">{{ nivel }}</p>
+        </div>
+      </div>
+
+      <br><br><br><br><br><br>
+
+      <div class="team-section">
+        <h2 class="team-title"> - Tu equipo -</h2>
+      </div>
+
+      <div class="xuxemons-summary" *ngIf="!cargando && coleccion.length > 0; else sinXuxemons">
+  <div class="card card--team" *ngFor="let item of getEquipo()">
+    <div class="card-xuxemon-image">
+      <img [src]="obtenerImagenXuxemon(item)" [alt]="item.xuxemon.nombre">
+    </div>
+    <div class="card-xuxemon-content">
+      <div class="card-xuxemon-header">
+        <h3 class="card-xuxemon-name">{{ item.xuxemon.nombre }}</h3>
+        <span class="card-xuxemon-level">Lvl {{ item.nivel ?? 1 }}</span>
+      </div>
+      <div class="card-xuxemon-type">
+        <span class="type-badge" [ngClass]="'type-' + item.xuxemon.tipo.toLowerCase()">
+          {{ item.xuxemon.tipo }}
+        </span>
+      </div>
+      <p class="card-xuxemon-stats">
+        {{ item.tamano_actual || 'Pequeno' }} | Nivel: {{ item.nivel ?? 1 }}
+      </p>
+    </div>
+  </div>
+</div>
+
+      <ng-template #sinXuxemons>
+        <div class="xuxemons-summary">
+          <div class="card card--team" *ngIf="!cargando">
+            <div class="card-xuxemon-image">
+              <img src="/images/xuxemons/Dragon agua - 1.png" alt="Sin Xuxemon">
+            </div>
+            <div class="card-xuxemon-content">
+              <div class="card-xuxemon-header">
+                <h3 class="card-xuxemon-name">Sin Xuxemons</h3>
+                <span class="card-xuxemon-level">Lvl 1</span>
+              </div>
+              <div class="card-xuxemon-type">
+                <span class="type-badge type-normal">NORMAL</span>
+              </div>
+              <p class="card-xuxemon-stats">¡Atrapa tu primer Xuxemon!</p>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+    </ng-container>
+
+  </div>
+
+  <!-- ======= MODAL FICHA ENTRENADOR ======= -->
+  <div class="modal-overlay" *ngIf="modalAbierto" (click)="cerrarModal()">
+    <div class="modal-ficha" (click)="$event.stopPropagation()">
+
+      <div class="modal-ficha-header">
+        <div class="modal-ficha-badge">⚙ FICHA DE ENTRENADOR</div>
+        <button class="modal-ficha-close" (click)="cerrarModal()">✕</button>
+      </div>
+
+      <div class="modal-ficha-identity" *ngIf="jugadorSeleccionado">
+        <div class="modal-ficha-avatar">🧑‍💻</div>
+        <div class="modal-ficha-info">
+          <h3 class="modal-ficha-name">{{ jugadorSeleccionado.name }} {{ jugadorSeleccionado.apellidos }}</h3>
+          <p class="modal-ficha-email">{{ jugadorSeleccionado.email }}</p>
+          <span class="modal-ficha-nivel">LVL {{ jugadorSeleccionado.nivel || 1 }}</span>
+        </div>
+      </div>
+
+      <div class="modal-ficha-divider"></div>
+
+      <div class="modal-ficha-progress">
+        <p class="modal-ficha-progress-label">
+          XUXEMONS: <span class="modal-ficha-progress-bar">{{ getBarraProgreso(jugadorSeleccionado?.total_xuxemons || 0) }}</span>
+          {{ jugadorSeleccionado?.total_xuxemons || 0 }}/{{ xuxemonsTotales }}
+        </p>
+      </div>
+
+      <div class="modal-ficha-divider"></div>
+
+      <div class="modal-ficha-section">
+        <p class="modal-ficha-section-title">▶ XUXEMONS CAPTURADOS</p>
+
+        <div *ngIf="cargandoModal" class="modal-ficha-loading">
+          Cargando...
+        </div>
+
+        <div class="modal-ficha-chips" *ngIf="!cargandoModal">
+          <span class="modal-ficha-chip"
+                *ngFor="let item of coleccionJugador"
+                [ngClass]="'chip-' + item.xuxemon?.tipo?.toLowerCase()">
+            {{ item.xuxemon?.nombre || '???' }}
+          </span>
+          <span class="modal-ficha-chip chip-empty"
+                *ngIf="coleccionJugador.length === 0">
+            Sin xuxemons
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 </section>

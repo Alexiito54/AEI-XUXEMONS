@@ -25,17 +25,72 @@ export interface Vacuna {
   nombre: string;
   cura_enfermedad_id: number | null;
 }
+  
+export interface XuxemonInstancia {
+  coleccion_id: number;
+  tamano_actual: string;  
+  nivel: number;
+  alimentaciones_pendientes: number;
+  esta_enfermo: boolean;
+  enfermedades: { id: number; nombre: string }[];
+}
+
+export interface XuxedexEntry {
+  id: number;
+  nombre: string;
+  tipo: string;
+  tamaño: string;
+  imagen: string;
+  cantidad_capturada: number;
+  atrapado: boolean;
+  visto: boolean;
+  oculto: boolean;
+  instancias: XuxemonInstancia[];
+}
+
+export interface XuxedexResponse {
+  xuxemons: XuxedexEntry[];
+  estadisticas: {
+    total: number;
+    atrapados: number;
+    vistos: number;
+    is_admin: boolean;
+  };
+}
 
 export interface ColeccionXuxemon {
   id: number;
-  user_id: number;
-  xuxemon_id: number;
-  tamano_actual: string;
+  user_id?: number;
+  id_usuario?: number;
+  xuxemon_id?: number;
+  id_xuxemon?: number;
+  capturado_en: string;
+  tamano: string;
+  tamaño_actual?: string;
   nivel: number;
   alimentaciones_pendientes: number;
-  capturado_en?: string;
   xuxemon: Xuxemon;
-  enfermedades?: Enfermedad[];
+}
+
+export interface AdminJugador {
+  id: number;
+  name: string;
+  apellidos: string;
+  email: string;
+  id_usuario: string;
+  rol: string;
+  total_xuxemons: number;
+}
+
+export interface AdminJugadoresResponse {
+  jugadores: AdminJugador[];
+}
+
+export interface AdminAsignarXuxemonResponse {
+  message: string;
+  xuxemon: Xuxemon;
+  coleccion: ColeccionXuxemon;
+  jugador: AdminJugador;
 }
 
 @Injectable({
@@ -64,11 +119,14 @@ export class XuxemonsService {
     return this.http.get<Xuxemon[]>(`${this.apiUrl}/xuxemons`);
   }
 
+  // Obtener datos de la Xuxedex (protegido)
+  getXuxedex(): Observable<XuxedexResponse> {
+    return this.http.get<XuxedexResponse>(`${this.apiUrl}/xuxedex`);
+  }
+
   // Obtener Xuxemons capturados por el usuario (protegido)
   getColeccion(): Observable<ColeccionXuxemon[]> {
-    return this.http.get<ColeccionXuxemon[]>(`${this.apiUrl}/colecciones`, {
-      headers: this.getHeaders()
-    });
+    return this.http.get<ColeccionXuxemon[]>(`${this.apiUrl}/colecciones`);
   }
 
   // Obtener un Xuxemon capturado específico
@@ -78,11 +136,32 @@ export class XuxemonsService {
     });
   }
 
-  // Capturar un Xuxemon aleatorio (protegido)
-  capturarXuxemon(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/colecciones`, {}, {
+  getAdminJugadores(): Observable<AdminJugadoresResponse> {
+    return this.http.get<AdminJugadoresResponse>(`${this.apiUrl}/admin/jugadores`, {
       headers: this.getHeaders()
     });
+  }
+
+  asignarXuxemonAleatorioAJugador(userId: number): Observable<AdminAsignarXuxemonResponse> {
+    return this.http.post<AdminAsignarXuxemonResponse>(
+      `${this.apiUrl}/admin/jugadores/${userId}/xuxemon-aleatorio`,
+      {},
+      {
+        headers: this.getHeaders()
+      }
+    );
+  }
+  getColeccionJugador(userId: number): Observable<any> {
+  return this.http.get<any>(
+    `${this.apiUrl}/admin/jugadores/${userId}/coleccion`,
+    { headers: this.getHeaders() }
+  );
+}
+
+
+  // Capturar un Xuxemon aleatorio (protegido)
+  capturarXuxemon(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/colecciones`, {});
   }
 
   // Alimentar un Xuxemon (protegido)
@@ -92,14 +171,13 @@ export class XuxemonsService {
     });
   }
 
-  // Curar un Xuxemon con vacuna (protegido)
-  curarXuxemon(id: number, vacunaId: number): Observable<any> {
+  curarXuxemon(id: number, itemId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/colecciones/${id}/curar`, {
-      id_vacuna: vacunaId
+        id_item: itemId  
     }, {
-      headers: this.getHeaders()
+        headers: this.getHeaders()
     });
-  }
+}
 
   // Liberar un Xuxemon (protegido)
   liberarXuxemon(id: number): Observable<any> {

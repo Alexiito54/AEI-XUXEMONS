@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # Base de dades MySQL
   db:
     image: mysql:8.0
     container_name: xuxemons-db
@@ -15,14 +14,12 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
-      # - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql  # No necesario, usamos Laravel migrations
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # phpMyAdmin
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: xuxemons-phpmyadmin
@@ -37,14 +34,12 @@ services:
       db:
         condition: service_healthy
 
-  # Backend Laravel
-   # Backend Laravel
   laravel:
     build:
       context: ./docker/backend/laravel
       dockerfile: Dockerfile
     container_name: xuxemons-laravel
-    restart: always
+    restart: unless-stopped
     working_dir: /var/www/html
     environment:
       APACHE_DOCUMENT_ROOT: /var/www/html/public
@@ -63,10 +58,10 @@ services:
             php artisan db:wipe --force 2>/dev/null || true &&
             php artisan migrate --force &&
             php artisan db:seed --force &&
-            php artisan serve --host=0.0.0.0 --port=80"
+            php artisan config:clear &&
+            php artisan cache:clear &&
+            apache2-foreground"
 
-
-  # Frontend Angular
   angular:
     image: node:20
     container_name: xuxemons-angular

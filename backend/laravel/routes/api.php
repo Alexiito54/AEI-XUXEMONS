@@ -13,6 +13,10 @@ use App\Http\Controllers\VacunaController;
 use App\Http\Controllers\ConfiguracionAdminController;
 use App\Http\Controllers\DiarioController;
 
+Route::options('/{any}', function () {
+    return response('', 200);
+})->where('any', '.*');
+
 // Public routes (no authentication required)
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -31,6 +35,7 @@ Route::get('/vacunas/{vacuna}', [VacunaController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
     // Auth routes
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/perfil/stats', [UserController::class, 'perfilStats']);
 
     // User routes
     Route::get('/user', [UserController::class, 'getUser']);
@@ -45,6 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Coleccion routes
     Route::get('/colecciones', [ColeccionController::class, 'index']);
+    Route::get('/xuxedex', [ColeccionController::class, 'xuxedex']);
     Route::post('/colecciones', [ColeccionController::class, 'store']);
     Route::post('/colecciones/{coleccion}/alimentar', [ColeccionController::class, 'alimentar']);
     Route::post('/colecciones/{coleccion}/curar', [ColeccionController::class, 'curar']);
@@ -56,12 +62,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Admin only routes
     Route::middleware('admin')->group(function () {
+        Route::get('/admin/jugadores', [UserController::class, 'indexJugadores']);
+        Route::post('/admin/jugadores/{user}/xuxemon-aleatorio', [ColeccionController::class, 'storeForUser']);
         Route::post('/items', [ItemController::class, 'store']);
         Route::post('/xuxemons', [XuxemonController::class, 'store']);
         Route::post('/enfermedades', [EnfermedadController::class, 'store']);
         Route::post('/vacunas', [VacunaController::class, 'store']);
         Route::get('/configuracion', [ConfiguracionAdminController::class, 'show']);
         Route::put('/configuracion', [ConfiguracionAdminController::class, 'update']);
+        Route::get('/admin/jugadores/{user}/coleccion', [ColeccionController::class, 'indexForUser']);
     });
 });
-
